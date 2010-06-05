@@ -1,0 +1,68 @@
+<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"> <style>
+	.KEYW {color: #933;}
+	.COMM {color: #bbb; font-style: italic;}
+	.NUMB {color: #393;}
+	.STRN {color: #393;}
+	.REGX {color: #339;}
+	.line {border-right: 1px dotted #666; color: #666; font-style: normal;}
+	</style></head><body><pre><span class='line'>  1</span> <span class="COMM">/*
+<span class='line'>  2</span>  * Copyright [2010] [Mark Rijnbeek] 
+<span class='line'>  3</span>  * Licensed under the Apache License, Version 2.0 (the "License"); 
+<span class='line'>  4</span>  * you may not use this file except in compliance with the License. 
+<span class='line'>  5</span>  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 
+<span class='line'>  6</span>  * 
+<span class='line'>  7</span>  * Unless required by applicable law or agreed to in writing, software distributed under the License 
+<span class='line'>  8</span>  * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+<span class='line'>  9</span>  * See the License for the specific language governing permissions and limitations under the License.
+<span class='line'> 10</span>  */</span><span class="WHIT">
+<span class='line'> 11</span> 
+<span class='line'> 12</span> </span><span class="NAME">goog.provide</span><span class="PUNC">(</span><span class="STRN">'jchemhub.util.BondUtil'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 13</span> </span><span class="NAME">goog.provide</span><span class="PUNC">(</span><span class="STRN">'jchemhub.util.BondUtil.Orders'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 14</span> 
+<span class='line'> 15</span> </span><span class="NAME">goog.require</span><span class="PUNC">(</span><span class="STRN">'jchemhub.model.Atom'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 16</span> </span><span class="NAME">goog.require</span><span class="PUNC">(</span><span class="STRN">'jchemhub.model.PseudoAtom'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 17</span> </span><span class="NAME">goog.require</span><span class="PUNC">(</span><span class="STRN">'jchemhub.model.Bond'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 18</span> </span><span class="NAME">goog.require</span><span class="PUNC">(</span><span class="STRN">'jchemhub.model.SingleBond'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 19</span> </span><span class="NAME">goog.require</span><span class="PUNC">(</span><span class="STRN">'jchemhub.model.DoubleBond'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 20</span> </span><span class="NAME">goog.require</span><span class="PUNC">(</span><span class="STRN">'jchemhub.model.TripleBond'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 21</span> </span><span class="NAME">goog.require</span><span class="PUNC">(</span><span class="STRN">'jchemhub.model.QuadrupleBond'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 22</span> 
+<span class='line'> 23</span> 
+<span class='line'> 24</span> </span><span class="NAME">jchemhub.util.BondUtil</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 25</span> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 26</span> 
+<span class='line'> 27</span> </span><span class="COMM">/*
+<span class='line'> 28</span>  * Return a bond of the correct subclass given the input arguments.
+<span class='line'> 29</span>  * TODO: extend with stereo types.
+<span class='line'> 30</span>  */</span><span class="WHIT">
+<span class='line'> 31</span> </span><span class="NAME">jchemhub.util.BondUtil.getBond</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">atom1</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">atom2</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">bondOrder</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 32</span>     </span><span class="NAME">bond</span><span class="PUNC">=</span><span class="KEYW">null</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 33</span>     </span><span class="KEYW">switch</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">bondOrder</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 34</span>         </span><span class="KEYW">case</span><span class="WHIT"> </span><span class="NAME">jchemhub.util.BondUtil.Orders.SINGLE</span><span class="PUNC">:</span><span class="WHIT">
+<span class='line'> 35</span>             </span><span class="NAME">bond</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">jchemhub.model.SingleBond</span><span class="PUNC">(</span><span class="NAME">atom1</span><span class="PUNC">,</span><span class="NAME">atom2</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 36</span>             </span><span class="KEYW">break</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 37</span>         </span><span class="KEYW">case</span><span class="WHIT"> </span><span class="NAME">jchemhub.util.BondUtil.Orders.DOUBLE</span><span class="PUNC">:</span><span class="WHIT">
+<span class='line'> 38</span>             </span><span class="NAME">bond</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">jchemhub.model.DoubleBond</span><span class="PUNC">(</span><span class="NAME">atom1</span><span class="PUNC">,</span><span class="NAME">atom2</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 39</span>             </span><span class="KEYW">break</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 40</span>         </span><span class="KEYW">case</span><span class="WHIT"> </span><span class="NAME">jchemhub.util.BondUtil.Orders.TRIPLE</span><span class="PUNC">:</span><span class="WHIT">
+<span class='line'> 41</span>             </span><span class="NAME">bond</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">jchemhub.model.TripleBond</span><span class="PUNC">(</span><span class="NAME">atom1</span><span class="PUNC">,</span><span class="NAME">atom2</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 42</span>             </span><span class="KEYW">break</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 43</span>         </span><span class="KEYW">case</span><span class="WHIT"> </span><span class="NAME">jchemhub.util.BondUtil.Orders.QUADRUPLE</span><span class="PUNC">:</span><span class="WHIT">
+<span class='line'> 44</span>             </span><span class="NAME">bond</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">jchemhub.model.QuadrupleBond</span><span class="PUNC">(</span><span class="NAME">atom1</span><span class="PUNC">,</span><span class="NAME">atom2</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 45</span>             </span><span class="KEYW">break</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 46</span>     </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 47</span>     </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">bond</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 48</span> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 49</span> 
+<span class='line'> 50</span> 
+<span class='line'> 51</span> </span><span class="COMM">/**
+<span class='line'> 52</span>  * Bond orders to map to bond type subclasses
+<span class='line'> 53</span>  * @enum {number}
+<span class='line'> 54</span>  */</span><span class="WHIT">
+<span class='line'> 55</span> </span><span class="NAME">jchemhub.util.BondUtil.Orders</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 56</span>         </span><span class="NAME">SINGLE</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="NUMB">1</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 57</span>         </span><span class="NAME">DOUBLE</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="NUMB">2</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 58</span>         </span><span class="NAME">TRIPLE</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="NUMB">3</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 59</span>         </span><span class="NAME">QUADRUPLE</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="NUMB">4</span><span class="WHIT">
+<span class='line'> 60</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 61</span> </span></pre></body></html>

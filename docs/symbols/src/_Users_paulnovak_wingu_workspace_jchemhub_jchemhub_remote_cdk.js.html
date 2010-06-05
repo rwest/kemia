@@ -1,0 +1,41 @@
+<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"> <style>
+	.KEYW {color: #933;}
+	.COMM {color: #bbb; font-style: italic;}
+	.NUMB {color: #393;}
+	.STRN {color: #393;}
+	.REGX {color: #339;}
+	.line {border-right: 1px dotted #666; color: #666; font-style: normal;}
+	</style></head><body><pre><span class='line'>  1</span> <span class="COMM">/**
+<span class='line'>  2</span>  * @fileoverview Remote service class for CDK services
+<span class='line'>  3</span>  *
+<span class='line'>  4</span>  */</span><span class="WHIT">
+<span class='line'>  5</span> </span><span class="NAME">goog.provide</span><span class="PUNC">(</span><span class="STRN">'jchemhub.remote.CDK'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>  6</span> </span><span class="NAME">goog.require</span><span class="PUNC">(</span><span class="STRN">'goog.net.Jsonp'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>  7</span> 
+<span class='line'>  8</span> </span><span class="NAME">jchemhub.remote.CDK</span><span class="PUNC">=</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">_url</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>  9</span> </span><span class="WHIT">    </span><span class="NAME">this.serverUrl</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">_url</span><span class="WHIT"> </span><span class="PUNC">?</span><span class="WHIT"> </span><span class="NAME">_url</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">"http://localhost:8080/"</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 10</span> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 11</span> 
+<span class='line'> 12</span> </span><span class="COMM">/**
+<span class='line'> 13</span>  * Sends the given payload to the URL specified at the construction
+<span class='line'> 14</span>  * time. The reply is delivered to the given replyCallback. If the
+<span class='line'> 15</span>  * errorCallback is specified and the reply does not arrive within the
+<span class='line'> 16</span>  * timeout period set on this channel, the errorCallback is invoked
+<span class='line'> 17</span>  * with the original payload.
+<span class='line'> 18</span>  *
+<span class='line'> 19</span>  * @param {Object}  params TODO write doc.
+<span class='line'> 20</span>  *
+<span class='line'> 21</span>  * @param {Function=} replyCallback A function expecting one
+<span class='line'> 22</span>  *     argument, called when the reply arrives, with the response data.
+<span class='line'> 23</span>  *
+<span class='line'> 24</span>  * @param {Function=} errorCallback A function expecting one
+<span class='line'> 25</span>  *     argument, called on timeout, with the payload.
+<span class='line'> 26</span>  *
+<span class='line'> 27</span>  * @return {Object} A request descriptor that may be used to cancel this
+<span class='line'> 28</span>  *     transmission, or null, if the message may not be cancelled.
+<span class='line'> 29</span>  */</span><span class="WHIT">
+<span class='line'> 30</span> 
+<span class='line'> 31</span> </span><span class="NAME">jchemhub.remote.CDK.prototype.smilesToMolfile</span><span class="PUNC">=</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">params</span><span class="PUNC">,</span><span class="NAME">replyCallback</span><span class="PUNC">,</span><span class="NAME">errorCallback</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 32</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">jsonp</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">goog.net.Jsonp</span><span class="PUNC">(</span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">goog.Uri</span><span class="PUNC">(</span><span class="NAME">this.serverUrl</span><span class="PUNC">+</span><span class="STRN">'parseSmiles'</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 33</span> </span><span class="WHIT">    </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">jsonp.send</span><span class="PUNC">(</span><span class="NAME">params</span><span class="PUNC">,</span><span class="NAME">replyCallback</span><span class="PUNC">,</span><span class="NAME">errorCallback</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 34</span> </span><span class="PUNC">}</span><span class="PUNC">;</span></pre></body></html>

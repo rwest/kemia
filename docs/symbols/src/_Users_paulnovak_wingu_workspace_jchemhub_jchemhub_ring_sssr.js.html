@@ -1,0 +1,237 @@
+<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"> <style>
+	.KEYW {color: #933;}
+	.COMM {color: #bbb; font-style: italic;}
+	.NUMB {color: #393;}
+	.STRN {color: #393;}
+	.REGX {color: #339;}
+	.line {border-right: 1px dotted #666; color: #666; font-style: normal;}
+	</style></head><body><pre><span class='line'>  1</span> <span class="COMM">/*
+<span class='line'>  2</span>  * Copyright 2010 Tim Vandermeersch
+<span class='line'>  3</span>  *
+<span class='line'>  4</span>  * Licensed under the Apache License, Version 2.0 (the "License"); 
+<span class='line'>  5</span>  * you may not use this file except in compliance with the License. 
+<span class='line'>  6</span>  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 
+<span class='line'>  7</span>  * 
+<span class='line'>  8</span>  * Unless required by applicable law or agreed to in writing, software 
+<span class='line'>  9</span>  * distributed under the License is distributed on an "AS IS" BASIS, 
+<span class='line'> 10</span>  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+<span class='line'> 11</span>  * See the License for the specific language governing permissions and 
+<span class='line'> 12</span>  * limitations under the License.
+<span class='line'> 13</span>  */</span><span class="WHIT">
+<span class='line'> 14</span> 
+<span class='line'> 15</span> </span><span class="NAME">goog.provide</span><span class="PUNC">(</span><span class="STRN">'jchemhub.ring.SSSRFinder'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 16</span> 
+<span class='line'> 17</span> </span><span class="NAME">goog.require</span><span class="PUNC">(</span><span class="STRN">'goog.structs.Set'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 18</span> </span><span class="NAME">goog.require</span><span class="PUNC">(</span><span class="STRN">'goog.array'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 19</span> </span><span class="NAME">goog.require</span><span class="PUNC">(</span><span class="STRN">'jchemhub.ring.Ring'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 20</span> 
+<span class='line'> 21</span> </span><span class="COMM">/*
+<span class='line'> 22</span> function debug(text, noNewLine) {
+<span class='line'> 23</span>     var logDiv = document.getElementById("logDiv");
+<span class='line'> 24</span>     if (!logDiv) {
+<span class='line'> 25</span>         var body = document.getElementsByTagName("body")[0];
+<span class='line'> 26</span>         logDiv = document.createElement("div");
+<span class='line'> 27</span>         logDiv.id = "logDiv";
+<span class='line'> 28</span>         body.appendChild(logDiv);
+<span class='line'> 29</span>     }
+<span class='line'> 30</span>     if (noNewLine) {
+<span class='line'> 31</span>         logDiv.innerHTML += text;
+<span class='line'> 32</span>     } else {
+<span class='line'> 33</span>         logDiv.innerHTML += text + "&lt;br>";
+<span class='line'> 34</span>     }
+<span class='line'> 35</span> };
+<span class='line'> 36</span> */</span><span class="WHIT">
+<span class='line'> 37</span> 
+<span class='line'> 38</span> </span><span class="PUNC">(</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 39</span> 
+<span class='line'> 40</span>     </span><span class="COMM">/**
+<span class='line'> 41</span>      * Smallest Set of Smallest rings.
+<span class='line'> 42</span>      *
+<span class='line'> 43</span>      * A robust method for searching the smallest set of smallest rings with a 
+<span class='line'> 44</span>      * path-included distance matrix, Chang Lee, PNAS, Oct. 13, 2009, vol. 16,
+<span class='line'> 45</span>      * no. 41, pages 17355-17358
+<span class='line'> 46</span>      *
+<span class='line'> 47</span>      * http://www.pnas.org/content/106/41/17355.full
+<span class='line'> 48</span>      * http://www.pnas.org/content/106/41/17355/suppl/DCSupplemental
+<span class='line'> 49</span>      */</span><span class="WHIT">
+<span class='line'> 50</span> 
+<span class='line'> 51</span> 
+<span class='line'> 52</span>     </span><span class="COMM">/**
+<span class='line'> 53</span>      * Make a deep copy of an array
+<span class='line'> 54</span>      */</span><span class="WHIT">
+<span class='line'> 55</span>     </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">deepCopy</span><span class="PUNC">(</span><span class="NAME">arr</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 56</span>         </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">newArray</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">[</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 57</span>         </span><span class="KEYW">for</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">i</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">li</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">arr.length</span><span class="PUNC">;</span><span class="WHIT"> </span><span class="NAME">i</span><span class="WHIT"> </span><span class="XML">&lt; li; i++) {
+<span class='line'> 58</span>             var item = arr[i];
+<span class='line'> 59</span>             if (item instanceof Array) {
+<span class='line'> 60</span>                 newArray.push(deepCopy(item));
+<span class='line'> 61</span>             } else {
+<span class='line'> 62</span>                 newArray.push(item);
+<span class='line'> 63</span>             }
+<span class='line'> 64</span>         }
+<span class='line'> 65</span>         return newArray;
+<span class='line'> 66</span>     }
+<span class='line'> 67</span> 
+<span class='line'> 68</span>     /**
+<span class='line'> 69</span>      * Debug helper function
+<span class='line'> 70</span>      */
+<span class='line'> 71</span>     function matrixToHTML(matrix) {
+<span class='line'> 72</span>         var text = "";
+<span class='line'> 73</span>         var n = matrix.length;
+<span class='line'> 74</span>         for (var i = 0; i &lt; n; i++) {
+<span class='line'> 75</span>             for (var j = 0; j &lt; n; j++) {
+<span class='line'> 76</span>                 text += JSON.stringify(matrix[i][j]) + " ";
+<span class='line'> 77</span>             }
+<span class='line'> 78</span>             text += "&lt;br></span><span class="STRN">";
+<span class='line'> 79</span>         }
+<span class='line'> 80</span>         return text; 
+<span class='line'> 81</span>     }
+<span class='line'> 82</span> 
+<span class='line'> 83</span>     /**
+<span class='line'> 84</span>      * Create a n x n matrix with all elements set to 0.
+<span class='line'> 85</span>      */
+<span class='line'> 86</span>     function createEmptyMatrix(n) {
+<span class='line'> 87</span>         var matrix = [];
+<span class='line'> 88</span>         for (var i = 0; i &lt; n; i++) {
+<span class='line'> 89</span>             var row = [];
+<span class='line'> 90</span>             for (var j = 0; j &lt; n; j++) {
+<span class='line'> 91</span>                 row.push(0);
+<span class='line'> 92</span>             }
+<span class='line'> 93</span>             matrix.push(row);
+<span class='line'> 94</span>         }
+<span class='line'> 95</span>         return matrix;
+<span class='line'> 96</span>     }
+<span class='line'> 97</span> 
+<span class='line'> 98</span>     /**
+<span class='line'> 99</span>      * Create an initial distance matrix. This is  the D matrix from the paper.
+<span class='line'>100</span>      */
+<span class='line'>101</span>     function createWeightMatrix(molecule, n) {
+<span class='line'>102</span>         var matrix = [];
+<span class='line'>103</span>         for (var i = 0; i &lt; n; i++) {
+<span class='line'>104</span>             var row = [];
+<span class='line'>105</span>             for (var j = 0; j &lt; n; j++) {
+<span class='line'>106</span>                 if (i == j) {
+<span class='line'>107</span>                     row.push(0);
+<span class='line'>108</span>                 } else if (molecule.findBond(molecule.getAtom(i), molecule.getAtom(j))) {
+<span class='line'>109</span>                     row.push(1);
+<span class='line'>110</span>                 } else {
+<span class='line'>111</span>                     row.push(99999999);
+<span class='line'>112</span>                 }
+<span class='line'>113</span>             }
+<span class='line'>114</span>             matrix.push(row);
+<span class='line'>115</span>         }
+<span class='line'>116</span>         return matrix;
+<span class='line'>117</span>     }
+<span class='line'>118</span> 
+<span class='line'>119</span>     /**
+<span class='line'>120</span>      * Create an empty Path-Included Distance matrix. This is an n x n matrix 
+<span class='line'>121</span>      * with all elements set to an empty list (i.e. there is no path between 
+<span class='line'>122</span>      * i and j)
+<span class='line'>123</span>      */
+<span class='line'>124</span>     function createEmptyPIDMatrix(n) {
+<span class='line'>125</span>         var matrix = [];
+<span class='line'>126</span>         for (var i = 0; i &lt; n; i++) {
+<span class='line'>127</span>             var row = [];
+<span class='line'>128</span>             for (var j = 0; j &lt; n; j++) {
+<span class='line'>129</span>                 row.push([]);
+<span class='line'>130</span>             }
+<span class='line'>131</span>             matrix.push(row);
+<span class='line'>132</span>         }
+<span class='line'>133</span>         return matrix;
+<span class='line'>134</span> 
+<span class='line'>135</span>     }
+<span class='line'>136</span> 
+<span class='line'>137</span>     /**
+<span class='line'>138</span>      * Create the initial Pe matrix. The supplementary information 
+<span class='line'>139</span>      * indicates this should be an empty PID matrix, this makes no sense though.
+<span class='line'>140</span>      * We initialize it with adding all bonds as paths of length 1 when atom i 
+<span class='line'>141</span>      * and j are connected.
+<span class='line'>142</span>      */
+<span class='line'>143</span>     function createPIDMatrix(molecule, n) {
+<span class='line'>144</span>         var matrix = [];
+<span class='line'>145</span>         for (var i = 0; i &lt; n; i++) {
+<span class='line'>146</span>             var row = [];
+<span class='line'>147</span>             for (var j = 0; j &lt; n; j++) {
+<span class='line'>148</span>                 var beginAtom = molecule.getAtom(i);
+<span class='line'>149</span>                 var endAtom = molecule.getAtom(j);
+<span class='line'>150</span>                 var bond = molecule.findBond(beginAtom, endAtom);
+<span class='line'>151</span>                 if (bond) {
+<span class='line'>152</span>                     row.push([[molecule.indexOfBond(bond)]]);
+<span class='line'>153</span>                 } else {
+<span class='line'>154</span>                     row.push([]);
+<span class='line'>155</span>                 }
+<span class='line'>156</span>             }
+<span class='line'>157</span>             matrix.push(row);
+<span class='line'>158</span>         }
+<span class='line'>159</span>         return matrix;
+<span class='line'>160</span> 
+<span class='line'>161</span>     }
+<span class='line'>162</span> 
+<span class='line'>163</span>     /**
+<span class='line'>164</span>      * Update a path included distance matrix element (i.e. lhs) by merging 
+<span class='line'>165</span>      * p1 with p2. 
+<span class='line'>166</span>      */
+<span class='line'>167</span>     function appendPath(lhs, p1, p2) {
+<span class='line'>168</span>         if (!lhs.length) {
+<span class='line'>169</span>             lhs[0] = p1[0].concat(p2[0]);
+<span class='line'>170</span>         } else {
+<span class='line'>171</span>             lhs.push(p1[0].concat(p2[0]));
+<span class='line'>172</span>         }
+<span class='line'>173</span>     }
+<span class='line'>174</span> 
+<span class='line'>175</span> 
+<span class='line'>176</span>     /**
+<span class='line'>177</span>      * Create the two Path-Included Distance matrices (Pe and Pe') and the 
+<span class='line'>178</span>      * distance matrix D. This is Algorithm 1 in the supplementary information
+<span class='line'>179</span>      * that comes with the paper.
+<span class='line'>180</span>      */
+<span class='line'>181</span>     function makePIDMatrixes(molecule) {
+<span class='line'>182</span>         var n = molecule.countAtoms();
+<span class='line'>183</span>         var D = createWeightMatrix(molecule, n);
+<span class='line'>184</span>         var Pe1 = createPIDMatrix(molecule, n); // Pe
+<span class='line'>185</span>         var Pe2 = createEmptyPIDMatrix(n); // Pe'
+<span class='line'>186</span>         var lastD = D;
+<span class='line'>187</span> 
+<span class='line'>188</span>         //debug("</span><span class="NAME">Pe</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="XML">&lt;br></span><span class="STRN">" + matrixToHTML(Pe1));
+<span class='line'>189</span>         //debug("</span><span class="NAME">Pe</span><span class="STRN">' =&lt;br>" + matrixToHTML(Pe2));
+<span class='line'>190</span> 
+<span class='line'>191</span>         for (var k = 0; k &lt; n; k++) {
+<span class='line'>192</span>             for (var i = 0; i &lt; n; i++) {
+<span class='line'>193</span>                 for (var j = 0; j &lt; n; j++) {
+<span class='line'>194</span>                     var lastPathLength = lastD[i][j];
+<span class='line'>195</span>                     var pathLength = lastD[i][k] + lastD[k][j];
+<span class='line'>196</span>                     var path1 = Pe1[i][k];
+<span class='line'>197</span>                     var path2 = Pe1[k][j];
+<span class='line'>198</span> 
+<span class='line'>199</span>                     // ignore invalid paths
+<span class='line'>200</span>                     if (pathLength == 100000000) { continue; }
+<span class='line'>201</span> 
+<span class='line'>202</span>                     if (lastPathLength > pathLength) {
+<span class='line'>203</span>                         if (lastPathLength == pathLength + 1) {
+<span class='line'>204</span>                             // a new shortest path = previous shortest path -1 => Pe'</span><span class="WHIT"> </span><span class="XML">&lt;- Pe
+<span class='line'>205</span>                             Pe2[i][j] = deepCopy(Pe1[i][j]);
+<span class='line'>206</span>                         } else {
+<span class='line'>207</span>                             Pe2[i][j] = [];
+<span class='line'>208</span>                         }
+<span class='line'>209</span> 
+<span class='line'>210</span>                         // a new shortest path is found
+<span class='line'>211</span>                         D[i][j] = pathLength;
+<span class='line'>212</span>                         Pe1[i][j] = [ path1[0].concat(path2[0]) ]; // change path
+<span class='line'>213</span>                     } else if (lastPathLength == pathLength) {
+<span class='line'>214</span>                         // another shortest path is found
+<span class='line'>215</span>                         if (path1.length && path2.length) {
+<span class='line'>216</span>                             appendPath(Pe1[i][j], path1, path2); // append path
+<span class='line'>217</span>                         }
+<span class='line'>218</span>                     } else if (lastPathLength == pathLength - 1) {
+<span class='line'>219</span>                         // shortest path + 1 found
+<span class='line'>220</span>                         appendPath(Pe2[i][j], path1, path2); // append path
+<span class='line'>221</span>                     } else {
+<span class='line'>222</span>                         D[i][j] = lastD[i][j];
+<span class='line'>223</span>                     }
+<span class='line'>224</span>                 }
+<span class='line'>225</span>             }
+<span class='line'>226</span>         }
+<span class='line'>227</span> 
+<span class='line'>228</span>         //debug("D =&lt;br></span><span class="STRN">" + matrixToHTML(D));
+<span class='line'>229</span>         //debug("</span><span class="NAME">Pe</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="XML">&lt;br></span><span class="STRN">" + matrixToHTML(Pe1));
+<span class='line'>230</span>         //debug("</span><span class="NAME">Pe</span><span class="TOKN"></span></pre></body></html>

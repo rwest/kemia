@@ -1,0 +1,105 @@
+<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"> <style>
+	.KEYW {color: #933;}
+	.COMM {color: #bbb; font-style: italic;}
+	.NUMB {color: #393;}
+	.STRN {color: #393;}
+	.REGX {color: #339;}
+	.line {border-right: 1px dotted #666; color: #666; font-style: normal;}
+	</style></head><body><pre><span class='line'>  1</span> <span class="NAME">goog.provide</span><span class="PUNC">(</span><span class="STRN">'jchemhub.controller.plugins.BondSelect'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>  2</span> </span><span class="NAME">goog.require</span><span class="PUNC">(</span><span class="STRN">'jchemhub.controller.Plugin'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>  3</span> </span><span class="NAME">goog.require</span><span class="PUNC">(</span><span class="STRN">'goog.debug.Logger'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>  4</span> </span><span class="NAME">goog.require</span><span class="PUNC">(</span><span class="STRN">'jchemhub.model.SingleBond'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>  5</span> </span><span class="NAME">goog.require</span><span class="PUNC">(</span><span class="STRN">'jchemhub.model.DoubleBond'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>  6</span> </span><span class="NAME">goog.require</span><span class="PUNC">(</span><span class="STRN">'jchemhub.model.TripleBond'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>  7</span> </span><span class="NAME">goog.require</span><span class="PUNC">(</span><span class="STRN">'jchemhub.model.QuadrupleBond'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>  8</span> </span><span class="NAME">goog.require</span><span class="PUNC">(</span><span class="STRN">'jchemhub.model.SingleBondUp'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>  9</span> </span><span class="NAME">goog.require</span><span class="PUNC">(</span><span class="STRN">'jchemhub.model.SingleBondDown'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 10</span> </span><span class="NAME">goog.require</span><span class="PUNC">(</span><span class="STRN">'jchemhub.model.SingleBondUpOrDown'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 11</span> 
+<span class='line'> 12</span> </span><span class="COMM">/**
+<span class='line'> 13</span>  * @constructor
+<span class='line'> 14</span>  * @extends{jchemhubn.controller.Plugin}s
+<span class='line'> 15</span>  */</span><span class="WHIT">
+<span class='line'> 16</span> </span><span class="NAME">jchemhub.controller.plugins.BondSelect</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 17</span> 	</span><span class="NAME">jchemhub.controller.Plugin.call</span><span class="PUNC">(</span><span class="KEYW">this</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 18</span> 
+<span class='line'> 19</span> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 20</span> </span><span class="NAME">goog.inherits</span><span class="PUNC">(</span><span class="NAME">jchemhub.controller.plugins.BondSelect</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 21</span> 		</span><span class="NAME">jchemhub.controller.Plugin</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 22</span> 
+<span class='line'> 23</span> </span><span class="COMM">/**
+<span class='line'> 24</span>  * Command implemented by this plugin.
+<span class='line'> 25</span>  */</span><span class="WHIT">
+<span class='line'> 26</span> </span><span class="NAME">jchemhub.controller.plugins.BondSelect.COMMAND</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">'selectBond'</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 27</span> 
+<span class='line'> 28</span> </span><span class="COMM">/** @inheritDoc */</span><span class="WHIT">
+<span class='line'> 29</span> </span><span class="NAME">jchemhub.controller.plugins.BondSelect.prototype.isSupportedCommand</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="WHIT">
+<span class='line'> 30</span> 		</span><span class="NAME">command</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 31</span> 	</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">command</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="NAME">jchemhub.controller.plugins.BondSelect.COMMAND</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 32</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 33</span> 
+<span class='line'> 34</span> </span><span class="COMM">/** @inheritDoc */</span><span class="WHIT">
+<span class='line'> 35</span> </span><span class="NAME">jchemhub.controller.plugins.BondSelect.prototype.getTrogClassId</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">goog.functions</span><span class="WHIT">
+<span class='line'> 36</span> 		</span><span class="PUNC">.</span><span class="NAME">constant</span><span class="PUNC">(</span><span class="NAME">jchemhub.controller.plugins.BondSelect.COMMAND</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 37</span> 
+<span class='line'> 38</span> </span><span class="COMM">/**
+<span class='line'> 39</span>  * sets atom symbol.
+<span class='line'> 40</span>  * 
+<span class='line'> 41</span>  * @param {string}
+<span class='line'> 42</span>  *            command Command to execute.
+<span class='line'> 43</span>  * @return {Object|undefined} The result of the command.
+<span class='line'> 44</span>  */</span><span class="WHIT">
+<span class='line'> 45</span> </span><span class="NAME">jchemhub.controller.plugins.BondSelect.prototype.execCommandInternal</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="WHIT">
+<span class='line'> 46</span> 		</span><span class="NAME">command</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">var_args</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 47</span> 
+<span class='line'> 48</span> 	</span><span class="NAME">this.bond_klass</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">arguments</span><span class="PUNC">[</span><span class="NUMB">1</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 49</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 50</span> 
+<span class='line'> 51</span> </span><span class="COMM">/**
+<span class='line'> 52</span>  * @enum {Object}
+<span class='line'> 53</span>  */</span><span class="WHIT">
+<span class='line'> 54</span> </span><span class="NAME">jchemhub.controller.plugins.BondSelect.BOND_TYPES</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">[</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 55</span> 	</span><span class="NAME">caption</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">"Single"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 56</span> 	</span><span class="NAME">klass</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">jchemhub.model.SingleBond</span><span class="WHIT">
+<span class='line'> 57</span> </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 58</span> 	</span><span class="NAME">caption</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">"Double"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 59</span> 	</span><span class="NAME">klass</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">jchemhub.model.DoubleBond</span><span class="WHIT">
+<span class='line'> 60</span> </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 61</span> 	</span><span class="NAME">caption</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">"Triple"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 62</span> 	</span><span class="NAME">klass</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">jchemhub.model.TripleBond</span><span class="WHIT">
+<span class='line'> 63</span> </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 64</span> 	</span><span class="NAME">caption</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">"Quadruple"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 65</span> 	</span><span class="NAME">klass</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">jchemhub.model.QuadrupleBond</span><span class="WHIT">
+<span class='line'> 66</span> </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 67</span> 	</span><span class="NAME">caption</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">"Single Up"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 68</span> 	</span><span class="NAME">klass</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">jchemhub.model.SingleBondUp</span><span class="WHIT">
+<span class='line'> 69</span> </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 70</span> 	</span><span class="NAME">caption</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">"Single Down"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 71</span> 	</span><span class="NAME">klass</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">jchemhub.model.SingleBondDown</span><span class="WHIT">
+<span class='line'> 72</span> </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 73</span> 	</span><span class="NAME">caption</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">"Single Up or Down"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 74</span> 	</span><span class="NAME">klass</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">jchemhub.model.SingleBondUpOrDown</span><span class="WHIT">
+<span class='line'> 75</span> </span><span class="PUNC">}</span><span class="WHIT"> </span><span class="PUNC">]</span><span class="WHIT">
+<span class='line'> 76</span> 
+<span class='line'> 77</span> </span><span class="COMM">/**
+<span class='line'> 78</span>  * The logger for this class.
+<span class='line'> 79</span>  * 
+<span class='line'> 80</span>  * @type {goog.debug.Logger}
+<span class='line'> 81</span>  * @protected
+<span class='line'> 82</span>  */</span><span class="WHIT">
+<span class='line'> 83</span> </span><span class="NAME">jchemhub.controller.plugins.BondSelect.prototype.logger</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">goog.debug.Logger</span><span class="WHIT">
+<span class='line'> 84</span> 		</span><span class="PUNC">.</span><span class="NAME">getLogger</span><span class="PUNC">(</span><span class="STRN">'jchemhub.controller.plugins.BondSelect'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 85</span> 
+<span class='line'> 86</span> </span><span class="NAME">jchemhub.controller.plugins.BondSelect.prototype.handleBondMouseDown</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="WHIT">
+<span class='line'> 87</span> 		</span><span class="NAME">e</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 88</span> 
+<span class='line'> 89</span> 	</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">this.bond_klass</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 90</span> 		</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">new_bond</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">this.bond_klass</span><span class="PUNC">(</span><span class="NAME">e.bond.source</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">e.bond.target</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 91</span> 		</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">molecule</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">e.bond.molecule</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 92</span> 		</span><span class="NAME">molecule.removeBond</span><span class="PUNC">(</span><span class="NAME">e.bond</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 93</span> 		</span><span class="NAME">molecule.addBond</span><span class="PUNC">(</span><span class="NAME">new_bond</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 94</span> 		</span><span class="NAME">this.editorObject.setModel</span><span class="PUNC">(</span><span class="NAME">this.editorObject.getModel</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 95</span> 	</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 96</span> 
+<span class='line'> 97</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 98</span> </span></pre></body></html>

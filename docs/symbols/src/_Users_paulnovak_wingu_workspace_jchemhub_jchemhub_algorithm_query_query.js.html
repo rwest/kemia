@@ -1,0 +1,405 @@
+<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"> <style>
+	.KEYW {color: #933;}
+	.COMM {color: #bbb; font-style: italic;}
+	.NUMB {color: #393;}
+	.STRN {color: #393;}
+	.REGX {color: #339;}
+	.line {border-right: 1px dotted #666; color: #666; font-style: normal;}
+	</style></head><body><pre><span class='line'>  1</span> <span class="COMM">/*
+<span class='line'>  2</span>  * Copyright 2010 Tim Vandermeersch
+<span class='line'>  3</span>  *
+<span class='line'>  4</span>  * Licensed under the Apache License, Version 2.0 (the "License"); 
+<span class='line'>  5</span>  * you may not use this file except in compliance with the License. 
+<span class='line'>  6</span>  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 
+<span class='line'>  7</span>  * 
+<span class='line'>  8</span>  * Unless required by applicable law or agreed to in writing, software 
+<span class='line'>  9</span>  * distributed under the License is distributed on an "AS IS" BASIS, 
+<span class='line'> 10</span>  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+<span class='line'> 11</span>  * See the License for the specific language governing permissions and 
+<span class='line'> 12</span>  * limitations under the License.
+<span class='line'> 13</span>  */</span><span class="WHIT">
+<span class='line'> 14</span> 
+<span class='line'> 15</span> </span><span class="NAME">goog.provide</span><span class="PUNC">(</span><span class="STRN">'jchemhub.query.Query'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 16</span> 
+<span class='line'> 17</span> </span><span class="PUNC">(</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 18</span> 
+<span class='line'> 19</span>     </span><span class="COMM">/**
+<span class='line'> 20</span>      * @namespace
+<span class='line'> 21</span>      * @name jchemhub
+<span class='line'> 22</span>      */</span><span class="WHIT">
+<span class='line'> 23</span>     </span><span class="COMM">/**
+<span class='line'> 24</span>      * @namespace
+<span class='line'> 25</span>      * @name jchemhub.query
+<span class='line'> 26</span>      */</span><span class="WHIT">
+<span class='line'> 27</span> 
+<span class='line'> 28</span>     </span><span class="COMM">/**
+<span class='line'> 29</span>      * &lt;h2 class="fixedFont">Introduction&lt;/h2>
+<span class='line'> 30</span>      * &lt;p>Substructure search is essentially searching for a mapping of a query on a 
+<span class='line'> 31</span>      * molecule. In jchemhub, a flexible set of classes are used for substructure 
+<span class='line'> 32</span>      * searching. These classes can be devied in three groups: queries, query compilers
+<span class='line'> 33</span>      * and mappers.&lt;/p>
+<span class='line'> 34</span>      * &lt;h2 class="fixedFont">Queries&lt;/h2>
+<span class='line'> 35</span>      * &lt;p>Queries define the (sub)stucture to be searched for. Similar to a molecule, a
+<span class='line'> 36</span>      * query contains atoms and bonds. The methods required for queries and their atoms
+<span class='line'> 37</span>      * and bonds are defined by interfaces. These are {@link jchemhub.query.IQuery},
+<span class='line'> 38</span>      * {@link jchemhub.query.IQueryAtom} and {@link jchemhub.query.IQueryBond}. Default
+<span class='line'> 39</span>      * implementations for these classes are provided but any objects implementing the
+<span class='line'> 40</span>      * interfaces can be used. The default implementations are {@link jchemhub.query.Query},
+<span class='line'> 41</span>      * {@link jchemhub.query.QueryAtom} and {@link jchemhub.query.QueryBond}.&lt;/p> 
+<span class='line'> 42</span>      * &lt;p>When doing a substructure search, queries are usually created using a query
+<span class='line'> 43</span>      * compiler. Directly manipulating query objects is only needed when implementing 
+<span class='line'> 44</span>      * new query compilers.&lt;/p>
+<span class='line'> 45</span>      * &lt;h2 class="fixedFont">Query Compilers&lt;/h2>
+<span class='line'> 46</span>      * &lt;p>Query Compilers convert various query representations to query objects 
+<span class='line'> 47</span>      * implementing the query interfaces. The query compiler interface 
+<span class='line'> 48</span>      * {@link jchemhub.query.IQueryCompiler} only contains a static compile method.&lt;/p>
+<span class='line'> 49</span>      * &lt;p>The {@link jchemhub.query.MoleculeCompiler} takes a molecule and converts it
+<span class='line'> 50</span>      * to a query. The resulting query is an exact (sub)structure search. Another 
+<span class='line'> 51</span>      * smililar query compiler is the {@link jchemhub.query.SmilesCompiler} which 
+<span class='line'> 52</span>      * converts a smiles string to a query. Complex queries can be created using the 
+<span class='line'> 53</span>      * {@link jchemhub.query.SmartCompiler}. Smarts strings are complex queries with 
+<span class='line'> 54</span>      * logical operators for query atoms and/or query bonds.&lt;/p>
+<span class='line'> 55</span>      *
+<span class='line'> 56</span>      * The usage of various query compilers is the same:
+<span class='line'> 57</span>      * &lt;pre class="code">
+<span class='line'> 58</span>      * goog.require('jchemhub.query.MoleculeCompiler')
+<span class='line'> 59</span>      * goog.require('jchemhub.query.SmilesCompiler')
+<span class='line'> 60</span>      * goog.require('jchemhub.query.SmartsCompiler')
+<span class='line'> 61</span>      * ...
+<span class='line'> 62</span>      * var query = jchemhub.query.MoleculeCompiler.compile(molecule);
+<span class='line'> 63</span>      * var query = jchemhub.query.SmilesCompiler.compile("OCCC=N");
+<span class='line'> 64</span>      * var query = jchemhub.query.SmartsCompiler.compile("[C,N]=&@C");
+<span class='line'> 65</span>      * &lt;/pre>
+<span class='line'> 66</span>      * 
+<span class='line'> 67</span>      * &lt;h2 class="fixedFont">Mappers&lt;/h2>
+<span class='line'> 68</span>      * &lt;p>Mappers search for a mapping of the query onto a molecule. The interface 
+<span class='line'> 69</span>      * for mappers is {@link jchemhub.query.IMapper}. The query is specified when
+<span class='line'> 70</span>      * constructing the mapper object. Once constructed, one or more molecules can
+<span class='line'> 71</span>      * be searched with the same query. Every mapper implements the mapFirst and 
+<span class='line'> 72</span>      * mapUnique methods to map only the first found match or map all unique 
+<span class='line'> 73</span>      * mappings.&lt;/p>
+<span class='line'> 74</span>      * &lt;p>Mapping all unique mappings can be time consuming for large molecules. To
+<span class='line'> 75</span>      * solv this problem, the work of a substructure search can be divided in short
+<span class='line'> 76</span>      * running time parts. To make use of this, the mapUniqueCallback method can be
+<span class='line'> 77</span>      * used. Depending on the size of your molecule mapUnique will return within 
+<span class='line'> 78</span>      * 100ms. When searching a large number of molecules (e.g. a database) it is
+<span class='line'> 79</span>      * recommended to frequently allow the browser to do gui updating. If this is 
+<span class='line'> 80</span>      * not done, the browser will "lock" and the user experiences the page as 
+<span class='line'> 81</span>      * unresponsive.&lt;/p> 
+<span class='line'> 82</span>      *
+<span class='line'> 83</span>      * Example showing how to allow the browser to remain responsive:
+<span class='line'> 84</span>      * &lt;pre class="code">
+<span class='line'> 85</span>      * var i = 0;
+<span class='line'> 86</span>      * var smiles = ['CC(C)C', 'c1ccccc1CC', ...];
+<span class='line'> 87</span>      * var query = jchemhub.query.SmilesCompiler.compile('c1ccccc1');
+<span class='line'> 88</span>      * var mapper = new jchemhub.query.DFSMapper(query);
+<span class='line'> 89</span>      * function doNext() {
+<span class='line'> 90</span>      *       var molecule = jchemhub.io.smiles.parse(smiles[i]);
+<span class='line'> 91</span>      *       var maps = mapper.mapUnique(molecule);
+<span class='line'> 92</span>      *       debug("match " + (i+1) + ": " + maps.length);
+<span class='line'> 93</span>      *       i++;
+<span class='line'> 94</span>      *       if (i &lt; smiles.length) {
+<span class='line'> 95</span>      *           // a timeout of 0 means: process events (i.e. gui, mouse presses,
+<span class='line'> 96</span>      *           // key presses, ...) and class doNext
+<span class='line'> 97</span>      *           setTimeout(doNext, 0);
+<span class='line'> 98</span>      *       }
+<span class='line'> 99</span>      * }
+<span class='line'>100</span>      * &lt;/pre>
+<span class='line'>101</span>      *
+<span class='line'>102</span>      *
+<span class='line'>103</span>      * &lt;h2 class="fixedFont">Example&lt;/h2>
+<span class='line'>104</span>      * &lt;pre class="code">
+<span class='line'>105</span>      * &lt;html&gt;
+<span class='line'>106</span>      *     &lt;head&gt;
+<span class='line'>107</span>      *         &lt;script&gt;
+<span class='line'>108</span>      *             goog.require('jchemhub.query.SmartsCompiler')
+<span class='line'>109</span>      *             goog.require('jchemhub.query.DFSMapper')
+<span class='line'>110</span>      *   
+<span class='line'>111</span>      *             function doSubstructureSearch(molecule, smart) {
+<span class='line'>112</span>      *                  var query = jchemhub.query.SmartCompiler.compile(smart);
+<span class='line'>113</span>      *                  var mapper = jchemhub.query.DFSMapper(query);
+<span class='line'>114</span>      *                  var maps = mapper.mapUnique(molecule);
+<span class='line'>115</span>      *                  ...do something with found mappings...
+<span class='line'>116</span>      *             }
+<span class='line'>117</span>      *         &lt;/script>
+<span class='line'>118</span>      *     &lt;/head&gt;
+<span class='line'>119</span>      *     &lt;body&gt;
+<span class='line'>120</span>      *     &lt;/body&gt;
+<span class='line'>121</span>      * &lt;/html&gt;
+<span class='line'>122</span>      * &lt;/pre>
+<span class='line'>123</span>      *
+<span class='line'>124</span>      *
+<span class='line'>125</span>      * @page Substructure Search
+<span class='line'>126</span>      * @name needed to make sure jsdoc doesn't ignore the comment
+<span class='line'>127</span>      */</span><span class="WHIT">
+<span class='line'>128</span> 
+<span class='line'>129</span>     </span><span class="COMM">/**
+<span class='line'>130</span>      * &lt;p>The {@link jchemhub.query.IQuery} class defines an interface for Query
+<span class='line'>131</span>      * objects. Other classes in the Substructure Search framework rely on these interfaces
+<span class='line'>132</span>      * to ensure interoperability. The interface doesn't actually do anything. Since 
+<span class='line'>133</span>      * javascript is a dynamic language, we can pass any object as parameter. As long
+<span class='line'>134</span>      * as the object has the correct methods and fields, no inheritance is needed.&lt;/p>
+<span class='line'>135</span>      * 
+<span class='line'>136</span>      * &lt;p>This interface makes use of two other interfaces: {@link jchemhub.query.IQueryAtom} 
+<span class='line'>137</span>      * and {@link jchemhub.query.IQueryBond}. There is a default implementation for these
+<span class='line'>138</span>      * interfaces: {@link jchemhub.query.Query}, {@link jchemhub.query.QueryAtom} and
+<span class='line'>139</span>      * {@link jchemhub.query.QueryBond}. However, in practice the use of query compilers 
+<span class='line'>140</span>      * limit the need to directly manipulate query objects. There are query compilers to 
+<span class='line'>141</span>      * convert a {@link jchemhub.model.Molecule}, SMILES or SMARTS to a query.&lt;/p>
+<span class='line'>142</span>      * 
+<span class='line'>143</span>      *
+<span class='line'>144</span>      * Example showing the use of various query compilers:
+<span class='line'>145</span>      * &lt;pre class="code">
+<span class='line'>146</span>      * goog.require('jchemhub.query.MoleculeCompiler')
+<span class='line'>147</span>      * goog.require('jchemhub.query.SmilesCompiler')
+<span class='line'>148</span>      * goog.require('jchemhub.query.SmartsCompiler')
+<span class='line'>149</span>      * ...
+<span class='line'>150</span>      * var query = jchemhub.query.MoleculeCompiler.compile(molecule);
+<span class='line'>151</span>      * var query = jchemhub.query.SmilesCompiler.compile("OCCC=N");
+<span class='line'>152</span>      * var query = jchemhub.query.SmartsCompiler.compile("[C,N]=&@C");
+<span class='line'>153</span>      * &lt;/pre>
+<span class='line'>154</span>      *
+<span class='line'>155</span>      * @author Tim Vandermeersch
+<span class='line'>156</span>      * @class Interface defining Query objetcs.
+<span class='line'>157</span>      * @interface
+<span class='line'>158</span>      */</span><span class="WHIT">
+<span class='line'>159</span>     </span><span class="NAME">jchemhub.query.IQuery</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>160</span>         </span><span class="KEYW">throw</span><span class="WHIT"> </span><span class="NAME">Error</span><span class="PUNC">(</span><span class="STRN">'IQuery: Interface should never be constructed!'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>161</span>         </span><span class="COMM">/**
+<span class='line'>162</span>          * Add a query atom to this query.
+<span class='line'>163</span>          * @param atom The query atom to add.
+<span class='line'>164</span>          */</span><span class="WHIT">
+<span class='line'>165</span>         </span><span class="NAME">this.addAtom</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="COMM">/**jchemhub.query.IQueryAtom*/</span><span class="NAME">atom</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>166</span>         </span><span class="COMM">/**
+<span class='line'>167</span>          * Add a query bond to this query.
+<span class='line'>168</span>          * @param bond The query bond to add
+<span class='line'>169</span>          */</span><span class="WHIT">
+<span class='line'>170</span>         </span><span class="NAME">this.addBond</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="COMM">/**jchemhub.query.IQueryBond*/</span><span class="NAME">bond</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>171</span>         </span><span class="COMM">/**
+<span class='line'>172</span>          * Get the number of query atoms in this query.
+<span class='line'>173</span>          * @return {number} The number of query atoms in this query.
+<span class='line'>174</span>          */</span><span class="WHIT">
+<span class='line'>175</span>         </span><span class="NAME">this.countAtoms</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>176</span>         </span><span class="COMM">/**
+<span class='line'>177</span>          * Get an atom by index.
+<span class='line'>178</span>          * @param index The atom index.
+<span class='line'>179</span>          * @return {?jchemhub.query.IQueryAtom} The atom with the specified index or null if the atom is not in the query.
+<span class='line'>180</span>          */</span><span class="WHIT">
+<span class='line'>181</span>         </span><span class="NAME">this.getAtom</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="COMM">/**number*/</span><span class="NAME">index</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>182</span>         </span><span class="COMM">/**
+<span class='line'>183</span>          * Find the bond connecting atom1 with atom2.
+<span class='line'>184</span>          * @param atom1 The first atom.
+<span class='line'>185</span>          * @param atom2 The second atom.
+<span class='line'>186</span>          * @return {?jchemhub.query.IQueryBond} The found bond or null if no such bond exists.
+<span class='line'>187</span>          */</span><span class="WHIT">
+<span class='line'>188</span>         </span><span class="NAME">this.findBond</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="COMM">/**jchemhub.query.IQueryAtom*/</span><span class="NAME">atom1</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="COMM">/**jchemhub.query.IQueryAtom*/</span><span class="NAME">atom2</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>189</span>         </span><span class="COMM">/**
+<span class='line'>190</span>          * Get the index of the specified query atom.
+<span class='line'>191</span>          * @param atom The query atom for which to get the index.
+<span class='line'>192</span>          * @return {number} The index of the specified atom or -1 if the atom is 
+<span class='line'>193</span>          * not part of this query.
+<span class='line'>194</span>          */</span><span class="WHIT">
+<span class='line'>195</span>         </span><span class="NAME">this.indexOfAtom</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="COMM">/**jchemhub.query.IQueryAtom*/</span><span class="NAME">atom</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>196</span>     </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>197</span> 
+<span class='line'>198</span>     </span><span class="COMM">/**
+<span class='line'>199</span>      * @class Interface defining query atoms.
+<span class='line'>200</span>      * @see jchemhub.query.IQuery
+<span class='line'>201</span>      * @see jchemhub.query.IQueryBond
+<span class='line'>202</span>      */</span><span class="WHIT">
+<span class='line'>203</span>     </span><span class="NAME">jchemhub.query.IQueryAtom</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>204</span>         </span><span class="COMM">/**
+<span class='line'>205</span>          * Compare an atom with this query atom.
+<span class='line'>206</span>          * @param atom The atom to be compared with this query atom.
+<span class='line'>207</span>          * @param opt_molecule The molecule containing atom.
+<span class='line'>208</span>          * @param opt_sssr The SSSR for the molecule.
+<span class='line'>209</span>          * @return {boolean} True if the specified atom matches this query atom.
+<span class='line'>210</span>          */</span><span class="WHIT">
+<span class='line'>211</span>         </span><span class="NAME">this.matches</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="COMM">/**jchemhub.query.QueryAtom*/</span><span class="NAME">atom</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="COMM">/**jchemhub.model.Moleculei=*/</span><span class="NAME">opt_molecule</span><span class="PUNC">,</span><span class="WHIT"> 
+<span class='line'>212</span>                 </span><span class="COMM">/**Array.&lt;jchemhub.ring.Ring>=*/</span><span class="NAME">opt_sssr</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>213</span>         </span><span class="COMM">/**
+<span class='line'>214</span>          * Get the neighbors for this query atom.
+<span class='line'>215</span>          * @return {Array.&lt;jchemhub.query.QueryAtom>} The neighbors for this query atom.
+<span class='line'>216</span>          */</span><span class="WHIT">
+<span class='line'>217</span>         </span><span class="NAME">this.getNeighbors</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>218</span>     </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>219</span> 
+<span class='line'>220</span>     </span><span class="COMM">/**
+<span class='line'>221</span>      * @class Interface defining query bonds.
+<span class='line'>222</span>      * @see jchemhub.query.IQuery 
+<span class='line'>223</span>      * @see jchemhub.query.IQueryAtom
+<span class='line'>224</span>      */</span><span class="WHIT">
+<span class='line'>225</span>     </span><span class="NAME">jchemhub.query.IQueryBond</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">source</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">target</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>226</span>         </span><span class="COMM">/**
+<span class='line'>227</span>          * Compare an bond with this query bond.
+<span class='line'>228</span>          * @param bond The bond to be compared with this query bond.
+<span class='line'>229</span>          * @param opt_molecule The molecule containing atom.
+<span class='line'>230</span>          * @param opt_sssr The SSSR for the molecule.
+<span class='line'>231</span>          * @return {boolean} True if the specified bond matches this query bond.
+<span class='line'>232</span>          */</span><span class="WHIT">
+<span class='line'>233</span>         </span><span class="NAME">this.matches</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="COMM">/**jchemhub.query.QueryBond*/</span><span class="NAME">bond</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="COMM">/**jchemhub.model.Molecule=*/</span><span class="NAME">opt_molecule</span><span class="PUNC">,</span><span class="WHIT"> 
+<span class='line'>234</span>                 </span><span class="COMM">/**Array.&lt;jchemhub.ring.Ring>=*/</span><span class="NAME">opt_sssr</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>235</span>     </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>236</span> 
+<span class='line'>237</span> 
+<span class='line'>238</span>     </span><span class="COMM">/**
+<span class='line'>239</span>      * Query compilers are used to convert various input sources to queries. 
+<span class='line'>240</span>      * To implement a query compiler, a single static "compile" member function
+<span class='line'>241</span>      * is needed. The method should return an object implementing 
+<span class='line'>242</span>      * {@link jchemhub.query.IQuery}
+<span class='line'>243</span>      * @class Interface defining Query Compilers.
+<span class='line'>244</span>      * @interface
+<span class='line'>245</span>      */</span><span class="WHIT">
+<span class='line'>246</span>     </span><span class="NAME">jchemhub.query.IQueryCompiler</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>247</span>         </span><span class="COMM">/**
+<span class='line'>248</span>          * Compile a query.
+<span class='line'>249</span>          * @param variable The source for query compilation, this can be a molecule, smiles or smarts string, ...
+<span class='line'>250</span>          * @return {jchemhub.query.IQuery}
+<span class='line'>251</span>          */</span><span class="WHIT">
+<span class='line'>252</span>         </span><span class="NAME">compile</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="COMM">/**?*/</span><span class="NAME">variable</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>253</span>     </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT"> 
+<span class='line'>254</span>     
+<span class='line'>255</span> 
+<span class='line'>256</span> 
+<span class='line'>257</span> 
+<span class='line'>258</span> 
+<span class='line'>259</span>     </span><span class="COMM">/**
+<span class='line'>260</span>      * @class Class representing a query
+<span class='line'>261</span>      * @see jchemhub.query.QueryAtom
+<span class='line'>262</span>      * @see jchemhub.query.QueryBond
+<span class='line'>263</span>      *
+<span class='line'>264</span>      */</span><span class="WHIT">
+<span class='line'>265</span>     </span><span class="NAME">jchemhub.query.Query</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>266</span>         </span><span class="NAME">this.atoms</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">[</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>267</span>         </span><span class="NAME">this.bonds</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">[</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>268</span>         </span><span class="NAME">this.isSSSRRequired</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>269</span>     </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>270</span> 
+<span class='line'>271</span>     </span><span class="COMM">/**
+<span class='line'>272</span>      * Get the number of atoms in this query.
+<span class='line'>273</span>      * @return {number} The number of atoms in this query.
+<span class='line'>274</span>      */</span><span class="WHIT">
+<span class='line'>275</span>     </span><span class="NAME">jchemhub.query.Query.prototype.countAtoms</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>276</span>         </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">this.atoms.length</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>277</span>     </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>278</span> 
+<span class='line'>279</span>     </span><span class="COMM">/**
+<span class='line'>280</span>      * Get the index of the specified atom.
+<span class='line'>281</span>      * @param atom The atom for which to get the index.
+<span class='line'>282</span>      * @return {number} The index of the specified atom or -1 if the atom is 
+<span class='line'>283</span>      * not part of this query.
+<span class='line'>284</span>      */</span><span class="WHIT">
+<span class='line'>285</span>     </span><span class="NAME">jchemhub.query.Query.prototype.indexOfAtom</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="COMM">/**jchemhub.query.QueryAtom*/</span><span class="NAME">atom</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>286</span>         </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">goog.array.indexOf</span><span class="PUNC">(</span><span class="NAME">this.atoms</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">atom</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>287</span>     </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>288</span> 
+<span class='line'>289</span>     </span><span class="COMM">/**
+<span class='line'>290</span>      * Get an atom by index.
+<span class='line'>291</span>      * @param index The atom index.
+<span class='line'>292</span>      * @return The atom with the specified index or null if the index is invalid.
+<span class='line'>293</span>      */</span><span class="WHIT">
+<span class='line'>294</span>     </span><span class="NAME">jchemhub.query.Query.prototype.getAtom</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="COMM">/**number*/</span><span class="NAME">index</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>295</span>         </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">this.atoms</span><span class="PUNC">[</span><span class="NAME">index</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>296</span>     </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>297</span> 
+<span class='line'>298</span>     </span><span class="COMM">/**
+<span class='line'>299</span>      * Add an atom to this query.
+<span class='line'>300</span>      * @param atom The query atom to add.
+<span class='line'>301</span>      */</span><span class="WHIT">
+<span class='line'>302</span>     </span><span class="NAME">jchemhub.query.Query.prototype.addAtom</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="COMM">/**jchemhub.query.QueryAtom*/</span><span class="NAME">atom</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>303</span>         </span><span class="NAME">this.atoms.push</span><span class="PUNC">(</span><span class="NAME">atom</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>304</span>     </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>305</span> 
+<span class='line'>306</span>     </span><span class="COMM">/**
+<span class='line'>307</span>      * Add a bond to this query.
+<span class='line'>308</span>      * @param bond The query bond to add.
+<span class='line'>309</span>      */</span><span class="WHIT">
+<span class='line'>310</span>     </span><span class="NAME">jchemhub.query.Query.prototype.addBond</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="COMM">/**jchemhub.query.QueryBond*/</span><span class="NAME">bond</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>311</span>         </span><span class="NAME">bond.source.neighbors.push</span><span class="PUNC">(</span><span class="NAME">bond.target</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>312</span>         </span><span class="NAME">bond.target.neighbors.push</span><span class="PUNC">(</span><span class="NAME">bond.source</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>313</span>         </span><span class="NAME">this.bonds.push</span><span class="PUNC">(</span><span class="NAME">bond</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>314</span>     </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>315</span> 
+<span class='line'>316</span>     </span><span class="COMM">/**
+<span class='line'>317</span>      * Find the bond connecting atom1 with atom2.
+<span class='line'>318</span>      * @param atom1 The first atom.
+<span class='line'>319</span>      * @param atom2 The second atom.
+<span class='line'>320</span>      * @return {?jchemhub.query.QueryBond} The found bond or null if no such bond exists.
+<span class='line'>321</span>      */</span><span class="WHIT">
+<span class='line'>322</span>     </span><span class="NAME">jchemhub.query.Query.prototype.findBond</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="COMM">/**jchemhub.query.QueryAtom*/</span><span class="NAME">atom1</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="COMM">/**jchemhub.query.QueryAtom*/</span><span class="NAME">atom2</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>323</span>         </span><span class="KEYW">for</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="WHIT"> </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">i</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">il</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.bonds.length</span><span class="PUNC">;</span><span class="WHIT"> </span><span class="NAME">i</span><span class="WHIT"> </span><span class="XML">&lt; il; i++) {
+<span class='line'>324</span>             var bond = this.bonds[i];
+<span class='line'>325</span>             if ((atom1 === bond.source && atom2 === bond.target) || (atom2 === bond.source && atom1 === bond.target)) {
+<span class='line'>326</span>                 return bond;
+<span class='line'>327</span>             }
+<span class='line'>328</span>         }
+<span class='line'>329</span>         return null;
+<span class='line'>330</span>     };
+<span class='line'>331</span> 
+<span class='line'>332</span> 
+<span class='line'>333</span>     /**
+<span class='line'>334</span>      * @class Class representing an atom in a query
+<span class='line'>335</span>      * @see jchemhub.query.Query
+<span class='line'>336</span>      * @see jchemhub.query.QueryBond
+<span class='line'>337</span>      */
+<span class='line'>338</span>     jchemhub.query.QueryAtom = function() {
+<span class='line'>339</span>         // query properties
+<span class='line'>340</span>         this.symbols = [];
+<span class='line'>341</span>         this.valence = 0;
+<span class='line'>342</span>         // topology properties
+<span class='line'>343</span>         this.neighbors = [];
+<span class='line'>344</span>     };
+<span class='line'>345</span> 
+<span class='line'>346</span>     /**
+<span class='line'>347</span>      * Compare an atom with this query atom.
+<span class='line'>348</span>      * @param atom The atom to be compared with this query atom.
+<span class='line'>349</span>      * @param opt_molecule The molecule containing atom.
+<span class='line'>350</span>      * @param opt_sssr The SSSR for the molecule.
+<span class='line'>351</span>      * @return {boolean} True if the specified atom matches this query atom.
+<span class='line'>352</span>      */
+<span class='line'>353</span>     jchemhub.query.QueryAtom.prototype.matches = function(/**jchemhub.query.QueryAtom*/atom, /**jchemhub.model.Moleculei=*/opt_molecule, 
+<span class='line'>354</span>             /**Array.&lt;jchemhub.ring.Ring></span><span class="PUNC">=</span><span class="PUNC">*</span><span class="REGX">/opt_sssr) {
+<span class='line'>355</span>         var symbolMatches = true;
+<span class='line'>356</span>         if (this.symbols.length) {
+<span class='line'>357</span>             if (goog.array.indexOf(this.symbols, atom.symbol) === -1) {
+<span class='line'>358</span>                 symbolMatches = false;                
+<span class='line'>359</span>             }
+<span class='line'>360</span>         }
+<span class='line'>361</span> 
+<span class='line'>362</span>         var valenceMatches = this.valence &lt;= atom.countBonds();
+<span class='line'>363</span> 
+<span class='line'>364</span>         return symbolMatches && valenceMatches;    
+<span class='line'>365</span>     };
+<span class='line'>366</span> 
+<span class='line'>367</span>     /</span><span class="PUNC">*</span><span class="PUNC">*</span><span class="WHIT">
+<span class='line'>368</span>      </span><span class="PUNC">*</span><span class="WHIT"> </span><span class="NAME">Get</span><span class="WHIT"> </span><span class="NAME">the</span><span class="WHIT"> </span><span class="NAME">neighbors</span><span class="WHIT"> </span><span class="KEYW">for</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="WHIT"> </span><span class="NAME">query</span><span class="WHIT"> </span><span class="NAME">atom.</span><span class="WHIT">
+<span class='line'>369</span>      </span><span class="PUNC">*</span><span class="WHIT"> </span><span class="TOKN">@</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="NAME">Array.</span><span class="PUNC">&lt;</span><span class="NAME">jchemhub.query.QueryAtom</span><span class="PUNC">></span><span class="PUNC">}</span><span class="WHIT"> </span><span class="NAME">The</span><span class="WHIT"> </span><span class="NAME">neighbors</span><span class="WHIT"> </span><span class="KEYW">for</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="WHIT"> </span><span class="NAME">query</span><span class="WHIT"> </span><span class="NAME">atom.</span><span class="WHIT">
+<span class='line'>370</span>      </span><span class="PUNC">*</span><span class="REGX">/
+<span class='line'>371</span>     jchemhub.query.QueryAtom.prototype.getNeighbors = function() {
+<span class='line'>372</span>         return this.neighbors;
+<span class='line'>373</span>     };
+<span class='line'>374</span> 
+<span class='line'>375</span>     /</span><span class="PUNC">*</span><span class="PUNC">*</span><span class="WHIT">
+<span class='line'>376</span>      </span><span class="PUNC">*</span><span class="WHIT"> </span><span class="TOKN">@</span><span class="NAME">class</span><span class="WHIT"> </span><span class="NAME">Class</span><span class="WHIT"> </span><span class="NAME">representing</span><span class="WHIT"> </span><span class="NAME">a</span><span class="WHIT"> </span><span class="NAME">bond</span><span class="WHIT"> </span><span class="KEYW">in</span><span class="WHIT"> </span><span class="NAME">a</span><span class="WHIT"> </span><span class="NAME">query</span><span class="WHIT">
+<span class='line'>377</span>      </span><span class="PUNC">*</span><span class="WHIT"> </span><span class="TOKN">@</span><span class="NAME">see</span><span class="WHIT"> </span><span class="NAME">jchemhub.query.Query</span><span class="WHIT"> 
+<span class='line'>378</span>      </span><span class="PUNC">*</span><span class="WHIT"> </span><span class="TOKN">@</span><span class="NAME">see</span><span class="WHIT"> </span><span class="NAME">jchemhub.query.QueryAtom</span><span class="WHIT">
+<span class='line'>379</span>      </span><span class="PUNC">*</span><span class="REGX">/
+<span class='line'>380</span>     jchemhub.query.QueryBond = function(source, target) {
+<span class='line'>381</span>         /</span><span class="REGX">/ query properties
+<span class='line'>382</span>         this.orders = [];
+<span class='line'>383</span>         /</span><span class="REGX">/ topology properties
+<span class='line'>384</span>         this.source = source;
+<span class='line'>385</span>         this.target = target;
+<span class='line'>386</span>     };
+<span class='line'>387</span>    
+<span class='line'>388</span>     /</span><span class="PUNC">*</span><span class="PUNC">*</span><span class="WHIT">
+<span class='line'>389</span>      </span><span class="PUNC">*</span><span class="WHIT"> </span><span class="NAME">Compare</span><span class="WHIT"> </span><span class="NAME">an</span><span class="WHIT"> </span><span class="NAME">bond</span><span class="WHIT"> </span><span class="KEYW">with</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="WHIT"> </span><span class="NAME">query</span><span class="WHIT"> </span><span class="NAME">bond.</span><span class="WHIT">
+<span class='line'>390</span>      </span><span class="PUNC">*</span><span class="WHIT"> </span><span class="TOKN">@</span><span class="NAME">param</span><span class="WHIT"> </span><span class="NAME">bond</span><span class="WHIT"> </span><span class="NAME">The</span><span class="WHIT"> </span><span class="NAME">bond</span><span class="WHIT"> </span><span class="NAME">to</span><span class="WHIT"> </span><span class="NAME">be</span><span class="WHIT"> </span><span class="NAME">compared</span><span class="WHIT"> </span><span class="KEYW">with</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="WHIT"> </span><span class="NAME">query</span><span class="WHIT"> </span><span class="NAME">bond.</span><span class="WHIT">
+<span class='line'>391</span>      </span><span class="PUNC">*</span><span class="WHIT"> </span><span class="TOKN">@</span><span class="NAME">param</span><span class="WHIT"> </span><span class="NAME">opt_molecule</span><span class="WHIT"> </span><span class="NAME">The</span><span class="WHIT"> </span><span class="NAME">molecule</span><span class="WHIT"> </span><span class="NAME">containing</span><span class="WHIT"> </span><span class="NAME">atom.</span><span class="WHIT">
+<span class='line'>392</span>      </span><span class="PUNC">*</span><span class="WHIT"> </span><span class="TOKN">@</span><span class="NAME">param</span><span class="WHIT"> </span><span class="NAME">opt_sssr</span><span class="WHIT"> </span><span class="NAME">The</span><span class="WHIT"> </span><span class="NAME">SSSR</span><span class="WHIT"> </span><span class="KEYW">for</span><span class="WHIT"> </span><span class="NAME">the</span><span class="WHIT"> </span><span class="NAME">molecule.</span><span class="WHIT">
+<span class='line'>393</span>      </span><span class="PUNC">*</span><span class="WHIT"> </span><span class="TOKN">@</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="NAME">boolean</span><span class="PUNC">}</span><span class="WHIT"> </span><span class="NAME">True</span><span class="WHIT"> </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="NAME">the</span><span class="WHIT"> </span><span class="NAME">specified</span><span class="WHIT"> </span><span class="NAME">bond</span><span class="WHIT"> </span><span class="NAME">matches</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="WHIT"> </span><span class="NAME">query</span><span class="WHIT"> </span><span class="NAME">bond.</span><span class="WHIT">
+<span class='line'>394</span>      </span><span class="PUNC">*</span><span class="REGX">/
+<span class='line'>395</span>     jchemhub.query.QueryBond.prototype.matches = function(/</span><span class="PUNC">*</span><span class="PUNC">*</span><span class="NAME">jchemhub.query.QueryBond</span><span class="PUNC">*</span><span class="REGX">/bond, /</span><span class="PUNC">*</span><span class="PUNC">*</span><span class="NAME">jchemhub.model.Molecule</span><span class="PUNC">=</span><span class="PUNC">*</span><span class="REGX">/opt_molecule, 
+<span class='line'>396</span>             /</span><span class="PUNC">*</span><span class="PUNC">*</span><span class="NAME">Array.</span><span class="PUNC">&lt;</span><span class="NAME">jchemhub.ring.Ring</span><span class="PUNC">>=</span><span class="PUNC">*</span><span class="REGX">/opt_sssr) {
+<span class='line'>397</span>         if (!this.orders.length) {
+<span class='line'>398</span>             return true; /</span><span class="TOKN"></span></pre></body></html>

@@ -1,0 +1,85 @@
+<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"> <style>
+	.KEYW {color: #933;}
+	.COMM {color: #bbb; font-style: italic;}
+	.NUMB {color: #393;}
+	.STRN {color: #393;}
+	.REGX {color: #339;}
+	.line {border-right: 1px dotted #666; color: #666; font-style: normal;}
+	</style></head><body><pre><span class='line'>  1</span> <span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">rxnsample</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">"$RXN\n\
+<span class='line'>  2</span> \n\
+<span class='line'>  3</span>   Marvin       041401101425\n\
+<span class='line'>  4</span> \n\
+<span class='line'>  5</span>   2  1\n\
+<span class='line'>  6</span> $MOL\n\
+<span class='line'>  7</span> \n\
+<span class='line'>  8</span>   Marvin  04141014252D          \n\
+<span class='line'>  9</span> \n\
+<span class='line'> 10</span>  14 15  0  0  1  0            999 V2000\n\
+<span class='line'> 11</span>    -9.0279    0.1331    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n\
+<span class='line'> 12</span>    -8.4758    0.7462    0.0000 C   0  0  1  0  0  0  0  0  0  0  0  0\n\
+<span class='line'> 13</span>    -7.6689    0.5747    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n\
+<span class='line'> 14</span>    -7.4139   -0.2099    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n\
+<span class='line'> 15</span>    -7.8989   -0.8774    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n\
+<span class='line'> 16</span>    -7.4139   -1.5448    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n\
+<span class='line'> 17</span>    -6.6293   -1.2899    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n\
+<span class='line'> 18</span>    -6.6293   -0.4649    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n\
+<span class='line'> 19</span>    -5.9148   -0.0524    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n\
+<span class='line'> 20</span>    -5.2004   -0.4649    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n\
+<span class='line'> 21</span>    -5.2004   -1.2899    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n\
+<span class='line'> 22</span>    -5.9148   -1.7024    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n\
+<span class='line'> 23</span>    -8.7308    1.5308    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n\
+<span class='line'> 24</span>    -9.5378    1.7024    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n\
+<span class='line'> 25</span>   2  1  1  6  0  0  0\n\
+<span class='line'> 26</span>   2  3  1  0  0  0  0\n\
+<span class='line'> 27</span>   3  4  1  0  0  0  0\n\
+<span class='line'> 28</span>   4  5  2  0  0  0  0\n\
+<span class='line'> 29</span>   5  6  1  0  0  0  0\n\
+<span class='line'> 30</span>   6  7  1  0  0  0  0\n\
+<span class='line'> 31</span>   7  8  2  0  0  0  0\n\
+<span class='line'> 32</span>   4  8  1  0  0  0  0\n\
+<span class='line'> 33</span>   8  9  1  0  0  0  0\n\
+<span class='line'> 34</span>   9 10  2  0  0  0  0\n\
+<span class='line'> 35</span>  10 11  1  0  0  0  0\n\
+<span class='line'> 36</span>  11 12  2  0  0  0  0\n\
+<span class='line'> 37</span>   7 12  1  0  0  0  0\n\
+<span class='line'> 38</span>   2 13  1  0  0  0  0\n\
+<span class='line'> 39</span>  13 14  2  0  0  0  0\n\
+<span class='line'> 40</span> M  END\n\
+<span class='line'> 41</span> $MOL\n\
+<span class='line'> 42</span> \n\
+<span class='line'> 43</span>   Marvin  04141014252D          \n\
+<span class='line'> 44</span> \n\
+<span class='line'> 45</span>   6  6  0  0  1  0            999 V2000\n\
+<span class='line'> 46</span>    -1.6500    0.1833    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n\
+<span class='line'> 47</span>    -1.6500   -0.6417    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n\
+<span class='line'> 48</span>    -2.3645   -1.0542    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n\
+<span class='line'> 49</span>    -3.0789   -0.6417    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n\
+<span class='line'> 50</span>    -3.0789    0.1833    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n\
+<span class='line'> 51</span>    -2.3645    0.5958    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n\
+<span class='line'> 52</span>   1  2  2  0  0  0  0\n\
+<span class='line'> 53</span>   2  3  1  0  0  0  0\n\
+<span class='line'> 54</span>   3  4  2  0  0  0  0\n\
+<span class='line'> 55</span>   4  5  1  0  0  0  0\n\
+<span class='line'> 56</span>   5  6  2  0  0  0  0\n\
+<span class='line'> 57</span>   1  6  1  0  0  0  0\n\
+<span class='line'> 58</span> M  END\n\
+<span class='line'> 59</span> $MOL\n\
+<span class='line'> 60</span> \n\
+<span class='line'> 61</span>   Marvin  04141014252D          \n\
+<span class='line'> 62</span> \n\
+<span class='line'> 63</span>   6  6  0  0  1  0            999 V2000\n\
+<span class='line'> 64</span>     4.4932    0.4125    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n\
+<span class='line'> 65</span>     4.4932   -0.4125    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n\
+<span class='line'> 66</span>     3.7788   -0.8250    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n\
+<span class='line'> 67</span>     3.0643   -0.4125    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n\
+<span class='line'> 68</span>     3.0643    0.4125    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n\
+<span class='line'> 69</span>     3.7788    0.8250    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n\
+<span class='line'> 70</span>   1  2  1  0  0  0  0\n\
+<span class='line'> 71</span>   2  3  1  0  0  0  0\n\
+<span class='line'> 72</span>   3  4  1  0  0  0  0\n\
+<span class='line'> 73</span>   4  5  1  0  0  0  0\n\
+<span class='line'> 74</span>   5  6  1  0  0  0  0\n\
+<span class='line'> 75</span>   1  6  1  0  0  0  0\n\
+<span class='line'> 76</span> M  END\n\
+<span class='line'> 77</span> "</span><span class="WHIT">
+<span class='line'> 78</span> </span></pre></body></html>

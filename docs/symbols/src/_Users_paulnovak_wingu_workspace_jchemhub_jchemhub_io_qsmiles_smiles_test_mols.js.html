@@ -1,0 +1,537 @@
+<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"> <style>
+	.KEYW {color: #933;}
+	.COMM {color: #bbb; font-style: italic;}
+	.NUMB {color: #393;}
+	.STRN {color: #393;}
+	.REGX {color: #339;}
+	.line {border-right: 1px dotted #666; color: #666; font-style: normal;}
+	</style></head><body><pre><span class='line'>  1</span> <span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">smiles</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">Array</span><span class="PUNC">(</span><span class="STRN">"CN1C2CCC1CC(C2)OC(=O)C(CO)c3ccccc3"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>  2</span> </span><span class="STRN">"c1cc(ccc1C(C(CO)NC(=O)C(Cl)Cl)O)N(=O)=O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>  3</span> </span><span class="STRN">"c1c2c(cc(c1Cl)S(=O)(=O)N)S(=O)(=O)N=CN2"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>  4</span> </span><span class="STRN">"CN(C)CCCN1c2ccccc2Sc3c1cc(cc3)Cl"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>  5</span> </span><span class="STRN">"Cc1c(nc[nH]1)CSCCNC(=NC#N)NC"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>  6</span> </span><span class="STRN">"CN1c2ccc(cc2C(=NCC1=O)c3ccccc3)Cl"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>  7</span> </span><span class="STRN">"CC(=O)OC1C(Sc2ccccc2N(C1=O)CCN(C)C)c3ccc(cc3)OC"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>  8</span> </span><span class="STRN">"CN(C)CCOC(c1ccccc1)c2ccccc2"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>  9</span> </span><span class="STRN">"c1ccc(c(c1)C(=O)O)Nc2cccc(c2)C(F)(F)F"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 10</span> </span><span class="STRN">"c1cc(ccc1C(=O)CCCN2CCC(CC2)(c3ccc(cc3)Cl)O)F"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 11</span> </span><span class="STRN">"CN(C)CCCN1c2ccccc2CCc3c1cccc3"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 12</span> </span><span class="STRN">"CCN(CC)CC(=O)Nc1c(cccc1C)C"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 13</span> </span><span class="STRN">"CCC1(C(=O)NC(=O)NC1=O)c2ccccc2"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 14</span> </span><span class="STRN">"c1ccc(cc1)C2(C(=O)NC(=O)N2)c3ccccc3"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 15</span> </span><span class="STRN">"CCN(CC)CCNC(=O)c1ccc(cc1)N"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 16</span> </span><span class="STRN">"CC(C)NCC(COc1cccc2c1cccc2)O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 17</span> </span><span class="STRN">"CCCCNc1ccc(cc1)C(=O)OCCN(C)C"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 18</span> </span><span class="STRN">"COc1cc(cc(c1OC)OC)Cc2cnc(nc2N)N"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 19</span> </span><span class="STRN">"CC(C)C(CCCN(C)CCc1ccc(c(c1)OC)OC)(C#N)c2ccc(c(c2)OC)OC"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 20</span> </span><span class="STRN">"C([C@@H](CO)O)CC"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 21</span> </span><span class="STRN">"O([C@@](CC)(C#N)C)C(C)=O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 22</span> </span><span class="STRN">"O([C@]([C@@](OC(C)=O)(C#N)C)(C#N)C)C(C)=O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 23</span> </span><span class="STRN">"C(SC)(=[NH2])N.S(=O)(=O)(O)O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 24</span> </span><span class="STRN">"C([C@H]([C@@H](C(OC)=O)O)O)(OC)=O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 25</span> </span><span class="STRN">"O([C@@H](C(C)C)C)C(C)=O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 26</span> </span><span class="STRN">"C(CCC#N)(=O)c1ccccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 27</span> </span><span class="STRN">"O=C1c2c3c(ccc2C(O1)=O)cccc3"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 28</span> </span><span class="STRN">"[N+](C)(C)(C)[C@H]1CS(=O)(=O)C=C1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 29</span> </span><span class="STRN">"C(C#C)(C)(C)O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 30</span> </span><span class="STRN">"C[C@@H]1C(=O)CCCC1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 31</span> </span><span class="STRN">"C(CCCCCCCC=C)COC(C)=O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 32</span> </span><span class="STRN">"N(C(CCC(=O)O)=O)(CC)CC"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 33</span> </span><span class="STRN">"C(OC(C)=O)[C@@H]1[C@@H](COC(C)=O)[C@@H](C)C=C[C@@H]1C"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 34</span> </span><span class="STRN">"N(/Cl)=C1/C=C(Br)C(=O)C(=C1)Br"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 35</span> </span><span class="STRN">"C(C)[n+]1c2c(cc(C)cc2)ccc1C"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 36</span> </span><span class="STRN">"N(C(=O)c1c(O)cccc1)c1ccc(C(=O)O)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 37</span> </span><span class="STRN">"C(Nc1ccccc1)(=O)c1c(OCC(=O)O)cccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 38</span> </span><span class="STRN">"C(=C(\C#N)C#N)/c1ccc(Br)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 39</span> </span><span class="STRN">"C(CNc1ccccc1)n1c2c(cccc2)sc1=S"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 40</span> </span><span class="STRN">"C(SC#N)c1cc([N+](=O)[O-])ccc1O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 41</span> </span><span class="STRN">"O=C1c2c(C(=O)C(=C1Cl)Cl)cccc2"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 42</span> </span><span class="STRN">"O([C@@H](C(=O)O)C)c1c(cccc1)c1ccccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 43</span> </span><span class="STRN">"N(=C/c1c(O)cccc1)/c1ccc([Hg]OC(C)=O)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 44</span> </span><span class="STRN">"N(=O)(=O)c1c(SC#N)ccc(c1)[N+](=O)[O-]"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 45</span> </span><span class="STRN">"C(Cl)c1cc([N+](=O)[O-])ccc1O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 46</span> </span><span class="STRN">"C(=C(\C#N)C#N)/c1c(Cl)cccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 47</span> </span><span class="STRN">"S(N)(=O)(=O)c1cc(SC#N)c(N)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 48</span> </span><span class="STRN">"O(C[C@H]1CO1)c1cc([N+](=O)[O-])ccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 49</span> </span><span class="STRN">"C([C@@H](C#N)c1cc(Cl)c(Cl)cc1)(C#N)C#N"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 50</span> </span><span class="STRN">"P(NC1CCCCC1)(NC1CCCCC1)(NC1CCCCC1)=S"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 51</span> </span><span class="STRN">"N(C(CBr)=O)c1c(C)cccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 52</span> </span><span class="STRN">"S(N)(=O)(=O)c1ccc(NC(CBr)=O)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 53</span> </span><span class="STRN">"S(Sc1cc(S(N)(=O)=O)ccc1N)c1cc(S(N)(=O)=O)ccc1N"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 54</span> </span><span class="STRN">"C[C@@]12[C@@H](OC(CN(CCCCC)CCCCC)=O)C[C@@H](C1(C)C)CC2"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 55</span> </span><span class="STRN">"C(COC)CN"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 56</span> </span><span class="STRN">"C(NCO)(C=C)=O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 57</span> </span><span class="STRN">"Oc1nc2c(cccc2)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 58</span> </span><span class="STRN">"C(OC(N[C@@H](CCC(=O)O)C(=O)O)=O)c1ccccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 59</span> </span><span class="STRN">"C(OC(C)=O)[C@H]1[C@@H](COC(C)=O)[C@@H]2CC[C@@H]1C2"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 60</span> </span><span class="STRN">"C(OC(C)=O)[C@@H]1[C@@H](COC(C)=O)[C@@H](C)CCC1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 61</span> </span><span class="STRN">"C=C1CCCC=C1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 62</span> </span><span class="STRN">"C(OC/C=C/COC(OC)=O)(OC)=O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 63</span> </span><span class="STRN">"C(/CC(C)C)(=N/O)C"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 64</span> </span><span class="STRN">"O(C(C)=O)[C@@H]1[C@@H](OC(C)=O)CCCC1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 65</span> </span><span class="STRN">"N(CCC[C@@H](Br)C)(CC)CC"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 66</span> </span><span class="STRN">"O(C(C)=O)[C@@]1(C)[C@@](OC(C)=O)(C)C(=O)OC1=O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 67</span> </span><span class="STRN">"C([C@@H](OC=O)C)C(C)C"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 68</span> </span><span class="STRN">"C([C@@H](OC(C)=O)C)C(C)C"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 69</span> </span><span class="STRN">"O([C@@H](CC(C)C)C)C(CCC)=O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 70</span> </span><span class="STRN">"O([C@@H](CC(C)C)C)C(CC(C)C)=O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 71</span> </span><span class="STRN">"O([C@@H](CC(C)C)C)C(CCCCCC)=O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 72</span> </span><span class="STRN">"C(O[C@@H](CC(C)C)C)(=O)c1ccc(OC)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 73</span> </span><span class="STRN">"C(Cl)c1c(C)cc(C)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 74</span> </span><span class="STRN">"O=C1c2c(cccc2)C(N1CCCCBr)=O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 75</span> </span><span class="STRN">"N(CCCCCCCCCCCO)(CCCCCC)CCCCCC"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 76</span> </span><span class="STRN">"C(=O)(O)c1c(Cl)cc(Cl)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 77</span> </span><span class="STRN">"Fc1ccc(N)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 78</span> </span><span class="STRN">"C(Cc1ccc(N)cc1)c1ccc(N)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 79</span> </span><span class="STRN">"C(C(C)=O)c1ccc([N+](=O)[O-])cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 80</span> </span><span class="STRN">"C(CC)(=O)c1ccc([N+](=O)[O-])cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 81</span> </span><span class="STRN">"C(CC)(=O)c1cc(C(CC)=O)cc(c1)C(CC)=O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 82</span> </span><span class="STRN">"C(=C/C(/C=C/c1c(Cl)cccc1)=O)/c1c(Cl)cccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 83</span> </span><span class="STRN">"N(N=O)(c1ccccc1)c1ccccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 84</span> </span><span class="STRN">"C(/C=C/c1ccccc1)(=O)c1c(C)c([N+](=O)[O-])cc(c1)[N+](=O)[O-]"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 85</span> </span><span class="STRN">"C(C(C)=O)c1ccc(c2ccccc2)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 86</span> </span><span class="STRN">"O(C)c1c2c(c([N+](=O)[O-])cc1OC)nccc2"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 87</span> </span><span class="STRN">"O=C1C(=CC(=O)C(=C1)c1ccc(OC)cc1)c1ccc(OC)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 88</span> </span><span class="STRN">"C(=C)N1C(=O)CCC1=O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 89</span> </span><span class="STRN">"Clc1cc2c(NC(=O)CS2)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 90</span> </span><span class="STRN">"Oc1c2c(cc(c1C#N)C)cccc2"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 91</span> </span><span class="STRN">"Clc1c2c(cc(Cl)cc2)ncc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 92</span> </span><span class="STRN">"C(Cc1ccc(Cl)cc1)c1ccc(Cl)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 93</span> </span><span class="STRN">"C(CCCCCCC)(CCCCCCC)=O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 94</span> </span><span class="STRN">"N(=O)(=O)c1c(Br)c([N+](=O)[O-])cc(c1C)[N+](=O)[O-]"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 95</span> </span><span class="STRN">"C(=O)(O)c1cc(N)c(C)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 96</span> </span><span class="STRN">"c1(cc(nc(c1)c1cccnc1)c1cccnc1)c1ccccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 97</span> </span><span class="STRN">"C(=C(/C(=O)O)C)/c1c2c(ccc1OC)cccc2"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 98</span> </span><span class="STRN">"C(CC(C(C)(C)C)=O)(c1ccccc1)c1ccccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 99</span> </span><span class="STRN">"C(=O)(O)c1c(C)c(Br)c(C)cc1C"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>100</span> </span><span class="STRN">"C(C(CCCCCCCCC=C)=O)CCCCCCCC=C"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>101</span> </span><span class="STRN">"C(CNC(C)=O)NC(C)=O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>102</span> </span><span class="STRN">"C(C=C)C1(O)C(=C(c2ccccc2)C(=C1c1ccccc1)c1ccccc1)c1ccccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>103</span> </span><span class="STRN">"C(Cl)(=O)c1c2c(c([N+](=O)[O-])ccc2)ccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>104</span> </span><span class="STRN">"C(N)(=O)[C@@]1(C)C(C)(C)[C@@H](C(=O)O)CC1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>105</span> </span><span class="STRN">"O=C1c2c(C(=O)c3c1cccc3)ccc(c2)C"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>106</span> </span><span class="STRN">"N(=O)(=O)c1ccc(CCc2ccc([N+](=O)[O-])cc2)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>107</span> </span><span class="STRN">"N(=O)(=O)c1c(C(=O)O)cccc1OC"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>108</span> </span><span class="STRN">"C(Br)(Br)(Br)c1nc2c(cccc2)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>109</span> </span><span class="STRN">"C(CCl)[C@H]1C(=O)N[C@@H](CCCl)C(N1)=O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>110</span> </span><span class="STRN">"C(CCCC(=O)c1ccc(C)cc1)(=O)c1ccc(C)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>111</span> </span><span class="STRN">"Brc1nc(Br)ccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>112</span> </span><span class="STRN">"N(=O)(=O)c1c2c(c(N)cc1)cccc2"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>113</span> </span><span class="STRN">"C(C)(=O)c1c(O)cccc1O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>114</span> </span><span class="STRN">"C(=O)(c1c(C)cccc1)c1c(C)cccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>115</span> </span><span class="STRN">"N(=O)(=O)c1cc(C(C)=O)ccc1C"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>116</span> </span><span class="STRN">"Cc1c2c(ccc1)cc[nH]2"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>117</span> </span><span class="STRN">"C(CCCC)(=O)c1cc(OC)cc(c1)OC"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>118</span> </span><span class="STRN">"C(OCC)(=O)c1cc2c(cccc2)oc1=O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>119</span> </span><span class="STRN">"C(=O)(O)C1CCC(C(=O)O)CC1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>120</span> </span><span class="STRN">"C(=O)(O)C=1CC[C@@H](C)CC1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>121</span> </span><span class="STRN">"C(=O)(c1c(O)cccc1)c1ccccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>122</span> </span><span class="STRN">"C(C(OC)=O)(O)(c1ccccc1)c1ccccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>123</span> </span><span class="STRN">"C(CCC(=O)O)(=O)c1cc(OC)c(OC)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>124</span> </span><span class="STRN">"Clc1c2c(c3c(c(Cl)ccn3)cc2)ncc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>125</span> </span><span class="STRN">"C(=N/C(NC(N)=S)=S)/c1ccc(OC)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>126</span> </span><span class="STRN">"N(C(/N=C/CC)=S)C(N)=S"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>127</span> </span><span class="STRN">"C1[C@@H](O1)[C@@H]1CO1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>128</span> </span><span class="STRN">"C(Br)[C@H]1CO1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>129</span> </span><span class="STRN">"C(OCC=C)[C@H]1CO1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>130</span> </span><span class="STRN">"O(C[C@H]1CO1)c1c2c(ccc1)cccc2"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>131</span> </span><span class="STRN">"C(OCCCl)[C@H]1CO1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>132</span> </span><span class="STRN">"O(C[C@H]1CO1)c1c(Cl)cc(Cl)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>133</span> </span><span class="STRN">"O(C[C@H]1CO1)c1ccccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>134</span> </span><span class="STRN">"C(CBr)(CBr)O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>135</span> </span><span class="STRN">"C1[C@@H](O1)c1ccccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>136</span> </span><span class="STRN">"C(CCCCCCC(=O)O)[C@H]1[C@@H](CCCCCCCC)O1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>137</span> </span><span class="STRN">"S(NN)(=O)(=O)c1ccc(NC(C)=O)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>138</span> </span><span class="STRN">"C(NN)(=O)c1ccc(N)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>139</span> </span><span class="STRN">"C(NN)(=O)c1c(O)ccc(c1)N"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>140</span> </span><span class="STRN">"C(NN)(=O)c1c(N)cccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>141</span> </span><span class="STRN">"S(NN)(=O)(=O)c1ccccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>142</span> </span><span class="STRN">"C(NN)(=O)c1ccccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>143</span> </span><span class="STRN">"C(NN)(=O)c1cc(OC)nc(c1)OC"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>144</span> </span><span class="STRN">"C(/C=C/C)(NN)=O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>145</span> </span><span class="STRN">"C(NN)(=O)c1ccc(O)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>146</span> </span><span class="STRN">"C(NN)(=O)c1ccc(C(C)C)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>147</span> </span><span class="STRN">"C(C(NN)=O)C(NN)=O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>148</span> </span><span class="STRN">"I(Cl)Cl.Cc1[n+](C)cccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>149</span> </span><span class="STRN">"Oc1c2c(c(O)nn1)cccc2"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>150</span> </span><span class="STRN">"C(NN)(=O)c1c(O)cccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>151</span> </span><span class="STRN">"C(NN)(=O)c1cccs1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>152</span> </span><span class="STRN">"CC=1OC(=O)CC1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>153</span> </span><span class="STRN">"C[C@H]1OC(=O)C=C1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>154</span> </span><span class="STRN">"C([C@@H](O)[C@@H]1[C@@H](O)[C@@H](O)C(O1)=O)=O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>155</span> </span><span class="STRN">"N(C(C)=O)c1ccc(/C=N/O)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>156</span> </span><span class="STRN">"C(/C(=O)c1ccccc1)(=N/O)c1ccccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>157</span> </span><span class="STRN">"C(/[C@@H](O)c1ccccc1)(=N/O)c1ccccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>158</span> </span><span class="STRN">"C(/C(C)=O)(=N/O)C"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>159</span> </span><span class="STRN">"N(CC)(CC)[C@@H]1/C(=N/O)CCCC1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>160</span> </span><span class="STRN">"N(=O)(=O)c1oc(/C=N/O)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>161</span> </span><span class="STRN">"C(/C=C/c1ccc(OC)cc1)(=N/O)c1ccccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>162</span> </span><span class="STRN">"C(/CCc1ccc(OC)cc1)(=N/O)c1ccccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>163</span> </span><span class="STRN">"C([N+](C)(C)C)[C@@H]1COCCO1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>164</span> </span><span class="STRN">"C([C@@H](C(NO)=O)N)c1ccc(O)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>165</span> </span><span class="STRN">"O(OC(C)=O)C(C)=O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>166</span> </span><span class="STRN">"C(OOC(CCCCCCCCCCC)=O)(CCCCCCCCCCC)=O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>167</span> </span><span class="STRN">"C(OOC(=O)c1ccccc1)(=O)c1ccccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>168</span> </span><span class="STRN">"C(OO)(C)(C)C"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>169</span> </span><span class="STRN">"O(OC(C)(C)C)C(C)(C)C"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>170</span> </span><span class="STRN">"C(OOC(C)(C)C)(=O)c1ccccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>171</span> </span><span class="STRN">"C(OOC(=O)c1ccccc1)(=O)c1ccccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>172</span> </span><span class="STRN">"C(OOC(CCC(=O)O)=O)(CCC(=O)O)=O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>173</span> </span><span class="STRN">"N=c1sc(c2ccccc2)n[nH]1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>174</span> </span><span class="STRN">"S=c1[nH]c(c2ccccc2)cs1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>175</span> </span><span class="STRN">"c12c(nsn1)cccc2"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>176</span> </span><span class="STRN">"S=C1NCCS1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>177</span> </span><span class="STRN">"Cc1c(C)sc([nH]1)=S"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>178</span> </span><span class="STRN">"N(C(Nc1ccc(N(C)C)cc1)=S)c1ccc(OCCCC)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>179</span> </span><span class="STRN">"N(C(Nc1c(CC)cccc1)=S)c1c(CC)cccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>180</span> </span><span class="STRN">"N(C(Nc1ccccc1)=S)c1ccccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>181</span> </span><span class="STRN">"N(C(Nc1ccc(C)cc1)=S)c1ccc(C)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>182</span> </span><span class="STRN">"N(NC(NNc1ccccc1)=S)c1ccccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>183</span> </span><span class="STRN">"C(NN)(NN)=S"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>184</span> </span><span class="STRN">"N(C(C)=O)c1ccc(/C=N/NC(NN)=S)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>185</span> </span><span class="STRN">"C(=N/NC(NN)=S)/c1ccccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>186</span> </span><span class="STRN">"C(=N/NC(NN)=S)/c1ccco1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>187</span> </span><span class="STRN">"N(=O)(=O)c1ccc(/C=N/NC(NN)=S)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>188</span> </span><span class="STRN">"N(=O)(=O)c1cc(/C=N/NC(NN)=S)ccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>189</span> </span><span class="STRN">"C(=N/NC(NN)=S)/c1cccnc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>190</span> </span><span class="STRN">"C(=N/NC(NN)=S)/c1ccc[nH]1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>191</span> </span><span class="STRN">"C(=N/NC(NN)=S)/c1nc2c(cccc2)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>192</span> </span><span class="STRN">"C(=N/NC(NN)=S)/c1c2c(ncc1)cccc2"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>193</span> </span><span class="STRN">"C(=N/NC(NN)=S)/c1cccs1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>194</span> </span><span class="STRN">"S(NNC(N)=S)(=O)(=O)c1ccccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>195</span> </span><span class="STRN">"C(NNC(N)=S)(=O)c1ccccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>196</span> </span><span class="STRN">"C(NNC(N)=S)(=O)c1ccc([N+](=O)[O-])cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>197</span> </span><span class="STRN">"C(NNC(N)=S)(=O)c1cc([N+](=O)[O-])ccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>198</span> </span><span class="STRN">"N(C(NN)=S)c1ccccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>199</span> </span><span class="STRN">"C(=N\NC(N)=S)(/C)c1ccc(Cl)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>200</span> </span><span class="STRN">"C(=C/C=N/NC(N)=S)/c1ccccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>201</span> </span><span class="STRN">"C(=N\NC(N)=S)(/C)c1cccs1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>202</span> </span><span class="STRN">"C(=N/NC(N)=S)(/C(=N/O)C)C"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>203</span> </span><span class="STRN">"C(=N/NC(N)=S)(/CC)C"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>204</span> </span><span class="STRN">"C(/C(=N/NC(N)=S)C)C(OCC)=O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>205</span> </span><span class="STRN">"N(/NC(N)=S)=C(\C)C"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>206</span> </span><span class="STRN">"C(=N/NC(N)=S)/c1ccc(OC)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>207</span> </span><span class="STRN">"C(=N\NC(N)=S)(/C)c1ccccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>208</span> </span><span class="STRN">"N(C(C)=O)c1ccc(/C=N/NC(NCC(C)C)=S)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>209</span> </span><span class="STRN">"N(/NC(N)=S)=C/C=C/C"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>210</span> </span><span class="STRN">"N(/NC(N)=S)=C1/CCCCC1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>211</span> </span><span class="STRN">"S(CC)(=O)(=O)c1ccc(/C=N/NC(N)=S)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>212</span> </span><span class="STRN">"C(/CCCCCC)=N/NC(N)=S"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>213</span> </span><span class="STRN">"C(=N\NC(N)=S)(/C)c1ccc(O)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>214</span> </span><span class="STRN">"N(/NC(N)=S)=C1/c2c(cccc2)NC1=O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>215</span> </span><span class="STRN">"C(=N\NC(N)=S)(/C)c1ccc(OC)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>216</span> </span><span class="STRN">"C(=N/NC(N)=S)/c1c2c(ccc1)cccc2"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>217</span> </span><span class="STRN">"C(=N/NC(N)=S)/c1cc([N+](=O)[O-])ccc1O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>218</span> </span><span class="STRN">"N(=O)(=O)c1sc(/C=N/NC(N)=S)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>219</span> </span><span class="STRN">"C(=N/NC(N)=S)/[C@@H]1[C@@H]2C(C)(C)[C@@H](C2)CC1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>220</span> </span><span class="STRN">"C(=N/NC(N)=S)/c1cc2c(OCO2)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>221</span> </span><span class="STRN">"C(=N/NC(N)=S)/c1ccc(OCCC)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>222</span> </span><span class="STRN">"C(=N/NC(N)=S)/c1ccccn1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>223</span> </span><span class="STRN">"C(=N/NC(N)=S)/c1cccnc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>224</span> </span><span class="STRN">"C(=N/NC(N)=S)/c1ccncc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>225</span> </span><span class="STRN">"C(=N/NC(N)=S)/c1c2c(ncc1)cccc2"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>226</span> </span><span class="STRN">"C(=N/NC(N)=S)/c1c(O)cccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>227</span> </span><span class="STRN">"C(=N/NC(N)=S)/c1cccs1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>228</span> </span><span class="STRN">"C(=N/NC(N)=S)/c1cc(OC)c(O)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>229</span> </span><span class="STRN">"C(=N/c1ccccc1)/c1ccccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>230</span> </span><span class="STRN">"N(C)(C)C=1S[Zn]2(SC(N(C)C)=[S+]2)[S+]1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>231</span> </span><span class="STRN">"C(CC(C)(C)C)(C)(C)c1ccc(OCCOCCSC(=[NH2])N)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>232</span> </span><span class="STRN">"Nc1c2c(ncc(n2)CNc2ccc(C(N[C@@H](CCC(=O)O)C(=O)O)=O)cc2)nc(n1)N"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>233</span> </span><span class="STRN">"Nc1c2c(ncc(n2)CN(C)c2ccc(C(N[C@@H](CCC(=O)O)C(=O)O)=O)cc2)nc(n1)N"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>234</span> </span><span class="STRN">"C[C@@]12[C@@H]([C@@H]3[C@@H]([C@@]4(C)C(=CC(=O)CC4)CC3)[C@@H](C2)O)CC[C@@]1(C(COC(C)=O)=O)O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>235</span> </span><span class="STRN">"O(C[C@@H](C(=O)O)N)C(C=[N+]=[N-])=O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>236</span> </span><span class="STRN">"Nc1c2c(nc(n1)N)[nH]cn2"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>237</span> </span><span class="STRN">"Clc1c2c(ncn1)[nH]cn2"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>238</span> </span><span class="STRN">"P(=O)(N1CC1)(N1CC1)N1CCOCC1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>239</span> </span><span class="STRN">"O(C(N)=O)CC"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>240</span> </span><span class="STRN">"C(NC)(C)=O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>241</span> </span><span class="STRN">"C(N)=O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>242</span> </span><span class="STRN">"Oc1c2c(nc(n1)N)[nH]nn2"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>243</span> </span><span class="STRN">"O(S(C)(=O)=O)CCCCOS(C)(=O)=O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>244</span> </span><span class="STRN">"C([C@@H](C(=O)O)N)CSCC"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>245</span> </span><span class="STRN">"Sc1c2c(nc(n1)N)[nH]cn2"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>246</span> </span><span class="STRN">"c12c([nH]cn1)ncnc2"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>247</span> </span><span class="STRN">"C([C@@H](C(=O)O)N)c1cccs1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>248</span> </span><span class="STRN">"Sc1c2c(ncn1)[nH]cn2"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>249</span> </span><span class="STRN">"Oc1c2c(nc(n1)O)[nH]nn2"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>250</span> </span><span class="STRN">"O(C)c1c2c3c([C@H](NC(C)=O)CCc2cc(c1OC)OC)cc(=O)c(cc3)OC"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>251</span> </span><span class="STRN">"O[C@@H]([C@@H]([C@@H](CO)O)O)[C@@H](C=O)N"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>252</span> </span><span class="STRN">"c12c([nH]cn1)cccc2"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>253</span> </span><span class="STRN">"Oc1c2c(nc(n1)N)[nH]nc2"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>254</span> </span><span class="STRN">"C(C)(=O)c1cccnc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>255</span> </span><span class="STRN">"N(CCCl)(CCCl)C"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>256</span> </span><span class="STRN">"S(C)(C)=O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>257</span> </span><span class="STRN">"N([C@@H](C(Cl)Cl)O)C(C)=O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>258</span> </span><span class="STRN">"C(N[C@@H](C(Cl)Cl)O)(=O)c1ccccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>259</span> </span><span class="STRN">"C(C(N[C@@H](C(Cl)Cl)O)=O)c1ccccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>260</span> </span><span class="STRN">"C(/C(=N/O)Cl)(=O)c1ccc(C)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>261</span> </span><span class="STRN">"N(C(C)=O)c1ccc(C(CCl)=O)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>262</span> </span><span class="STRN">"C(/C(=N/O)Cl)(=O)c1ccc(c2ccccc2)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>263</span> </span><span class="STRN">"O=C1c2c(cccc2)C(N1O)=O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>264</span> </span><span class="STRN">"N(C(SCCC(N)=O)=S)(CC)CC"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>265</span> </span><span class="STRN">"C(SCCC(N)=O)(=S)N1CCOCC1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>266</span> </span><span class="STRN">"C(CCCCCCCCCCCCCC)c1ccc(O)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>267</span> </span><span class="STRN">"C(CCCCCCCCCCCCCC)c1cc(O)c(O)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>268</span> </span><span class="STRN">"C(CCCCCCCCCCCCCC)c1c(O)cc(O)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>269</span> </span><span class="STRN">"C(CCCCCCCCCCCCCC)c1cc(O)cc(c1)O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>270</span> </span><span class="STRN">"B(OC)(OC)OC"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>271</span> </span><span class="STRN">"B(OCCC)(OCCC)OCCC"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>272</span> </span><span class="STRN">"B(OCCCC)(OCCCC)OCCCC"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>273</span> </span><span class="STRN">"B(OCCCCC)(OCCCCC)OCCCCC"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>274</span> </span><span class="STRN">"B(OCCCCCC)(OCCCCCC)OCCCCCC"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>275</span> </span><span class="STRN">"B(O[C@@H](CC(C)C)C)(O[C@@H](CC(C)C)C)O[C@@H](CC(C)C)C"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>276</span> </span><span class="STRN">"B(OCCCCCCCC)(OCCCCCCCC)OCCCCCCCC"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>277</span> </span><span class="STRN">"B(OC(CC(C)C)CC(C)C)(OC(CC(C)C)CC(C)C)OC(CC(C)C)CC(C)C"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>278</span> </span><span class="STRN">"B(OCCCCCCCCCCCC)(OCCCCCCCCCCCC)OCCCCCCCCCCCC"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>279</span> </span><span class="STRN">"B(OCCCCCCCCCCCCCCCCCC)(OCCCCCCCCCCCCCCCCCC)OCCCCCCCCCCCCCCCCCC"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>280</span> </span><span class="STRN">"O(C(C[C@@H](OB1OC(C)(C)C[C@@H](O1)C)C)(C)C)B1OC(C)(C)C[C@@H](O1)C"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>281</span> </span><span class="STRN">"C(Oc1ccccc1)(=O)c1ccc(C)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>282</span> </span><span class="STRN">"C[C@@]12[C@@H]3[C@@H]([C@@H]4[C@@](C)([C@@H]([C@@H](CCCC(C)C)C)CC4)CC3)C[C@@H]([C@@]1(Br)C[C@@H](Cl)CC2)Br"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>283</span> </span><span class="STRN">"C(CCCC)(C(=O)O)C(=O)O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>284</span> </span><span class="STRN">"N(C(N)=S)c1c(Br)cc(Br)cc1Br"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>285</span> </span><span class="STRN">"C(CC(=O)c1ccccc1)(CC(=O)c1ccccc1)c1ccccn1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>286</span> </span><span class="STRN">"C(CC(=O)c1ccccc1)(CC(=O)c1ccccc1)c1ccncc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>287</span> </span><span class="STRN">"C(=C/c1ccc(CC)cn1)/c1ccc([N+](=O)[O-])cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>288</span> </span><span class="STRN">"C(C[C@@H](O)c1ccncc1)(=O)c1ccccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>289</span> </span><span class="STRN">"C(/C=C/c1ccccn1)(=O)c1ccc(Cl)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>290</span> </span><span class="STRN">"C(/C=C/c1ccccc1)(=O)c1ccccn1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>291</span> </span><span class="STRN">"C(/C=C/c1ccccn1)(=O)c1ccccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>292</span> </span><span class="STRN">"C(/C=C/c1ccccc1)(C#Cc1ccccc1)(C#Cc1ccccc1)O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>293</span> </span><span class="STRN">"C(=O)(c1ccc(C)cc1)c1ccc(O)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>294</span> </span><span class="STRN">"Brc1c2c(cc3c1cccc3)cccc2"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>295</span> </span><span class="STRN">"N(=O)(=O)c1c2c(cc(c1O)C(OC)=O)cccc2"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>296</span> </span><span class="STRN">"C(=O)(O)c1oc(C(=O)O)cc(c1O)=O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>297</span> </span><span class="STRN">"B(Oc1ccccc1)(Oc1ccccc1)Oc1ccccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>298</span> </span><span class="STRN">"B(Oc1c(C)cccc1)(Oc1c(C)cccc1)Oc1c(C)cccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>299</span> </span><span class="STRN">"B(Oc1c(Cl)cccc1)(Oc1c(Cl)cccc1)Oc1c(Cl)cccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>300</span> </span><span class="STRN">"C(CCCCCCCCCCCCCCCCCC)(CO)CO"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>301</span> </span><span class="STRN">"C[N@]1[C@@H](CCC1)[C@@H]1CCCNC1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>302</span> </span><span class="STRN">"C([C@@H](CCc1ccccc1)C(C)=O)(OCC)=O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>303</span> </span><span class="STRN">"C(CC(C)=O)c1ccccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>304</span> </span><span class="STRN">"C(CCCCCC)CCCCCS"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>305</span> </span><span class="STRN">"O(CCCN)C(C)C"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>306</span> </span><span class="STRN">"C(C(OC=O)(C)C)(OCC)OCC"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>307</span> </span><span class="STRN">"CC1CSSC1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>308</span> </span><span class="STRN">"C(=O)(C1CCCCC1)c1ccccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>309</span> </span><span class="STRN">"C(OCCC(C)C)(OCCC(C)C)OCCC(C)C"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>310</span> </span><span class="STRN">"C(C(C(=O)O)(F)F)(C(F)(F)F)(F)F"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>311</span> </span><span class="STRN">"OC1[C@@H](C)CCC[C@@H]1C"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>312</span> </span><span class="STRN">"C(C)c1ccncc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>313</span> </span><span class="STRN">"S(SCCCCCCCCCCCCCCCC)CCCCCCCCCCCCCCCC"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>314</span> </span><span class="STRN">"C(=O)(c1c(C)cc(C)cc1)c1ccccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>315</span> </span><span class="STRN">"C(C)(C)(C)c1ccc(C(C)=O)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>316</span> </span><span class="STRN">"C(C(OCC)=O)(C(OCC)=O)CCCCCCC"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>317</span> </span><span class="STRN">"C(C)C1(C)OCCO1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>318</span> </span><span class="STRN">"C(=C/C(=O)O)/c1ccncc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>319</span> </span><span class="STRN">"C(C(OCC)=O)(C(OCC)=O)CCCCC(C(OCC)=O)C(OCC)=O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>320</span> </span><span class="STRN">"C([C@@H](CC(OCC)=O)c1ccccc1)(C(OCC)=O)C(OCC)=O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>321</span> </span><span class="STRN">"C(C)(=O)c1c(C)cc(C)c(c1)C"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>322</span> </span><span class="STRN">"C(#CCO)CO"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>323</span> </span><span class="STRN">"C(=C1/c2c(cccc2)C=C1)/c1ccccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>324</span> </span><span class="STRN">"C(C(=O)O)(C(=O)O)(C)C"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>325</span> </span><span class="STRN">"O([C@@H](C(=O)O)c1ccccc1)C(C)C"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>326</span> </span><span class="STRN">"c12n(nnn1)cccc2"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>327</span> </span><span class="STRN">"c12n(nnc1)cccc2"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>328</span> </span><span class="STRN">"N(=O)(=O)c1c2n(cc(c1)C)nnn2"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>329</span> </span><span class="STRN">"C(CCCC)(CCCC)C(=O)O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>330</span> </span><span class="STRN">"C(C)(=C)[C@@H]1CCC(C)=CC1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>331</span> </span><span class="STRN">"C[C@H]1CC(C)=CC(C1)=O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>332</span> </span><span class="STRN">"CC=1C[C@@H](CC(C1)=O)c1ccccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>333</span> </span><span class="STRN">"N(CCCN)C(C)C"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>334</span> </span><span class="STRN">"C(C(C)(C)C)(C(C)(C)C)=O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>335</span> </span><span class="STRN">"O(CC=C)c1c(C)ccc(c1)C"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>336</span> </span><span class="STRN">"C(CCCCC)CCCCS"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>337</span> </span><span class="STRN">"C(CCCCCCS)CCCCCC"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>338</span> </span><span class="STRN">"C(CC)(=O)c1ccc(C)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>339</span> </span><span class="STRN">"CC1(C)Oc2ccc(cc2C1)Br"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>340</span> </span><span class="STRN">"C(CS)(CS)C"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>341</span> </span><span class="STRN">"C(SC(=[NH2])N)CCCCSC(=[NH2])N"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>342</span> </span><span class="STRN">"C(CCC)(=O)c1c(OC)ccc(c1)C"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>343</span> </span><span class="STRN">"C(CCCC)(=O)c1cc(C)c(OC)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>344</span> </span><span class="STRN">"N(=O)(=O)c1ccc(CC)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>345</span> </span><span class="STRN">"S(OCCCCl)(=O)(=O)c1ccc(C)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>346</span> </span><span class="STRN">"C(CC)c1c(C)c(C)ccc1O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>347</span> </span><span class="STRN">"C(CBr)(=O)c1c(C)cc(C)cc1C"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>348</span> </span><span class="STRN">"C(SCCCCCCCCCCCC)(SCCCCCCCCCCCC)SCCCCCCCCCCCC"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>349</span> </span><span class="STRN">"N(=O)(=O)c1ccc(/C=N/N=C/c2ccc([N+](=O)[O-])cc2)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>350</span> </span><span class="STRN">"C(=N/N=C/c1c(O)cccc1)/c1c(O)cccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>351</span> </span><span class="STRN">"C(=N/N=C/c1ccc(Cl)cc1)/c1ccc(Cl)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>352</span> </span><span class="STRN">"C(=N\N=C(/C)c1cc([N+](=O)[O-])ccc1)(/C)c1cc([N+](=O)[O-])ccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>353</span> </span><span class="STRN">"C(=C/C=N/N=C/C=C/c1ccccc1)/c1ccccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>354</span> </span><span class="STRN">"C(=N/CC/N=C/c1ccc(O)cc1)/c1ccc(O)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>355</span> </span><span class="STRN">"N(=C/c1ccc(Cl)cc1)/c1ccc([N+](=O)[O-])cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>356</span> </span><span class="STRN">"[Cu]123[N+](=Cc4ccccc4O3)CC[N+]1=Cc1ccccc1O2"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>357</span> </span><span class="STRN">"[Zn]123[N+](=Cc4ccccc4O3)CC[N+]1=Cc1ccccc1O2"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>358</span> </span><span class="STRN">"C(C(OCCCCCCCCCCCCCCCC)=O)C(OCCCCCCCCCCCCCCCC)=O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>359</span> </span><span class="STRN">"C(=C/c1ccccc1)/c1ccc(Cl)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>360</span> </span><span class="STRN">"C(C[C@@H](N(C)C)C)(CCC(=O)O)(c1ccccc1)c1ccccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>361</span> </span><span class="STRN">"C(C[C@@H](N(C)C)C)([C@@H](CC)O)(c1ccccc1)c1ccccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>362</span> </span><span class="STRN">"C(C[C@@H]([N+](C)(C)C)C)(C(CC)=O)(c1ccccc1)c1ccccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>363</span> </span><span class="STRN">"C(C[C@@H]([N+](C)(C)C)C)(c1ccccc1)c1ccccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>364</span> </span><span class="STRN">"Cl(=O)(=O)(=O)O.C(CN(C)C)C1(CCN(C)C)c2c(CCC1=O)cccc2"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>365</span> </span><span class="STRN">"C1[C@H]2[C@@H](CCCC2)NCC1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>366</span> </span><span class="STRN">"C(=O)c1cc([N+](=O)[O-])ccc1O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>367</span> </span><span class="STRN">"N(=O)(=O)c1cc(O)c(C(=O)O)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>368</span> </span><span class="STRN">"O(Cc1ccccc1)c1c(C(=O)O)ccc(c1)[N+](=O)[O-]"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>369</span> </span><span class="STRN">"C(C#N)(c1ccccc1)c1ccccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>370</span> </span><span class="STRN">"C(=O)(c1cc(N)c(N(C)C)cc1)c1cc(N)c(N(C)C)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>371</span> </span><span class="STRN">"C(=O)(O)c1c(N)c(Br)cc(c1)Br"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>372</span> </span><span class="STRN">"C(CCCCCCCCCCCCCCCS)CCCCCCCCCCCCCCC"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>373</span> </span><span class="STRN">"C(CCCCCCCC)CCC(N)=O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>374</span> </span><span class="STRN">"C(C#N)(C)(C)C"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>375</span> </span><span class="STRN">"O(C(C(C)(C)C)=O)CC(C)(C)C"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>376</span> </span><span class="STRN">"C(C(C)(C)C)(C(C)C)=O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>377</span> </span><span class="STRN">"C(C(CC(C)(C)C)(C)C)(OCC(C)(C)C)=O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>378</span> </span><span class="STRN">"C(C(OCC(C)(C)C)=O)(CC)CC"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>379</span> </span><span class="STRN">"C(OCC(C)(C)C)(=O)c1ccccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>380</span> </span><span class="STRN">"C(C(C)(C)C)C(CC)=O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>381</span> </span><span class="STRN">"C(C(CCCCC)(C)O)CCCC"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>382</span> </span><span class="STRN">"C(C(C)(C)O)CCCC"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>383</span> </span><span class="STRN">"C(C(CC)(C)C)(C(C)(C)C)=O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>384</span> </span><span class="STRN">"C(C(C)C)(CC)(CC)O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>385</span> </span><span class="STRN">"C(CCCCC)(CCCC)(CCCC)O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>386</span> </span><span class="STRN">"C(CCCC)(C(C)C)(C(C)C)O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>387</span> </span><span class="STRN">"C([C@@](CC)(C)O)CCCC"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>388</span> </span><span class="STRN">"C(C(C)(C)C)C(C)(C)O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>389</span> </span><span class="STRN">"C(C(CCCC)(CCCC)O)C(C)(C)C"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>390</span> </span><span class="STRN">"C(C(OCCC)=O)(CC(C)(C)C)CC(C)(C)C"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>391</span> </span><span class="STRN">"C(CC[C@@H](C(=O)O)O)CCCCCCCCCCCCC"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>392</span> </span><span class="STRN">"C([C@@](CCC)(C)O)(C)(C)C"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>393</span> </span><span class="STRN">"C([C@@H](C(Cl)=O)C)C(C)(C)C"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>394</span> </span><span class="STRN">"C(CCCCCCC)CCCCCC#N"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>395</span> </span><span class="STRN">"C(=C\C)(/C)c1ccccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>396</span> </span><span class="STRN">"C([C@@H](C(C)=O)C)(C)(C)C"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>397</span> </span><span class="STRN">"C(C(C(C)(C)C)=O)(C(C)(C)C)(C)C"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>398</span> </span><span class="STRN">"C(C(C)C)(C(C)=O)(C)C"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>399</span> </span><span class="STRN">"C(CCC)(CCC)(CCC)C#N"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>400</span> </span><span class="STRN">"C(CC(C)(C)C)(CCC)=O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>401</span> </span><span class="STRN">"C(CCCCC)(CCCCC)(CC)O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>402</span> </span><span class="STRN">"C(CCCC)(CCCC)(CC)O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>403</span> </span><span class="STRN">"C(CCCC)(CCCC)(CCC)O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>404</span> </span><span class="STRN">"C(CCCCCCC)(CCCCCCC)(CCCCCCC)O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>405</span> </span><span class="STRN">"C(CCCCC)(CCCCC)(CCCC)O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>406</span> </span><span class="STRN">"C([C@@](CCCC)(C)O)C(C)(C)C"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>407</span> </span><span class="STRN">"C(CCl)(C)(C)c1ccccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>408</span> </span><span class="STRN">"C(CCCCCCCCCCCCCCC)[C@@H](C(OCC)=O)Br"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>409</span> </span><span class="STRN">"C(CCl)(C)(C)c1ccc(C(CCl)(C)C)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>410</span> </span><span class="STRN">"C([C@@H](C(=O)O)C)C(C)(C)C"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>411</span> </span><span class="STRN">"C(CCCCCC)(CCCCCC)(CCCCCC)O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>412</span> </span><span class="STRN">"C(CC(C)(C)C)(CC(C)(C)C)C(CC)=O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>413</span> </span><span class="STRN">"C(Cl)c1ccco1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>414</span> </span><span class="STRN">"C(CC(C)(C)C)(CC)(CC)O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>415</span> </span><span class="STRN">"C(CCCCCCCCCCC)CCC/C=C/C(=O)O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>416</span> </span><span class="STRN">"C(C(C)(C)C)OC=O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>417</span> </span><span class="STRN">"C(CCCCC)(C(C)(C)C)=O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>418</span> </span><span class="STRN">"C([C@@](CCCCC)(C)O)C(C)(C)C"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>419</span> </span><span class="STRN">"C(C(C)=O)(C)(C)C"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>420</span> </span><span class="STRN">"C([C@@H](CC(C)(C)C)C)(OCC(C)(C)C)=O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>421</span> </span><span class="STRN">"C(OCC(C)(C)C)(CC(C)C)=O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>422</span> </span><span class="STRN">"C(C(=O)O)(CC)(CC)CC"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>423</span> </span><span class="STRN">"C([C@@H](C)O)(C)(C)C"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>424</span> </span><span class="STRN">"C(CC(C)C)(C(C)C)=O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>425</span> </span><span class="STRN">"C([C@@](C(C)C)(C)O)C(C)(C)C"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>426</span> </span><span class="STRN">"N(=O)(=O)c1c2c(c(O)nnc2O)ccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>427</span> </span><span class="STRN">"C(CCCC)(CCCC)(CCCC)O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>428</span> </span><span class="STRN">"C(C(C)(C)C)C(C)=O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>429</span> </span><span class="STRN">"C(C(C)(C)C)OC(C)=O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>430</span> </span><span class="STRN">"O(C(CC)=O)CC(C)(C)C"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>431</span> </span><span class="STRN">"C(C(CCl)(C)C)(C(C)(C)C)=O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>432</span> </span><span class="STRN">"C(CCCCC)(CCC)(CCC)O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>433</span> </span><span class="STRN">"C(CC(C)(C)C)(OCC)=O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>434</span> </span><span class="STRN">"C(CCCCCC)(C(=O)O)=O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>435</span> </span><span class="STRN">"C(C(C)(C)C)(CCCC)(CCCC)O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>436</span> </span><span class="STRN">"C(C(C(C(C)C)(C)C)=O)(C(C)(C)C)(C)C"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>437</span> </span><span class="STRN">"C(CCCCCCCCCCCCCCC)(CCCCCCCCCCCCCCC)=O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>438</span> </span><span class="STRN">"C(CCC(C)C)(C(C)C)(C(C)C)O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>439</span> </span><span class="STRN">"C([C@@](C(C)(C)C)(C(=O)O)C)C(C)(C)C"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>440</span> </span><span class="STRN">"C(CO)(C)(C)c1ccccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>441</span> </span><span class="STRN">"C(CC(C)(C)O)(C)(C)c1ccccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>442</span> </span><span class="STRN">"C(C(C)(C)C)C(CC(C)(C)C)=O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>443</span> </span><span class="STRN">"C(OCC)(=O)c1ccccn1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>444</span> </span><span class="STRN">"C(OCCCC)(=O)c1ccccn1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>445</span> </span><span class="STRN">"C(OCCCCCC)(=O)c1ccccn1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>446</span> </span><span class="STRN">"C(OCCCCCCCC)(=O)c1ccccn1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>447</span> </span><span class="STRN">"C(OCCCCCCCCCC)(=O)c1ccccn1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>448</span> </span><span class="STRN">"C(C)c1ccccn1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>449</span> </span><span class="STRN">"C(C)c1ccncc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>450</span> </span><span class="STRN">"C(CC)c1ccccn1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>451</span> </span><span class="STRN">"C(CC)c1ccncc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>452</span> </span><span class="STRN">"C(CC)c1nc(C)ccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>453</span> </span><span class="STRN">"C(CCC)c1ccccn1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>454</span> </span><span class="STRN">"C(CCC)c1ccncc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>455</span> </span><span class="STRN">"C(CCC)c1nc(C)ccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>456</span> </span><span class="STRN">"C(CCCC)c1nc(C)ccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>457</span> </span><span class="STRN">"C(CCCCC)c1nc(C)ccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>458</span> </span><span class="STRN">"C(CCCCC)(CCCCC)c1ccccn1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>459</span> </span><span class="STRN">"C([C@@](C#C)(C)O)C"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>460</span> </span><span class="STRN">"C(=C/CO)/CO"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>461</span> </span><span class="STRN">"C(C#N)(C)(C)O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>462</span> </span><span class="STRN">"C([C@@](C#C)(C)O)C(C)C"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>463</span> </span><span class="STRN">"O(C(C)=O)[C@@H]1[C@@H](OC(C)=O)[C@@H](Sc2c(Cl)ccc(c2)Cl)O[C@@H]([C@@H]1OC(C)=O)COC(C)=O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>464</span> </span><span class="STRN">"S(C#N)c1c2c(c(N)c(c1)SC#N)cccc2"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>465</span> </span><span class="STRN">"N(CC)(CC)c1ccc(SSc2ccc(N(CC)CC)cc2)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>466</span> </span><span class="STRN">"S(Sc1c(Cl)ccc(c1)Cl)c1c(Cl)ccc(c1)Cl"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>467</span> </span><span class="STRN">"O(C(C)=O)[C@@H]1[C@@H](Sc2c3c(ccc2)cccc3)O[C@@H](COC(C)=O)[C@@H]([C@@H]1OC(C)=O)OC(C)=O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>468</span> </span><span class="STRN">"O(C(C)=O)[C@@H]1[C@@H](OC(C)=O)[C@@H](Sc2c(NC(C)=O)cc(Cl)cc2)O[C@@H]([C@@H]1OC(C)=O)COC(C)=O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>469</span> </span><span class="STRN">"S(Sc1c(N)cc(Cl)cc1)c1c(N)cc(Cl)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>470</span> </span><span class="STRN">"C(C)(=O)c1ccc(SSc2ccc(C(C)=O)cc2)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>471</span> </span><span class="STRN">"N(CCC)(CCC)c1ccc(SC#N)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>472</span> </span><span class="STRN">"N(CC)(CC)c1ccc(SC#N)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>473</span> </span><span class="STRN">"N(C)(C)c1ccc(SSc2ccc(N(C)C)cc2)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>474</span> </span><span class="STRN">"S(Sc1ccc(Br)cc1)c1ccc(Br)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>475</span> </span><span class="STRN">"N(Cc1ccccc1)(CC)c1ccc(SC#N)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>476</span> </span><span class="STRN">"S(Sc1ccc(C)cc1)c1ccc(C)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>477</span> </span><span class="STRN">"S(Sc1ccc(OC)cc1)c1ccc(OC)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>478</span> </span><span class="STRN">"N([C@@H]1O[C@@H](CO)[C@@H](O)[C@@H]([C@@H]1O)O)c1ccc(OCC)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>479</span> </span><span class="STRN">"S([C@@H]1[C@@H](O)[C@@H](O)[C@@H](O)[C@@H](O1)CO)c1c(Cl)ccc(c1)Cl"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>480</span> </span><span class="STRN">"N(=O)(=O)c1c(N/N=C(/CC(C)C)CC(C)C)ccc(c1)[N+](=O)[O-]"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>481</span> </span><span class="STRN">"N(=O)(=O)c1c(N/N=C/c2ccccc2)cccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>482</span> </span><span class="STRN">"N(C(NC(C)=O)C)C(C)=O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>483</span> </span><span class="STRN">"C(NC(C)=O)NC(C)=O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>484</span> </span><span class="STRN">"N(Cc1ccccc1)(CC(=O)O)CC(=O)O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>485</span> </span><span class="STRN">"N(CC(=O)O)(CC(=O)O)C(C)C"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>486</span> </span><span class="STRN">"C(/N=C/c1ccccc1)(/N=C/c1ccccc1)c1ccccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>487</span> </span><span class="STRN">"C(C(C)(C)C)[C@@]1(C)NC(=O)NC1=O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>488</span> </span><span class="STRN">"C(C(OCC)=O)(C(OCC)=O)C(C)C"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>489</span> </span><span class="STRN">"N([C@@H](c1c(O)c2c(cccn2)cc1)c1ccccc1)c1ccccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>490</span> </span><span class="STRN">"N([C@@H](c1oc(CO)cc(c1O)=O)c1ccccc1)c1ccccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>491</span> </span><span class="STRN">"N([C@@H](c1c(O)c2c(cccn2)cc1)c1ccccc1)c1ccc([N+](=O)[O-])cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>492</span> </span><span class="STRN">"N([C@@H](c1c(O)c2c(cccn2)cc1)c1ccccc1)c1ccc(C(=O)O)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>493</span> </span><span class="STRN">"N([C@@H](c1c(O)c2c(cccn2)cc1)c1ccccc1)c1c(C(=O)O)cccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>494</span> </span><span class="STRN">"N([C@@H](c1c(O)c2c(cccn2)cc1)c1ccccc1)c1cc(C)ccn1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>495</span> </span><span class="STRN">"N([C@@H](c1c(O)c2c(cccn2)cc1)c1ccccc1)c1c(C(OCC)=O)cccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>496</span> </span><span class="STRN">"N([C@@H](c1oc(CO)cc(c1O)=O)c1ccccc1)c1cc(Cl)ccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>497</span> </span><span class="STRN">"N(/N=C(/CCCCCC)C)c1c([N+](=O)[O-])cc([N+](=O)[O-])cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>498</span> </span><span class="STRN">"C([C@@](CC)(C)N)(=O)O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>499</span> </span><span class="STRN">"C(C)[C@@]1(C)C(=O)NC(N1)=O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>500</span> </span><span class="STRN">"C(CCCCC)[C@@]1(C)NC(=O)NC1=O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>501</span> </span><span class="STRN">"N(=O)(=O)c1cc(C)c(O)cc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>502</span> </span><span class="STRN">"C(CC)[C@]1(NC(=O)NC1=O)c1ccccc1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>503</span> </span><span class="STRN">"O=C1C2(NC(N1)=O)CCCC2"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>504</span> </span><span class="STRN">"C([C@@](CC)(C)O)#C[C@@](CC)(C)O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>505</span> </span><span class="STRN">"C(=O)(O)C1(N)CCCC1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>506</span> </span><span class="STRN">"C(C(Br)(C)C)(C(Br)Br)=O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>507</span> </span><span class="STRN">"C(/C=C/c1ccccc1)(NC(OCC)=O)NC(OCC)=O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>508</span> </span><span class="STRN">"C(C(C)C)CO"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>509</span> </span><span class="STRN">"C(O)[C@H]1[C@@H](O)[C@@H](O)C(O1)=O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>510</span> </span><span class="STRN">"N(C(N[C@@H](C#N)C)=O)[C@@H](C(N)=O)C"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>511</span> </span><span class="STRN">"N(C(NC(C#N)(C)C)=O)C(C(N)=O)(C)C"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>512</span> </span><span class="STRN">"C(NC(OCC)=O)(NC(OCC)=O)CC"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>513</span> </span><span class="STRN">"C(NC(OCC)=O)(NC(OCC)=O)C"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>514</span> </span><span class="STRN">"C([C@@H](CC)Cl)(NC(OCC)=O)NC(OCC)=O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>515</span> </span><span class="STRN">"C(NC(OCC)=O)(NC(OCC)=O)CCl"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>516</span> </span><span class="STRN">"C(NC(OCC)=O)(NC(OCC)=O)C(Cl)Cl"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>517</span> </span><span class="STRN">"Oc1c(c2c(nc3ccccc3n2)c2c(O)cc(O)cc2)ccc(c1)O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>518</span> </span><span class="STRN">"N(CCN(C)C)(CC(=O)O)CC(=O)O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>519</span> </span><span class="STRN">"N(CCN(CC)CC)(CC(=O)O)CC(=O)O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>520</span> </span><span class="STRN">"N(CC(=O)O)(CC(=O)O)CC"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>521</span> </span><span class="STRN">"c1ccncc1.O(C(C)=O)c1c(S(=O)(=O)O)ccc(c1)NC(C)=O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>522</span> </span><span class="STRN">"N(CCC([N+](=O)[O-])(C)C)(CC(=O)O)CC(=O)O"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>523</span> </span><span class="STRN">"C(CCN)([N+](=O)[O-])(C)C"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>524</span> </span><span class="STRN">"[13C]"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>525</span> </span><span class="STRN">"[13C]Cl"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>526</span> </span><span class="STRN">"c1(NC(C2CC2)=O)nc2c3c(cccc3)CCc2cn1"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>527</span> </span><span class="STRN">"c12-c3c(cc(N)cc3)Cc1cccc2"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>528</span> </span><span class="STRN">"c12c3c4c5c1c1c6c7c5c5c8c4c4c9c3c3c%10c9c9c%11c4c8c4c8c5c7c5c7c6c6c%12c%13c7c7c5c8c5c4c%11c4c9c8c%10c9c%10c8c8c4c5c7c8c%13c%10c%12c4c9c3c2c4c16"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>529</span> </span><span class="STRN">"c12c3c(ccc2)c(ccc4)c5c4cccc5c3ccc1"</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>530</span> </span></pre></body></html>

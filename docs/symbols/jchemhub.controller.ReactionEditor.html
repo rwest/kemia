@@ -1,0 +1,1622 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<meta name="generator" content="JsDoc Toolkit" />
+		
+		<title>JsDoc Reference - jchemhub.controller.ReactionEditor</title>
+
+		<style type="text/css">
+			/* default.css */
+body
+{
+	font: 12px "Lucida Grande", Tahoma, Arial, Helvetica, sans-serif;
+	width: 800px;
+}
+
+.header
+{
+	clear: both;
+	background-color: #ccc;
+	padding: 8px;
+}
+
+h1
+{
+	font-size: 150%;
+	font-weight: bold;
+	padding: 0;
+	margin: 1em 0 0 .3em;
+}
+
+hr
+{
+	border: none 0;
+	border-top: 1px solid #7F8FB1;
+	height: 1px;
+}
+
+pre.code
+{
+	display: block;
+	padding: 8px;
+	border: 1px dashed #ccc;
+}
+
+#index
+{
+	margin-top: 24px;
+	float: left;
+	width: 160px;
+	position: absolute;
+	left: 8px;
+	background-color: #F3F3F3;
+	padding: 8px;
+}
+
+#content
+{
+	margin-left: 190px;
+	width: 600px;
+}
+
+.classList
+{
+	list-style-type: none;
+	padding: 0;
+	margin: 0 0 0 8px;
+	font-family: arial, sans-serif;
+	font-size: 1em;
+	overflow: auto;
+}
+
+.classList li
+{
+	padding: 0;
+	margin: 0 0 8px 0;
+}
+
+.summaryTable { width: 100%; }
+
+h1.classTitle
+{
+	font-size:170%;
+	line-height:130%;
+}
+
+h2 { font-size: 110%; }
+caption, div.sectionTitle
+{
+	background-color: #7F8FB1;
+	color: #fff;
+	font-size:130%;
+	text-align: left;
+	padding: 2px 6px 2px 6px;
+	border: 1px #7F8FB1 solid;
+}
+
+div.sectionTitle { margin-bottom: 8px; }
+.summaryTable thead { display: none; }
+
+.summaryTable td
+{
+	vertical-align: top;
+	padding: 4px;
+	border-bottom: 1px #7F8FB1 solid;
+	border-right: 1px #7F8FB1 solid;
+}
+
+/*col#summaryAttributes {}*/
+.summaryTable td.attributes
+{
+	border-left: 1px #7F8FB1 solid;
+	width: 140px;
+	text-align: right;
+}
+
+td.attributes, .fixedFont
+{
+	line-height: 15px;
+	color: #002EBE;
+	font-family: "Courier New",Courier,monospace;
+	font-size: 13px;
+}
+
+.summaryTable td.nameDescription
+{
+	text-align: left;
+	font-size: 13px;
+	line-height: 15px;
+}
+
+.summaryTable td.nameDescription, .description
+{
+	line-height: 15px;
+	padding: 4px;
+	padding-left: 4px;
+}
+
+.summaryTable { margin-bottom: 8px; }
+
+ul.inheritsList
+{
+	list-style: square;
+	margin-left: 20px;
+	padding-left: 0;
+}
+
+.detailList {
+	margin-left: 20px; 
+	line-height: 15px;
+}
+.detailList dt { margin-left: 20px; }
+
+.detailList .heading
+{
+	font-weight: bold;
+	padding-bottom: 6px;
+	margin-left: 0;
+}
+
+.light, td.attributes, .light a:link, .light a:visited
+{
+	color: #777;
+	font-style: italic;
+}
+
+.fineprint
+{
+	text-align: right;
+	font-size: 10px;
+}
+		</style>
+	</head>
+
+	<body>
+<!-- ============================== header ================================= -->	
+		<!-- begin static/header.html -->
+		<div id="header">
+</div>
+		<!-- end static/header.html -->
+
+<!-- ============================== classes index ============================ -->
+		<div id="index">
+			<!-- begin publish.classesIndex -->
+			<div align="center"><a href="../index.html">Class Index</a>
+| <a href="../files.html">File Index</a></div>
+<hr />
+<h2>Classes</h2>
+<ul class="classList">
+	
+	<li><i><a href="../symbols/_global_.html">_global_</a></i></li>
+	
+	<li><a href="../symbols/jchemhub.html">jchemhub</a></li>
+	
+	<li><a href="../symbols/jchemhub.controller.AtomController.html">jchemhub.controller.AtomController</a></li>
+	
+	<li><a href="../symbols/jchemhub.controller.AtomController.AtomEvent.html">jchemhub.controller.AtomController.AtomEvent</a></li>
+	
+	<li><a href="../symbols/jchemhub.controller.BondController.html">jchemhub.controller.BondController</a></li>
+	
+	<li><a href="../symbols/jchemhub.controller.BondController.BondEvent.html">jchemhub.controller.BondController.BondEvent</a></li>
+	
+	<li><a href="../symbols/jchemhub.controller.MoleculeController.html">jchemhub.controller.MoleculeController</a></li>
+	
+	<li><a href="../symbols/jchemhub.controller.Plugin.html">jchemhub.controller.Plugin</a></li>
+	
+	<li><a href="../symbols/jchemhub.controller.plugins.BondSelect.html">jchemhub.controller.plugins.BondSelect</a></li>
+	
+	<li><a href="../symbols/jchemhub.controller.plugins.ClearEditor.html">jchemhub.controller.plugins.ClearEditor</a></li>
+	
+	<li><a href="../symbols/jchemhub.controller.plugins.Highlight.html">jchemhub.controller.plugins.Highlight</a></li>
+	
+	<li><a href="../symbols/jchemhub.controller.plugins.SelectorRectangle.html">jchemhub.controller.plugins.SelectorRectangle</a></li>
+	
+	<li><a href="../symbols/jchemhub.controller.plugins.SymbolSelect.html">jchemhub.controller.plugins.SymbolSelect</a></li>
+	
+	<li><a href="../symbols/jchemhub.controller.plugins.UndoRedo.html">jchemhub.controller.plugins.UndoRedo</a></li>
+	
+	<li><a href="../symbols/jchemhub.controller.plugins.Zoom.html">jchemhub.controller.plugins.Zoom</a></li>
+	
+	<li><a href="../symbols/jchemhub.controller.ReactionController.html">jchemhub.controller.ReactionController</a></li>
+	
+	<li><a href="../symbols/jchemhub.controller.ReactionEditor.html">jchemhub.controller.ReactionEditor</a></li>
+	
+	<li><a href="../symbols/jchemhub.controller.ToolbarController.html">jchemhub.controller.ToolbarController</a></li>
+	
+	<li><a href="../symbols/jchemhub.graphics.AffineTransform.html">jchemhub.graphics.AffineTransform</a></li>
+	
+	<li><a href="../symbols/jchemhub.math.Line.html">jchemhub.math.Line</a></li>
+	
+	<li><a href="../symbols/jchemhub.model.AromaticBond.html">jchemhub.model.AromaticBond</a></li>
+	
+	<li><a href="../symbols/jchemhub.model.Atom.html">jchemhub.model.Atom</a></li>
+	
+	<li><a href="../symbols/jchemhub.model.Bond.html">jchemhub.model.Bond</a></li>
+	
+	<li><a href="../symbols/jchemhub.model.DoubleBond.html">jchemhub.model.DoubleBond</a></li>
+	
+	<li><a href="../symbols/jchemhub.model.Molecule.html">jchemhub.model.Molecule</a></li>
+	
+	<li><a href="../symbols/jchemhub.model.PseudoAtom.html">jchemhub.model.PseudoAtom</a></li>
+	
+	<li><a href="../symbols/jchemhub.model.QuadrupleBond.html">jchemhub.model.QuadrupleBond</a></li>
+	
+	<li><a href="../symbols/jchemhub.model.Reaction.html">jchemhub.model.Reaction</a></li>
+	
+	<li><a href="../symbols/jchemhub.model.SingleBond.html">jchemhub.model.SingleBond</a></li>
+	
+	<li><a href="../symbols/jchemhub.model.SingleBondDown.html">jchemhub.model.SingleBondDown</a></li>
+	
+	<li><a href="../symbols/jchemhub.model.SingleBondUp.html">jchemhub.model.SingleBondUp</a></li>
+	
+	<li><a href="../symbols/jchemhub.model.SingleBondUpOrDown.html">jchemhub.model.SingleBondUpOrDown</a></li>
+	
+	<li><a href="../symbols/jchemhub.model.TripleBond.html">jchemhub.model.TripleBond</a></li>
+	
+	<li><a href="../symbols/jchemhub.query.html">jchemhub.query</a></li>
+	
+	<li><a href="../symbols/jchemhub.query.IQuery.html">jchemhub.query.IQuery</a></li>
+	
+	<li><a href="../symbols/jchemhub.query.IQueryAtom.html">jchemhub.query.IQueryAtom</a></li>
+	
+	<li><a href="../symbols/jchemhub.query.IQueryBond.html">jchemhub.query.IQueryBond</a></li>
+	
+	<li><a href="../symbols/jchemhub.query.IQueryCompiler.html">jchemhub.query.IQueryCompiler</a></li>
+	
+	<li><a href="../symbols/jchemhub.query.Query.html">jchemhub.query.Query</a></li>
+	
+	<li><a href="../symbols/jchemhub.query.QueryAtom.html">jchemhub.query.QueryAtom</a></li>
+	
+	<li><a href="../symbols/jchemhub.query.QueryBond.html">jchemhub.query.QueryBond</a></li>
+	
+	<li><a href="../symbols/jchemhub.query.SmilesCompiler.html">jchemhub.query.SmilesCompiler</a></li>
+	
+	<li><a href="../symbols/jchemhub.ring.Ring.html">jchemhub.ring.Ring</a></li>
+	
+	<li><a href="../symbols/jchemhub.view.ArrowRenderer.html">jchemhub.view.ArrowRenderer</a></li>
+	
+	<li><a href="../symbols/jchemhub.view.AtomRenderer.html">jchemhub.view.AtomRenderer</a></li>
+	
+	<li><a href="../symbols/jchemhub.view.BondRenderer.html">jchemhub.view.BondRenderer</a></li>
+	
+	<li><a href="../symbols/jchemhub.view.BondRendererFactory.html">jchemhub.view.BondRendererFactory</a></li>
+	
+	<li><a href="../symbols/jchemhub.view.DoubleBondRenderer.html">jchemhub.view.DoubleBondRenderer</a></li>
+	
+	<li><a href="../symbols/jchemhub.view.MoleculeRenderer.html">jchemhub.view.MoleculeRenderer</a></li>
+	
+	<li><a href="../symbols/jchemhub.view.PlusRenderer.html">jchemhub.view.PlusRenderer</a></li>
+	
+	<li><a href="../symbols/jchemhub.view.QuadrupleBondRenderer.html">jchemhub.view.QuadrupleBondRenderer</a></li>
+	
+	<li><a href="../symbols/jchemhub.view.ReactionRenderer.html">jchemhub.view.ReactionRenderer</a></li>
+	
+	<li><a href="../symbols/jchemhub.view.Renderer.html">jchemhub.view.Renderer</a></li>
+	
+	<li><a href="../symbols/jchemhub.view.SingleBondRenderer.html">jchemhub.view.SingleBondRenderer</a></li>
+	
+	<li><a href="../symbols/jchemhub.view.SingleDownBondRenderer.html">jchemhub.view.SingleDownBondRenderer</a></li>
+	
+	<li><a href="../symbols/jchemhub.view.SingleUpBondRenderer.html">jchemhub.view.SingleUpBondRenderer</a></li>
+	
+	<li><a href="../symbols/jchemhub.view.SingleUpOrDownBondRenderer.html">jchemhub.view.SingleUpOrDownBondRenderer</a></li>
+	
+	<li><a href="../symbols/jchemhub.view.TripleBondRenderer.html">jchemhub.view.TripleBondRenderer</a></li>
+	
+</ul>
+<hr />
+			<!-- end publish.classesIndex -->
+		</div>
+		
+		<div id="content">
+<!-- ============================== class title ============================ -->
+			<h1 class="classTitle">
+				
+				Class jchemhub.controller.ReactionEditor
+			</h1>
+
+<!-- ============================== class summary ========================== -->			
+			<p class="description">
+				<br />Extends
+					.<br />
+				
+			
+				
+				
+				
+					<br /><i>Defined in: </i> <a href="../symbols/src/_Users_paulnovak_wingu_workspace_jchemhub_jchemhub_controller_reaction_editor.js.html">reaction_editor.js</a>.
+				
+			</p>
+
+<!-- ============================== constructor summary ==================== -->			
+			
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class jchemhub.controller.ReactionEditor.">
+				<caption>Class Summary</caption>
+				<thead>
+					<tr>
+						<th scope="col">Constructor Attributes</th>
+						<th scope="col">Constructor Name and Description</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td class="attributes">&nbsp;</td>
+						<td class="nameDescription" >
+							<div class="fixedFont">
+								<b><a href="../symbols/jchemhub.controller.ReactionEditor.html#constructor">jchemhub.controller.ReactionEditor</a></b>(element, opt_config)
+							</div>
+							<div class="description">A graphical editor for reactions</div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			
+
+<!-- ============================== properties summary ===================== -->
+			
+				
+				
+				<table class="summaryTable" cellspacing="0" summary="A summary of the fields documented in the class jchemhub.controller.ReactionEditor.">
+					<caption>Field Summary</caption>
+					<thead>
+						<tr>
+							<th scope="col">Field Attributes</th>
+							<th scope="col">Field Name and Description</th>
+						</tr>
+					</thead>
+					<tbody>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								jchemhub.controller.ReactionEditor.<b><a href="../symbols/jchemhub.controller.ReactionEditor.html#.defaultConfig">defaultConfig</a></b>
+								</div>
+								<div class="description">A default configuration for the reaction editor.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/jchemhub.controller.ReactionEditor.html#eventRegister">eventRegister</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								jchemhub.controller.ReactionEditor.<b><a href="../symbols/jchemhub.controller.ReactionEditor.html#.EventType">EventType</a></b>
+								</div>
+								<div class="description">Event types that can be stopped/started.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/jchemhub.controller.ReactionEditor.html#logger">logger</a></b>
+								</div>
+								<div class="description">Logging object.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								jchemhub.controller.ReactionEditor.<b><a href="../symbols/jchemhub.controller.ReactionEditor.html#.MUTATION_EVENTS_GECKO">MUTATION_EVENTS_GECKO</a></b>
+								</div>
+								<div class="description">List of mutation events in Gecko browsers.</div>
+							</td>
+						</tr>
+					
+					</tbody>
+				</table>
+				
+				
+				
+			
+
+<!-- ============================== methods summary ======================== -->
+			
+				
+				
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class jchemhub.controller.ReactionEditor.">
+					<caption>Method Summary</caption>
+					<thead>
+						<tr>
+							<th scope="col">Method Attributes</th>
+							<th scope="col">Method Name and Description</th>
+						</tr>
+					</thead>
+					<tbody>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/jchemhub.controller.ReactionEditor.html#addListener">addListener</a></b>(type, listener, opt_capture, opt_handler)
+								</div>
+								<div class="description">Registers a keyboard event listener on the editor.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/jchemhub.controller.ReactionEditor.html#dispatchBeforeChange">dispatchBeforeChange</a></b>()
+								</div>
+								<div class="description">This dispatches the beforechange event on the editable reaction editor</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/jchemhub.controller.ReactionEditor.html#dispatchChange">dispatchChange</a></b>(opt_noDelay)
+								</div>
+								<div class="description">Dispatches the appropriate set of change events.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/jchemhub.controller.ReactionEditor.html#dispatchCommandValueChange">dispatchCommandValueChange</a></b>(opt_commands)
+								</div>
+								<div class="description">Dispatches a command value change event.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/jchemhub.controller.ReactionEditor.html#dispatchSelectionChangeEvent">dispatchSelectionChangeEvent</a></b>(opt_e)
+								</div>
+								<div class="description">Dispatch a selection change event, optionally caused by the given browser
+event.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/jchemhub.controller.ReactionEditor.html#disposeInternal">disposeInternal</a></b>()
+								</div>
+								<div class="description">Removes all listeners and destroys the eventhandler object.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/jchemhub.controller.ReactionEditor.html#execCommand">execCommand</a></b>(command, var_args)
+								</div>
+								<div class="description">Executes an editing command as per the registered plugins.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">jchemhub.controller.ReactionEditor.<b><a href="../symbols/jchemhub.controller.ReactionEditor.html#.getActiveEditorId">getActiveEditorId</a></b>()
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/jchemhub.controller.ReactionEditor.html#getEditableDomHelper">getEditableDomHelper</a></b>()
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/jchemhub.controller.ReactionEditor.html#getModel">getModel</a></b>()
+								</div>
+								<div class="description">gets model</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/jchemhub.controller.ReactionEditor.html#getOriginalElement">getOriginalElement</a></b>()
+								</div>
+								<div class="description">Returns original DOM element for the Editor null if that element has not yet
+been found in the appropriate document.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/jchemhub.controller.ReactionEditor.html#getPluginByClassId">getPluginByClassId</a></b>(classId)
+								</div>
+								<div class="description">Returns the registered plugin with the given classId.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/jchemhub.controller.ReactionEditor.html#handleChange">handleChange</a></b>()
+								</div>
+								<div class="description">Handle a change in the Editor.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/jchemhub.controller.ReactionEditor.html#handleEditorLoad">handleEditorLoad</a></b>()
+								</div>
+								<div class="description">Handle the loading of the editor (e.g.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/jchemhub.controller.ReactionEditor.html#installStyles">installStyles</a></b>()
+								</div>
+								<div class="description">Installs styles if needed.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/jchemhub.controller.ReactionEditor.html#isLoaded">isLoaded</a></b>()
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/jchemhub.controller.ReactionEditor.html#isLoading">isLoading</a></b>()
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/jchemhub.controller.ReactionEditor.html#queryCommandValue">queryCommandValue</a></b>(commands)
+								</div>
+								<div class="description">Gets the value of command(s).</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/jchemhub.controller.ReactionEditor.html#registerPlugin">registerPlugin</a></b>(plugin)
+								</div>
+								<div class="description">Registers the plugin with the editor.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/jchemhub.controller.ReactionEditor.html#removeAllWrappers">removeAllWrappers</a></b>()
+								</div>
+								<div class="description">Removes all wrappers and destroys them.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">jchemhub.controller.ReactionEditor.<b><a href="../symbols/jchemhub.controller.ReactionEditor.html#.setActiveEditorId">setActiveEditorId</a></b>(editorId)
+								</div>
+								<div class="description">Sets the active editor id.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/jchemhub.controller.ReactionEditor.html#setupMutationEventHandlersGecko">setupMutationEventHandlersGecko</a></b>()
+								</div>
+								<div class="description">Mutation events tell us when something has changed for mozilla.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/jchemhub.controller.ReactionEditor.html#unregisterPlugin">unregisterPlugin</a></b>(plugin)
+								</div>
+								<div class="description">Unregisters the plugin with this editor.</div>
+							</td>
+						</tr>
+					
+					</tbody>
+				</table>
+				
+				
+				
+			
+
+<!-- ============================== constructor details ==================== -->		
+			
+			<div class="details"><a name="constructor"> </a>
+				<div class="sectionTitle">
+					Class Detail
+				</div>
+				
+				<div class="fixedFont">
+						<b>jchemhub.controller.ReactionEditor</b>(element, opt_config)
+				</div>
+				
+				<div class="description">
+					A graphical editor for reactions
+					
+				</div>
+				
+				
+				
+				
+					
+						<dl class="detailList">
+						<dt class="heading">Parameters:</dt>
+						
+							<dt>
+								 <b>element</b>
+								
+							</dt>
+								<dd></dd>
+						
+							<dt>
+								 <b>opt_config</b>
+								
+							</dt>
+								<dd></dd>
+						
+						</dl>
+					
+					
+					
+					
+					
+					
+					
+
+			</div>
+			
+
+<!-- ============================== field details ========================== -->		
+			
+				<div class="sectionTitle">
+					Field Detail
+				</div>
+				
+					<a name=".defaultConfig"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">jchemhub.controller.ReactionEditor.</span><b>defaultConfig</b>
+					
+					</div>
+					<div class="description">
+						A default configuration for the reaction editor.
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="eventRegister"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>eventRegister</b>
+					
+					</div>
+					<div class="description">
+						
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".EventType"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">jchemhub.controller.ReactionEditor.</span><b>EventType</b>
+					
+					</div>
+					<div class="description">
+						Event types that can be stopped/started.
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="logger"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>logger</b>
+					
+					</div>
+					<div class="description">
+						Logging object.
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".MUTATION_EVENTS_GECKO"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">jchemhub.controller.ReactionEditor.</span><b>MUTATION_EVENTS_GECKO</b>
+					
+					</div>
+					<div class="description">
+						List of mutation events in Gecko browsers.
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					
+				
+			
+
+<!-- ============================== method details ========================= -->		
+			
+				<div class="sectionTitle">
+					Method Detail
+				</div>
+				
+					<a name="addListener"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>addListener</b>(type, listener, opt_capture, opt_handler)
+					
+					</div>
+					<div class="description">
+						Registers a keyboard event listener on the editor. This is necessary for
+Gecko since the fields are contained in an iFrame and there is no way to
+auto-propagate key events up to the main window.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{string|Array.<string>}</span> <b>type</b>
+									
+								</dt>
+								<dd>Event type to listen for or array of event types,
+           for example goog.events.EventType.KEYDOWN.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Function}</span> <b>listener</b>
+									
+								</dt>
+								<dd>Function to be used as the listener.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{boolean=}</span> <b>opt_capture</b>
+									
+								</dt>
+								<dd>Whether to use capture phase (optional, defaults to
+           false).</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Object=}</span> <b>opt_handler</b>
+									
+								</dt>
+								<dd>Object in whose scope to call the listener.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="dispatchBeforeChange"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>dispatchBeforeChange</b>()
+					
+					</div>
+					<div class="description">
+						This dispatches the beforechange event on the editable reaction editor
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="dispatchChange"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>dispatchChange</b>(opt_noDelay)
+					
+					</div>
+					<div class="description">
+						Dispatches the appropriate set of change events. This only fires synchronous
+change events in blended-mode, iframe-using mozilla. It just starts the
+appropriate timer for jchemhub.controller.ReactionEditor.DELAYEDCHANGE. This also
+starts up change events again if they were stopped.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{boolean=}</span> <b>opt_noDelay</b>
+									
+								</dt>
+								<dd>True if jchemhub.controller.ReactionEditor.DELAYEDCHANGE
+           should be fired syncronously.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="dispatchCommandValueChange"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>dispatchCommandValueChange</b>(opt_commands)
+					
+					</div>
+					<div class="description">
+						Dispatches a command value change event.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Array.<string>=}</span> <b>opt_commands</b>
+									
+								</dt>
+								<dd>Commands whose state has changed.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="dispatchSelectionChangeEvent"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>dispatchSelectionChangeEvent</b>(opt_e)
+					
+					</div>
+					<div class="description">
+						Dispatch a selection change event, optionally caused by the given browser
+event.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{goog.events.BrowserEvent=}</span> <b>opt_e</b>
+									
+								</dt>
+								<dd>Optional browser event causing this event.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="disposeInternal"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>disposeInternal</b>()
+					
+					</div>
+					<div class="description">
+						Removes all listeners and destroys the eventhandler object.
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="execCommand"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{Object|boolean}</span>
+					<b>execCommand</b>(command, var_args)
+					
+					</div>
+					<div class="description">
+						Executes an editing command as per the registered plugins.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{string}</span> <b>command</b>
+									
+								</dt>
+								<dd>The command to execute.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{...*}</span> <b>var_args</b>
+									
+								</dt>
+								<dd>Any additional parameters needed to execute the command.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{Object|boolean}</span> False if the command wasn't handled, otherwise, the
+        result of the command.</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name=".getActiveEditorId"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					<span class="light">{?string}</span>
+					<span class="light">jchemhub.controller.ReactionEditor.</span><b>getActiveEditorId</b>()
+					
+					</div>
+					<div class="description">
+						
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{?string}</span> The id of the active editor.</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="getEditableDomHelper"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{goog.dom.DomHelper?}</span>
+					<b>getEditableDomHelper</b>()
+					
+					</div>
+					<div class="description">
+						
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{goog.dom.DomHelper?}</span> The dom helper for the editable node.</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="getModel"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>getModel</b>()
+					
+					</div>
+					<div class="description">
+						gets model
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="getOriginalElement"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{Element}</span>
+					<b>getOriginalElement</b>()
+					
+					</div>
+					<div class="description">
+						Returns original DOM element for the Editor null if that element has not yet
+been found in the appropriate document.
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{Element}</span> The original element.</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="getPluginByClassId"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{<a href="../symbols/jchemhub.controller.Plugin.html#constructor">jchemhub.controller.Plugin</a>}</span>
+					<b>getPluginByClassId</b>(classId)
+					
+					</div>
+					<div class="description">
+						Returns the registered plugin with the given classId.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{string}</span> <b>classId</b>
+									
+								</dt>
+								<dd>classId of the plugin.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{<a href="../symbols/jchemhub.controller.Plugin.html#constructor">jchemhub.controller.Plugin</a>}</span> Registered plugin with the given classId.</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="handleChange"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>handleChange</b>()
+					
+					</div>
+					<div class="description">
+						Handle a change in the Editor. Marks the editor as modified, dispatches the
+change event on the editable field (moz only), starts the timer for the
+delayed change event. Note that these actions only occur if the proper events
+are not stopped.
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="handleEditorLoad"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>handleEditorLoad</b>()
+					
+					</div>
+					<div class="description">
+						Handle the loading of the editor (e.g. once the editor is ready to setup).
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="installStyles"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>installStyles</b>()
+					
+					</div>
+					<div class="description">
+						Installs styles if needed. Only writes styles when they can't be written
+inline directly into the field.
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="isLoaded"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{boolean}</span>
+					<b>isLoaded</b>()
+					
+					</div>
+					<div class="description">
+						
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{boolean}</span> Whether the editor has finished loading.</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="isLoading"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{boolean}</span>
+					<b>isLoading</b>()
+					
+					</div>
+					<div class="description">
+						
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{boolean}</span> Whether the editor is in the process of loading.</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="queryCommandValue"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{*}</span>
+					<b>queryCommandValue</b>(commands)
+					
+					</div>
+					<div class="description">
+						Gets the value of command(s).
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{string|Array.<string>}</span> <b>commands</b>
+									
+								</dt>
+								<dd>String name(s) of the command.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{*}</span> Value of each command. Returns false (or array of falses) if
+        designMode is off or the editor is otherwise uneditable, and there
+        are no activeOnUneditable plugins for the command.</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="registerPlugin"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>registerPlugin</b>(plugin)
+					
+					</div>
+					<div class="description">
+						Registers the plugin with the editor.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{<a href="../symbols/jchemhub.controller.Plugin.html#constructor">jchemhub.controller.Plugin</a>}</span> <b>plugin</b>
+									
+								</dt>
+								<dd>The plugin to register.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="removeAllWrappers"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>removeAllWrappers</b>()
+					
+					</div>
+					<div class="description">
+						Removes all wrappers and destroys them.
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".setActiveEditorId"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">jchemhub.controller.ReactionEditor.</span><b>setActiveEditorId</b>(editorId)
+					
+					</div>
+					<div class="description">
+						Sets the active editor id.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{?string}</span> <b>editorId</b>
+									
+								</dt>
+								<dd>The active editor id.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="setupMutationEventHandlersGecko"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>setupMutationEventHandlersGecko</b>()
+					
+					</div>
+					<div class="description">
+						Mutation events tell us when something has changed for mozilla.
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="unregisterPlugin"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>unregisterPlugin</b>(plugin)
+					
+					</div>
+					<div class="description">
+						Unregisters the plugin with this editor.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{<a href="../symbols/jchemhub.controller.Plugin.html#constructor">jchemhub.controller.Plugin</a>}</span> <b>plugin</b>
+									
+								</dt>
+								<dd>The plugin to unregister.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					
+				
+			
+			
+			<hr />
+		</div>
+		
+<!-- ============================== footer ================================= -->
+		<div class="fineprint" style="clear:both">
+			
+			Documentation generated by <a href="http://www.jsdoctoolkit.org/" target="_blank">JsDoc Toolkit</a> 2.0.3 on Sat Jun 05 2010 16:18:54 GMT-0400 (EDT)
+		</div>
+	</body>
+</html>

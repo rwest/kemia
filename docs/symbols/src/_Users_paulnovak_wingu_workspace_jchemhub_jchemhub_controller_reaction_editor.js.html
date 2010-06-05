@@ -1,0 +1,1061 @@
+<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"> <style>
+	.KEYW {color: #933;}
+	.COMM {color: #bbb; font-style: italic;}
+	.NUMB {color: #393;}
+	.STRN {color: #393;}
+	.REGX {color: #339;}
+	.line {border-right: 1px dotted #666; color: #666; font-style: normal;}
+	</style></head><body><pre><span class='line'>  1</span> <span class="NAME">goog.provide</span><span class="PUNC">(</span><span class="STRN">"jchemhub.controller.ReactionEditor"</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>  2</span> </span><span class="NAME">goog.provide</span><span class="PUNC">(</span><span class="STRN">"jchemhub.controller.ReactionEditor.EventType"</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>  3</span> </span><span class="NAME">goog.require</span><span class="PUNC">(</span><span class="STRN">"jchemhub.controller.ReactionController"</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>  4</span> </span><span class="NAME">goog.require</span><span class="PUNC">(</span><span class="STRN">"jchemhub.view.ReactionRenderer"</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>  5</span> </span><span class="NAME">goog.require</span><span class="PUNC">(</span><span class="STRN">"jchemhub.view.MoleculeRenderer"</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>  6</span> </span><span class="NAME">goog.require</span><span class="PUNC">(</span><span class="STRN">"goog.graphics"</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>  7</span> </span><span class="NAME">goog.require</span><span class="PUNC">(</span><span class="STRN">'goog.events'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>  8</span> </span><span class="NAME">goog.require</span><span class="PUNC">(</span><span class="STRN">'goog.fx.Dragger'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>  9</span> </span><span class="NAME">goog.require</span><span class="PUNC">(</span><span class="STRN">'goog.fx.Dragger.EventType'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 10</span> </span><span class="NAME">goog.require</span><span class="PUNC">(</span><span class="STRN">'goog.editor.BrowserFeature'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 11</span> </span><span class="NAME">goog.require</span><span class="PUNC">(</span><span class="STRN">'goog.async.Delay'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 12</span> </span><span class="NAME">goog.require</span><span class="PUNC">(</span><span class="STRN">'jchemhub.controller.Plugin'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 13</span> 
+<span class='line'> 14</span> 
+<span class='line'> 15</span> 
+<span class='line'> 16</span> 
+<span class='line'> 17</span> </span><span class="COMM">/**
+<span class='line'> 18</span>  * A graphical editor for reactions
+<span class='line'> 19</span>  * 
+<span class='line'> 20</span>  * 
+<span class='line'> 21</span>  * @constructor
+<span class='line'> 22</span>  * @extends {goog.events.EventTarget}
+<span class='line'> 23</span>  */</span><span class="WHIT">
+<span class='line'> 24</span> </span><span class="NAME">jchemhub.controller.ReactionEditor</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">element</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">opt_config</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 25</span> 	</span><span class="NAME">goog.events.EventTarget.call</span><span class="PUNC">(</span><span class="KEYW">this</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 26</span> 	</span><span class="NAME">this.originalElement</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">element</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 27</span> 	</span><span class="NAME">this.id</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">element.id</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 28</span> 	</span><span class="NAME">this.editableDomHelper</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">goog.dom.getDomHelper</span><span class="PUNC">(</span><span class="NAME">element</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 29</span> 	</span><span class="COMM">/**
+<span class='line'> 30</span> 	 * Map of class id to registered plugin.
+<span class='line'> 31</span> 	 * 
+<span class='line'> 32</span> 	 * @type {Object}
+<span class='line'> 33</span> 	 * @private
+<span class='line'> 34</span> 	 */</span><span class="WHIT">
+<span class='line'> 35</span> 	</span><span class="NAME">this.plugins_</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 36</span> 
+<span class='line'> 37</span> 	</span><span class="COMM">/**
+<span class='line'> 38</span> 	 * Plugins registered on this field, indexed by the jchemhub.controller.Plugin.Op
+<span class='line'> 39</span> 	 * that they support.
+<span class='line'> 40</span> 	 * 
+<span class='line'> 41</span> 	 * @type {Object.&lt;Array>}
+<span class='line'> 42</span> 	 * @private
+<span class='line'> 43</span> 	 */</span><span class="WHIT">
+<span class='line'> 44</span> 	</span><span class="NAME">this.indexedPlugins_</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 45</span> 
+<span class='line'> 46</span> 	</span><span class="KEYW">for</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="WHIT"> </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">op</span><span class="WHIT"> </span><span class="KEYW">in</span><span class="WHIT"> </span><span class="NAME">jchemhub.controller.Plugin.OPCODE</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 47</span> 		</span><span class="NAME">this.indexedPlugins_</span><span class="PUNC">[</span><span class="NAME">op</span><span class="PUNC">]</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">[</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 48</span> 	</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 49</span> 	</span><span class="NAME">this.config</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">goog.structs.Map</span><span class="PUNC">(</span><span class="WHIT">
+<span class='line'> 50</span> 			</span><span class="NAME">jchemhub.controller.ReactionEditor.defaultConfig</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 51</span> 	</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">opt_config</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 52</span> 		</span><span class="NAME">this.config.addAll</span><span class="PUNC">(</span><span class="NAME">opt_config</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT"> </span><span class="COMM">// merge optional config into</span><span class="WHIT">
+<span class='line'> 53</span> 		</span><span class="COMM">// defaults</span><span class="WHIT">
+<span class='line'> 54</span> 	</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 55</span> 
+<span class='line'> 56</span> 	</span><span class="NAME">this.graphics</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">goog.graphics.createGraphics</span><span class="PUNC">(</span><span class="NAME">element.clientWidth</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 57</span> 			</span><span class="NAME">element.clientHeight</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 58</span> 
+<span class='line'> 59</span> 	</span><span class="NAME">this.graphics.render</span><span class="PUNC">(</span><span class="NAME">this.originalElement</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 60</span> 
+<span class='line'> 61</span> 	</span><span class="NAME">this.reactionController</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">jchemhub.controller.ReactionController</span><span class="PUNC">(</span><span class="KEYW">this</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 62</span> 	</span><span class="NAME">this.reactionRenderer</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">jchemhub.view.ReactionRenderer</span><span class="PUNC">(</span><span class="NAME">this.reactionController</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">this.graphics</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 63</span> 	</span><span class="NAME">this.moleculeRenderer</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">jchemhub.view.MoleculeRenderer</span><span class="PUNC">(</span><span class="KEYW">this</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">this.graphics</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 64</span> 
+<span class='line'> 65</span> 	</span><span class="COMM">// The editor will not listen to change events until it has finished loading</span><span class="WHIT">
+<span class='line'> 66</span> 	</span><span class="COMM">// this.stoppedEvents_ = {};</span><span class="WHIT">
+<span class='line'> 67</span> 	</span><span class="COMM">// this.stopEvent(jchemhub.controller.ReactionEditor.EventType.CHANGE);</span><span class="WHIT">
+<span class='line'> 68</span> 	</span><span class="COMM">// this.stopEvent(jchemhub.controller.ReactionEditor.EventType.DELAYEDCHANGE);</span><span class="WHIT">
+<span class='line'> 69</span> 	</span><span class="NAME">this.isModified_</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 70</span> 	</span><span class="NAME">this.isEverModified_</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 71</span> 	</span><span class="COMM">//</span><span class="WHIT">
+<span class='line'> 72</span> 	</span><span class="COMM">// this.delayedChangeTimer_ = new goog.async.Delay(</span><span class="WHIT">
+<span class='line'> 73</span> 	</span><span class="COMM">// this.dispatchDelayedChange_,</span><span class="WHIT">
+<span class='line'> 74</span> 	</span><span class="COMM">// jchemhub.controller.ReactionEditor.DELAYED_CHANGE_FREQUENCY, this);</span><span class="WHIT">
+<span class='line'> 75</span> 
+<span class='line'> 76</span> 	</span><span class="COMM">/**
+<span class='line'> 77</span> 	 * @type {goog.events.EventHandler}
+<span class='line'> 78</span> 	 * @protected
+<span class='line'> 79</span> 	 */</span><span class="WHIT">
+<span class='line'> 80</span> 	</span><span class="NAME">this.eventRegister</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">goog.events.EventHandler</span><span class="PUNC">(</span><span class="KEYW">this</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 81</span> 
+<span class='line'> 82</span> 	</span><span class="COMM">// Wrappers around this editor, to be disposed when the editor is disposed.</span><span class="WHIT">
+<span class='line'> 83</span> 	</span><span class="NAME">this.wrappers_</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">[</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 84</span> 
+<span class='line'> 85</span> 	</span><span class="NAME">this.handleEditorLoad</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 86</span> 
+<span class='line'> 87</span> 	</span><span class="NAME">this.loadState_</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">jchemhub.controller.ReactionEditor.LoadState_.EDITABLE</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 88</span> 
+<span class='line'> 89</span> 	</span><span class="NAME">this.isModified_</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 90</span> 	</span><span class="NAME">this.isEverModified_</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 91</span> 	
+<span class='line'> 92</span> 	</span><span class="COMM">// currently selected model objects</span><span class="WHIT">
+<span class='line'> 93</span> 	</span><span class="NAME">this.selected</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">[</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 94</span> 
+<span class='line'> 95</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 96</span> </span><span class="NAME">goog.inherits</span><span class="PUNC">(</span><span class="NAME">jchemhub.controller.ReactionEditor</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">goog.events.EventTarget</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 97</span> 
+<span class='line'> 98</span> </span><span class="COMM">/**
+<span class='line'> 99</span>  * List of mutation events in Gecko browsers.
+<span class='line'>100</span>  * 
+<span class='line'>101</span>  * @type {Array.&lt;string>}
+<span class='line'>102</span>  * @protected
+<span class='line'>103</span>  */</span><span class="WHIT">
+<span class='line'>104</span> </span><span class="NAME">jchemhub.controller.ReactionEditor.MUTATION_EVENTS_GECKO</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">[</span><span class="WHIT"> </span><span class="STRN">'DOMNodeInserted'</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>105</span> 		</span><span class="STRN">'DOMNodeRemoved'</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="STRN">'DOMNodeRemovedFromDocument'</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>106</span> 		</span><span class="STRN">'DOMNodeInsertedIntoDocument'</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="STRN">'DOMCharacterDataModified'</span><span class="WHIT"> </span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>107</span> 
+<span class='line'>108</span> </span><span class="COMM">/**
+<span class='line'>109</span>  * Sets the active editor id.
+<span class='line'>110</span>  * 
+<span class='line'>111</span>  * @param {?string}
+<span class='line'>112</span>  *            editorId The active editor id.
+<span class='line'>113</span>  */</span><span class="WHIT">
+<span class='line'>114</span> </span><span class="NAME">jchemhub.controller.ReactionEditor.setActiveEditorId</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">editorId</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>115</span> 	</span><span class="NAME">jchemhub.controller.ReactionEditor.activeEditorId_</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">editorId</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>116</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>117</span> 
+<span class='line'>118</span> </span><span class="COMM">/**
+<span class='line'>119</span>  * @return {goog.dom.DomHelper?} The dom helper for the editable node.
+<span class='line'>120</span>  */</span><span class="WHIT">
+<span class='line'>121</span> </span><span class="NAME">jchemhub.controller.ReactionEditor.prototype.getEditableDomHelper</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>122</span> 	</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">this.editableDomHelper</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>123</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>124</span> 
+<span class='line'>125</span> </span><span class="COMM">/**
+<span class='line'>126</span>  * @return {?string} The id of the active editor.
+<span class='line'>127</span>  */</span><span class="WHIT">
+<span class='line'>128</span> </span><span class="NAME">jchemhub.controller.ReactionEditor.getActiveEditorId</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>129</span> 	</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">jchemhub.controller.ReactionEditor.activeEditorId_</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>130</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>131</span> 
+<span class='line'>132</span> </span><span class="NAME">jchemhub.controller.ReactionEditor.prototype.clear</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>133</span> 	</span><span class="NAME">this.graphics.clear</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>134</span> 	</span><span class="NAME">this.model</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>135</span> 	</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">fill</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">goog.graphics.SolidFill</span><span class="PUNC">(</span><span class="NAME">this.config.get</span><span class="PUNC">(</span><span class="STRN">"background"</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">color</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>136</span> 
+<span class='line'>137</span> 	</span><span class="NAME">this.graphics.drawRect</span><span class="PUNC">(</span><span class="NUMB">0</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">this.graphics.getSize</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">width</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">this.graphics</span><span class="WHIT">
+<span class='line'>138</span> 			</span><span class="PUNC">.</span><span class="NAME">getSize</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">height</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">fill</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>139</span> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>140</span> 
+<span class='line'>141</span> </span><span class="NAME">jchemhub.controller.ReactionEditor.prototype.getScaleFactor</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>142</span> 	</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">this.reactionRenderer.scale_factor</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>143</span> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>144</span> 
+<span class='line'>145</span> </span><span class="NAME">jchemhub.controller.ReactionEditor.prototype.setScaleFactor</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">scale</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>146</span> 	</span><span class="NAME">this.reactionRenderer.scale_factor</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">scale</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>147</span> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>148</span> 
+<span class='line'>149</span> </span><span class="NAME">jchemhub.controller.ReactionEditor.prototype.setModel</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">model</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>150</span> 	</span><span class="NAME">this.clear</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>151</span> 	</span><span class="NAME">this.model</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">model</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>152</span> 	</span><span class="NAME">this.render</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>153</span> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>154</span> 
+<span class='line'>155</span> </span><span class="NAME">jchemhub.controller.ReactionEditor.prototype.render</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>156</span> 	</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">this.model</span><span class="WHIT"> </span><span class="KEYW">instanceof</span><span class="WHIT"> </span><span class="NAME">jchemhub.model.Reaction</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>157</span> 		</span><span class="NAME">this.reactionRenderer.render</span><span class="PUNC">(</span><span class="NAME">this.model</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>158</span> 	</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>159</span> 	</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">this.model</span><span class="WHIT"> </span><span class="KEYW">instanceof</span><span class="WHIT"> </span><span class="NAME">jchemhub.model.Molecule</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>160</span> 		</span><span class="NAME">this.moleculeRenderer.render</span><span class="PUNC">(</span><span class="NAME">this.model</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>161</span> 	</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>162</span> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>163</span> 
+<span class='line'>164</span> </span><span class="COMM">/**
+<span class='line'>165</span>  * gets model
+<span class='line'>166</span>  * 
+<span class='line'>167</span>  * @return{jchemhub.model.Reaction | jchemhub.model.Molecule}
+<span class='line'>168</span>  */</span><span class="WHIT">
+<span class='line'>169</span> </span><span class="NAME">jchemhub.controller.ReactionEditor.prototype.getModel</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>170</span> 	</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">this.model</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>171</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>172</span> 
+<span class='line'>173</span> </span><span class="COMM">/**
+<span class='line'>174</span>  * This dispatches the beforechange event on the editable reaction editor
+<span class='line'>175</span>  */</span><span class="WHIT">
+<span class='line'>176</span> </span><span class="NAME">jchemhub.controller.ReactionEditor.prototype.dispatchBeforeChange</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>177</span> 	</span><span class="NAME">this.logger.info</span><span class="PUNC">(</span><span class="STRN">'dispatchBeforeChange'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>178</span> 	</span><span class="COMM">// if (this</span><span class="WHIT">
+<span class='line'>179</span> 	</span><span class="COMM">// .isEventStopped(jchemhub.controller.ReactionEditor.EventType.BEFORECHANGE)) {</span><span class="WHIT">
+<span class='line'>180</span> 	</span><span class="COMM">// return;</span><span class="WHIT">
+<span class='line'>181</span> 	</span><span class="COMM">// }</span><span class="WHIT">
+<span class='line'>182</span> 
+<span class='line'>183</span> 	</span><span class="NAME">this.dispatchEvent</span><span class="PUNC">(</span><span class="NAME">jchemhub.controller.ReactionEditor.EventType.BEFORECHANGE</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>184</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>185</span> </span><span class="COMM">//</span><span class="WHIT">
+<span class='line'>186</span> </span><span class="COMM">// /**</span><span class="WHIT">
+<span class='line'>187</span> </span><span class="COMM">// * Checks if the event of the given type has stopped being dispatched</span><span class="WHIT">
+<span class='line'>188</span> </span><span class="COMM">// *</span><span class="WHIT">
+<span class='line'>189</span> </span><span class="COMM">// * @param {goog.editor.Field.EventType}</span><span class="WHIT">
+<span class='line'>190</span> </span><span class="COMM">// * eventType type of event to check.</span><span class="WHIT">
+<span class='line'>191</span> </span><span class="COMM">// * @return {boolean} true if the event has been stopped with stopEvent().</span><span class="WHIT">
+<span class='line'>192</span> </span><span class="COMM">// * @protected</span><span class="WHIT">
+<span class='line'>193</span> </span><span class="COMM">// */</span><span class="WHIT">
+<span class='line'>194</span> </span><span class="COMM">// jchemhub.controller.ReactionEditor.prototype.isEventStopped = function(eventType) {</span><span class="WHIT">
+<span class='line'>195</span> </span><span class="COMM">// return !!this.stoppedEvents_[eventType];</span><span class="WHIT">
+<span class='line'>196</span> </span><span class="COMM">// };</span><span class="WHIT">
+<span class='line'>197</span> 
+<span class='line'>198</span> </span><span class="COMM">/**
+<span class='line'>199</span>  * Calls all the plugins of the given operation, in sequence, with the given
+<span class='line'>200</span>  * arguments. This is short-circuiting: once one plugin cancels the event, no
+<span class='line'>201</span>  * more plugins will be invoked.
+<span class='line'>202</span>  * 
+<span class='line'>203</span>  * @param {jchemhub.controller.Plugin.Op}
+<span class='line'>204</span>  *            op A plugin op.
+<span class='line'>205</span>  * @param {...*}
+<span class='line'>206</span>  *            var_args The arguments to the plugin.
+<span class='line'>207</span>  * @return {boolean} True if one of the plugins cancel the event, false
+<span class='line'>208</span>  *         otherwise.
+<span class='line'>209</span>  * @private
+<span class='line'>210</span>  */</span><span class="WHIT">
+<span class='line'>211</span> </span><span class="NAME">jchemhub.controller.ReactionEditor.prototype.invokeShortCircuitingOp_</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">op</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>212</span> 		</span><span class="NAME">var_args</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>213</span> 	</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">plugins</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.indexedPlugins_</span><span class="PUNC">[</span><span class="NAME">op</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>214</span> 	</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">argList</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">goog.array.slice</span><span class="PUNC">(</span><span class="NAME">arguments</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NUMB">1</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>215</span> 	</span><span class="KEYW">for</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="WHIT"> </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">i</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT"> </span><span class="NAME">i</span><span class="WHIT"> </span><span class="XML">&lt; plugins.length; ++i) {
+<span class='line'>216</span> 		// If the plugin returns true, that means it handled the event and
+<span class='line'>217</span> 		// we shouldn't propagate to the other plugins.
+<span class='line'>218</span> 		var plugin = plugins[i];
+<span class='line'>219</span> 		if ((plugin.isEnabled(this) || jchemhub.controller.Plugin.IRREPRESSIBLE_OPS[op])
+<span class='line'>220</span> 				&& plugin[jchemhub.controller.Plugin.OPCODE[op]].apply(plugin,
+<span class='line'>221</span> 						argList)) {
+<span class='line'>222</span> 			// Only one plugin is allowed to handle the event. If for some
+<span class='line'>223</span> 			// reason
+<span class='line'>224</span> 			// a plugin wants to handle it and still allow other plugins to
+<span class='line'>225</span> 			// handle
+<span class='line'>226</span> 			// it, it shouldn't return true.
+<span class='line'>227</span> 			return true;
+<span class='line'>228</span> 		}
+<span class='line'>229</span> 	}
+<span class='line'>230</span> 
+<span class='line'>231</span> 	return false;
+<span class='line'>232</span> };
+<span class='line'>233</span> 
+<span class='line'>234</span> /**
+<span class='line'>235</span>  * Handles keyboard shortcuts on the editor. Note that we bake this into our
+<span class='line'>236</span>  * handleKeyPress/handleKeyDown rather than using goog.events.KeyHandler or
+<span class='line'>237</span>  * goog.ui.KeyboardShortcutHandler for performance reasons. Since these are
+<span class='line'>238</span>  * handled on every key stroke, we do not want to be going out to the event
+<span class='line'>239</span>  * system every time.
+<span class='line'>240</span>  * 
+<span class='line'>241</span>  * @param {goog.events.BrowserEvent}
+<span class='line'>242</span>  *            e The browser event.
+<span class='line'>243</span>  * @private
+<span class='line'>244</span>  */
+<span class='line'>245</span> jchemhub.controller.ReactionEditor.prototype.handleKeyboardShortcut_ = function(e) {
+<span class='line'>246</span> 	// Alt key is used for i18n languages to enter certain characters. like
+<span class='line'>247</span> 	// control + alt + z (used for IMEs) and control + alt + s for Polish.
+<span class='line'>248</span> 	// So we don't invoke handleKeyboardShortcut at all for alt keys.
+<span class='line'>249</span> 	if (e.altKey) {
+<span class='line'>250</span> 		return;
+<span class='line'>251</span> 	}
+<span class='line'>252</span> 
+<span class='line'>253</span> 	var isModifierPressed = goog.userAgent.MAC ? e.metaKey : e.ctrlKey;
+<span class='line'>254</span> 	if (isModifierPressed
+<span class='line'>255</span> 			|| jchemhub.controller.ReactionEditor.POTENTIAL_SHORTCUT_KEYCODES_[e.keyCode]) {
+<span class='line'>256</span> 		// TODO: goog.events.KeyHandler uses much more complicated logic
+<span class='line'>257</span> 		// to determine key. Consider changing to what they do.
+<span class='line'>258</span> 		var key = e.charCode || e.keyCode;
+<span class='line'>259</span> 
+<span class='line'>260</span> 		if (key == 17) { // Ctrl key
+<span class='line'>261</span> 			// In IE and Webkit pressing Ctrl key itself results in this event.
+<span class='line'>262</span> 			return;
+<span class='line'>263</span> 		}
+<span class='line'>264</span> 
+<span class='line'>265</span> 		var stringKey = String.fromCharCode(key).toLowerCase();
+<span class='line'>266</span> 		if (this.invokeShortCircuitingOp_(jchemhub.controller.Plugin.Op.SHORTCUT, e,
+<span class='line'>267</span> 				stringKey, isModifierPressed)) {
+<span class='line'>268</span> 			e.preventDefault();
+<span class='line'>269</span> 			// We don't call stopPropagation as some other handler outside of
+<span class='line'>270</span> 			// trogedit might need it.
+<span class='line'>271</span> 		}
+<span class='line'>272</span> 	}
+<span class='line'>273</span> };
+<span class='line'>274</span> 
+<span class='line'>275</span> /**
+<span class='line'>276</span>  * Handle a change in the Editor. Marks the editor as modified, dispatches the
+<span class='line'>277</span>  * change event on the editable field (moz only), starts the timer for the
+<span class='line'>278</span>  * delayed change event. Note that these actions only occur if the proper events
+<span class='line'>279</span>  * are not stopped.
+<span class='line'>280</span>  */
+<span class='line'>281</span> jchemhub.controller.ReactionEditor.prototype.handleChange = function() {
+<span class='line'>282</span> 	// if (this.isEventStopped(jchemhub.controller.ReactionEditor.EventType.CHANGE)) {
+<span class='line'>283</span> 	// return;
+<span class='line'>284</span> 	// }
+<span class='line'>285</span> 
+<span class='line'>286</span> 	// Clear the changeTimerGecko_ if it's active, since any manual call to
+<span class='line'>287</span> 	// handle change is equiavlent to changeTimerGecko_.fire().
+<span class='line'>288</span> 	if (this.changeTimerGecko_) {
+<span class='line'>289</span> 		this.changeTimerGecko_.stop();
+<span class='line'>290</span> 	}
+<span class='line'>291</span> 
+<span class='line'>292</span> 	this.isModified_ = true;
+<span class='line'>293</span> 	this.isEverModified_ = true;
+<span class='line'>294</span> 
+<span class='line'>295</span> 	// if (this
+<span class='line'>296</span> 	// .isEventStopped(jchemhub.controller.ReactionEditor.EventType.DELAYEDCHANGE)) {
+<span class='line'>297</span> 	// return;
+<span class='line'>298</span> 	// }
+<span class='line'>299</span> 
+<span class='line'>300</span> 	// this.delayedChangeTimer_.start();
+<span class='line'>301</span> };
+<span class='line'>302</span> 
+<span class='line'>303</span> /**
+<span class='line'>304</span>  * Handles keydown on the editor.
+<span class='line'>305</span>  * 
+<span class='line'>306</span>  * @param {goog.events.BrowserEvent}
+<span class='line'>307</span>  *            e The browser event.
+<span class='line'>308</span>  * @private
+<span class='line'>309</span>  */
+<span class='line'>310</span> jchemhub.controller.ReactionEditor.prototype.handleKeyDown_ = function(e) {
+<span class='line'>311</span> 
+<span class='line'>312</span> 	this.handleKeyboardShortcut_(e);
+<span class='line'>313</span> };
+<span class='line'>314</span> 
+<span class='line'>315</span> /**
+<span class='line'>316</span>  * Handles keypress on the field.
+<span class='line'>317</span>  * 
+<span class='line'>318</span>  * @param {goog.events.BrowserEvent}
+<span class='line'>319</span>  *            e The browser event.
+<span class='line'>320</span>  * @private
+<span class='line'>321</span>  */
+<span class='line'>322</span> jchemhub.controller.ReactionEditor.prototype.handleKeyPress_ = function(e) {
+<span class='line'>323</span> 	this.gotGeneratingKey_ = true;
+<span class='line'>324</span> 	this.dispatchBeforeChange();
+<span class='line'>325</span> 	this.handleKeyboardShortcut_(e);
+<span class='line'>326</span> };
+<span class='line'>327</span> 
+<span class='line'>328</span> /**
+<span class='line'>329</span>  * Handles keyup on the editor.
+<span class='line'>330</span>  * 
+<span class='line'>331</span>  * @param {goog.events.BrowserEvent}
+<span class='line'>332</span>  *            e The browser event.
+<span class='line'>333</span>  * @private
+<span class='line'>334</span>  */
+<span class='line'>335</span> jchemhub.controller.ReactionEditor.prototype.handleKeyUp_ = function(e) {
+<span class='line'>336</span> 
+<span class='line'>337</span> 	this.invokeShortCircuitingOp_(jchemhub.controller.Plugin.Op.KEYUP, e);
+<span class='line'>338</span> 
+<span class='line'>339</span> 	if (this
+<span class='line'>340</span> 			.isEventStopped(jchemhub.controller.ReactionEditor.EventType.SELECTIONCHANGE)) {
+<span class='line'>341</span> 		return;
+<span class='line'>342</span> 	}
+<span class='line'>343</span> 
+<span class='line'>344</span> 	this.selectionChangeTimer_.start();
+<span class='line'>345</span> 
+<span class='line'>346</span> };
+<span class='line'>347</span> 
+<span class='line'>348</span> jchemhub.controller.ReactionEditor.prototype.handleMouseDown_ = function(e) {
+<span class='line'>349</span> 
+<span class='line'>350</span> 	this.invokeShortCircuitingOp_(jchemhub.controller.Plugin.Op.MOUSEDOWN, e);
+<span class='line'>351</span> 
+<span class='line'>352</span> }
+<span class='line'>353</span> 
+<span class='line'>354</span> jchemhub.controller.ReactionEditor.prototype.handleMouseUp_ = function(e) {
+<span class='line'>355</span> 	this.invokeShortCircuitingOp_(jchemhub.controller.Plugin.Op.MOUSEUP, e);
+<span class='line'>356</span> }
+<span class='line'>357</span> 
+<span class='line'>358</span> jchemhub.controller.ReactionEditor.prototype.handleAtomMouseDown_ = function(e){
+<span class='line'>359</span> 	this.invokeShortCircuitingOp_(jchemhub.controller.Plugin.Op.ATOM_MOUSEDOWN, e);
+<span class='line'>360</span> }
+<span class='line'>361</span> 
+<span class='line'>362</span> jchemhub.controller.ReactionEditor.prototype.handleAtomMouseOver_ = function(e){
+<span class='line'>363</span> 	this.invokeShortCircuitingOp_(jchemhub.controller.Plugin.Op.ATOM_MOUSEOVER, e);
+<span class='line'>364</span> }
+<span class='line'>365</span> 
+<span class='line'>366</span> jchemhub.controller.ReactionEditor.prototype.handleAtomMouseOut_ = function(e){
+<span class='line'>367</span> 	this.invokeShortCircuitingOp_(jchemhub.controller.Plugin.Op.ATOM_MOUSEOUT, e);
+<span class='line'>368</span> }
+<span class='line'>369</span> jchemhub.controller.ReactionEditor.prototype.handleBondMouseOver_ = function(e){
+<span class='line'>370</span> 	this.invokeShortCircuitingOp_(jchemhub.controller.Plugin.Op.BOND_MOUSEOVER, e);
+<span class='line'>371</span> }
+<span class='line'>372</span> 
+<span class='line'>373</span> jchemhub.controller.ReactionEditor.prototype.handleBondMouseOut_ = function(e){
+<span class='line'>374</span> 	this.invokeShortCircuitingOp_(jchemhub.controller.Plugin.Op.BOND_MOUSEOUT, e);
+<span class='line'>375</span> }
+<span class='line'>376</span> 
+<span class='line'>377</span> jchemhub.controller.ReactionEditor.prototype.handleBondMouseDown_ = function(e){
+<span class='line'>378</span> 	this.invokeShortCircuitingOp_(jchemhub.controller.Plugin.Op.BOND_MOUSEDOWN, e);
+<span class='line'>379</span> }
+<span class='line'>380</span> 
+<span class='line'>381</span> /**
+<span class='line'>382</span>  * Gets the value of this command.
+<span class='line'>383</span>  * 
+<span class='line'>384</span>  * @param {string}
+<span class='line'>385</span>  *            command The command to check.
+<span class='line'>386</span>  * @param {boolean}
+<span class='line'>387</span>  *            isEditable Whether the field is currently editable.
+<span class='line'>388</span>  * @return {string|boolean|null} The state of this command. Null if not handled.
+<span class='line'>389</span>  *         False if the field is uneditable and there are no handlers for
+<span class='line'>390</span>  *         uneditable commands.
+<span class='line'>391</span>  * @private
+<span class='line'>392</span>  */
+<span class='line'>393</span> jchemhub.controller.ReactionEditor.prototype.queryCommandValueInternal_ = function(
+<span class='line'>394</span> 		command, isEditable) {
+<span class='line'>395</span> 	var plugins = this.indexedPlugins_[jchemhub.controller.Plugin.Op.QUERY_COMMAND];
+<span class='line'>396</span> 	for ( var i = 0; i &lt; plugins.length; ++i) {
+<span class='line'>397</span> 		var plugin = plugins[i];
+<span class='line'>398</span> 		if (plugin.isEnabled(this) && plugin.isSupportedCommand(command)
+<span class='line'>399</span> 				&& (isEditable || plugin.activeOnUneditableEditors())) {
+<span class='line'>400</span> 			return plugin.queryCommandValue(command);
+<span class='line'>401</span> 		}
+<span class='line'>402</span> 	}
+<span class='line'>403</span> 	return isEditable ? null : false;
+<span class='line'>404</span> };
+<span class='line'>405</span> 
+<span class='line'>406</span> /**
+<span class='line'>407</span>  * Gets the value of command(s).
+<span class='line'>408</span>  * 
+<span class='line'>409</span>  * @param {string|Array.&lt;string></span><span class="PUNC">}</span><span class="WHIT"> </span><span class="NAME">commands</span><span class="WHIT"> </span><span class="NAME">String</span><span class="WHIT"> </span><span class="NAME">name</span><span class="PUNC">(</span><span class="NAME">s</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="NAME">of</span><span class="WHIT"> </span><span class="NAME">the</span><span class="WHIT"> </span><span class="NAME">command.</span><span class="WHIT">
+<span class='line'>410</span>  </span><span class="PUNC">*</span><span class="WHIT"> </span><span class="TOKN">@</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="PUNC">*</span><span class="PUNC">}</span><span class="WHIT"> </span><span class="NAME">Value</span><span class="WHIT"> </span><span class="NAME">of</span><span class="WHIT"> </span><span class="NAME">each</span><span class="WHIT"> </span><span class="NAME">command.</span><span class="WHIT"> </span><span class="NAME">Returns</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">or</span><span class="WHIT"> </span><span class="NAME">array</span><span class="WHIT"> </span><span class="NAME">of</span><span class="WHIT"> </span><span class="NAME">falses</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="KEYW">if</span><span class="WHIT">
+<span class='line'>411</span>  </span><span class="PUNC">*</span><span class="WHIT">         </span><span class="NAME">designMode</span><span class="WHIT"> </span><span class="NAME">is</span><span class="WHIT"> </span><span class="NAME">off</span><span class="WHIT"> </span><span class="NAME">or</span><span class="WHIT"> </span><span class="NAME">the</span><span class="WHIT"> </span><span class="NAME">editor</span><span class="WHIT"> </span><span class="NAME">is</span><span class="WHIT"> </span><span class="NAME">otherwise</span><span class="WHIT"> </span><span class="NAME">uneditable</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">and</span><span class="WHIT"> </span><span class="NAME">there</span><span class="WHIT">
+<span class='line'>412</span>  </span><span class="PUNC">*</span><span class="WHIT">         </span><span class="NAME">are</span><span class="WHIT"> </span><span class="NAME">no</span><span class="WHIT"> </span><span class="NAME">activeOnUneditable</span><span class="WHIT"> </span><span class="NAME">plugins</span><span class="WHIT"> </span><span class="KEYW">for</span><span class="WHIT"> </span><span class="NAME">the</span><span class="WHIT"> </span><span class="NAME">command.</span><span class="WHIT">
+<span class='line'>413</span>  </span><span class="PUNC">*</span><span class="REGX">/
+<span class='line'>414</span> jchemhub.controller.ReactionEditor.prototype.queryCommandValue = function(commands) {
+<span class='line'>415</span> 	var isEditable = this.isLoaded();
+<span class='line'>416</span> 	if (goog.isString(commands)) {
+<span class='line'>417</span> 		return this.queryCommandValueInternal_(commands, isEditable);
+<span class='line'>418</span> 	} else {
+<span class='line'>419</span> 		var state = {};
+<span class='line'>420</span> 		for ( var i = 0; i &lt; commands.length; i++) {
+<span class='line'>421</span> 			state[commands[i]] = this.queryCommandValueInternal_(commands[i],
+<span class='line'>422</span> 					isEditable);
+<span class='line'>423</span> 		}
+<span class='line'>424</span> 		return state;
+<span class='line'>425</span> 	}
+<span class='line'>426</span> };
+<span class='line'>427</span> 
+<span class='line'>428</span> /</span><span class="REGX">/ /</span><span class="PUNC">*</span><span class="PUNC">*</span><span class="WHIT">
+<span class='line'>429</span> </span><span class="COMM">// * Dispatch a delayed change event.</span><span class="WHIT">
+<span class='line'>430</span> </span><span class="COMM">// *</span><span class="WHIT">
+<span class='line'>431</span> </span><span class="COMM">// * @private</span><span class="WHIT">
+<span class='line'>432</span> </span><span class="COMM">// */</span><span class="WHIT">
+<span class='line'>433</span> </span><span class="COMM">// jchemhub.controller.ReactionEditor.prototype.dispatchDelayedChange_ = function() {</span><span class="WHIT">
+<span class='line'>434</span> </span><span class="COMM">// if (this</span><span class="WHIT">
+<span class='line'>435</span> </span><span class="COMM">// .isEventStopped(jchemhub.controller.ReactionEditor.EventType.DELAYEDCHANGE)) {</span><span class="WHIT">
+<span class='line'>436</span> </span><span class="COMM">// return;</span><span class="WHIT">
+<span class='line'>437</span> </span><span class="COMM">// }</span><span class="WHIT">
+<span class='line'>438</span> </span><span class="COMM">// // Clear the delayedChangeTimer_ if it's active, since any manual call to</span><span class="WHIT">
+<span class='line'>439</span> </span><span class="COMM">// // dispatchDelayedChange_ is equivalent to delayedChangeTimer_.fire().</span><span class="WHIT">
+<span class='line'>440</span> </span><span class="COMM">// this.delayedChangeTimer_.stop();</span><span class="WHIT">
+<span class='line'>441</span> </span><span class="COMM">// this.isModified_ = false;</span><span class="WHIT">
+<span class='line'>442</span> </span><span class="COMM">// this.dispatchEvent(jchemhub.controller.ReactionEditor.EventType.DELAYEDCHANGE);</span><span class="WHIT">
+<span class='line'>443</span> </span><span class="COMM">// };</span><span class="WHIT">
+<span class='line'>444</span> 
+<span class='line'>445</span> </span><span class="COMM">/**
+<span class='line'>446</span>  * Dispatches the appropriate set of change events. This only fires synchronous
+<span class='line'>447</span>  * change events in blended-mode, iframe-using mozilla. It just starts the
+<span class='line'>448</span>  * appropriate timer for jchemhub.controller.ReactionEditor.DELAYEDCHANGE. This also
+<span class='line'>449</span>  * starts up change events again if they were stopped.
+<span class='line'>450</span>  * 
+<span class='line'>451</span>  * @param {boolean=}
+<span class='line'>452</span>  *            opt_noDelay True if jchemhub.controller.ReactionEditor.DELAYEDCHANGE
+<span class='line'>453</span>  *            should be fired syncronously.
+<span class='line'>454</span>  */</span><span class="WHIT">
+<span class='line'>455</span> </span><span class="NAME">jchemhub.controller.ReactionEditor.prototype.dispatchChange</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">opt_noDelay</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>456</span> 	</span><span class="NAME">this.handleChange</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>457</span> 	</span><span class="COMM">// this.startChangeEvents(true, opt_noDelay)</span><span class="WHIT">
+<span class='line'>458</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>459</span> 
+<span class='line'>460</span> </span><span class="COMM">/**
+<span class='line'>461</span>  * Dispatch a selection change event, optionally caused by the given browser
+<span class='line'>462</span>  * event.
+<span class='line'>463</span>  * 
+<span class='line'>464</span>  * @param {goog.events.BrowserEvent=}
+<span class='line'>465</span>  *            opt_e Optional browser event causing this event.
+<span class='line'>466</span>  */</span><span class="WHIT">
+<span class='line'>467</span> </span><span class="NAME">jchemhub.controller.ReactionEditor.prototype.dispatchSelectionChangeEvent</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="WHIT">
+<span class='line'>468</span> 		</span><span class="NAME">opt_e</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>469</span> 	</span><span class="COMM">// if (this</span><span class="WHIT">
+<span class='line'>470</span> 	</span><span class="COMM">// .isEventStopped(jchemhub.controller.ReactionEditor.EventType.SELECTIONCHANGE))</span><span class="WHIT">
+<span class='line'>471</span> 	</span><span class="COMM">// {</span><span class="WHIT">
+<span class='line'>472</span> 	</span><span class="COMM">// return;</span><span class="WHIT">
+<span class='line'>473</span> 	</span><span class="COMM">// }</span><span class="WHIT">
+<span class='line'>474</span> 
+<span class='line'>475</span> 	</span><span class="NAME">this.dispatchCommandValueChange</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>476</span> 	</span><span class="NAME">this.dispatchEvent</span><span class="PUNC">(</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>477</span> 		</span><span class="NAME">type</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">jchemhub.controller.ReactionEditor.EventType.SELECTIONCHANGE</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>478</span> 		</span><span class="NAME">originalType</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">opt_e</span><span class="WHIT"> </span><span class="PUNC">&&</span><span class="WHIT"> </span><span class="NAME">opt_e.type</span><span class="WHIT">
+<span class='line'>479</span> 	</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>480</span> 
+<span class='line'>481</span> 	</span><span class="NAME">this.invokeShortCircuitingOp_</span><span class="PUNC">(</span><span class="NAME">jchemhub.controller.Plugin.Op.SELECTION</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">opt_e</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>482</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>483</span> 
+<span class='line'>484</span> </span><span class="COMM">/**
+<span class='line'>485</span>  * Dispatches a command value change event.
+<span class='line'>486</span>  * 
+<span class='line'>487</span>  * @param {Array.&lt;string>=} opt_commands Commands whose state has changed.
+<span class='line'>488</span>  */</span><span class="WHIT">
+<span class='line'>489</span> </span><span class="NAME">jchemhub.controller.ReactionEditor.prototype.dispatchCommandValueChange</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="WHIT">
+<span class='line'>490</span> 		</span><span class="NAME">opt_commands</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>491</span> 	</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">opt_commands</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>492</span> 		</span><span class="NAME">this.dispatchEvent</span><span class="PUNC">(</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>493</span> 			</span><span class="NAME">type</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">jchemhub.controller.ReactionEditor.EventType.COMMAND_VALUE_CHANGE</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>494</span> 			</span><span class="NAME">commands</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">opt_commands</span><span class="WHIT">
+<span class='line'>495</span> 		</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>496</span> 	</span><span class="PUNC">}</span><span class="WHIT"> </span><span class="KEYW">else</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>497</span> 		</span><span class="KEYW">this</span><span class="WHIT">
+<span class='line'>498</span> 				</span><span class="PUNC">.</span><span class="NAME">dispatchEvent</span><span class="PUNC">(</span><span class="NAME">jchemhub.controller.ReactionEditor.EventType.COMMAND_VALUE_CHANGE</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>499</span> 	</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>500</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>501</span> 
+<span class='line'>502</span> </span><span class="COMM">/**
+<span class='line'>503</span>  * Executes an editing command as per the registered plugins.
+<span class='line'>504</span>  * 
+<span class='line'>505</span>  * @param {string}
+<span class='line'>506</span>  *            command The command to execute.
+<span class='line'>507</span>  * @param {...*}
+<span class='line'>508</span>  *            var_args Any additional parameters needed to execute the command.
+<span class='line'>509</span>  * @return {Object|boolean} False if the command wasn't handled, otherwise, the
+<span class='line'>510</span>  *         result of the command.
+<span class='line'>511</span>  */</span><span class="WHIT">
+<span class='line'>512</span> </span><span class="NAME">jchemhub.controller.ReactionEditor.prototype.execCommand</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">command</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">var_args</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>513</span> 	</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">args</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">arguments</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>514</span> 	</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">result</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>515</span> 
+<span class='line'>516</span> 	</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">plugins</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.indexedPlugins_</span><span class="PUNC">[</span><span class="NAME">jchemhub.controller.Plugin.Op.EXEC_COMMAND</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>517</span> 	</span><span class="KEYW">for</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="WHIT"> </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">i</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT"> </span><span class="NAME">i</span><span class="WHIT"> </span><span class="XML">&lt; plugins.length; ++i) {
+<span class='line'>518</span> 		// If the plugin supports the command, that means it handled the
+<span class='line'>519</span> 		// event and we shouldn't propagate to the other plugins.
+<span class='line'>520</span> 		var plugin = plugins[i];
+<span class='line'>521</span> 		if (plugin.isEnabled(this) && plugin.isSupportedCommand(command)) {
+<span class='line'>522</span> 			result = plugin.execCommand.apply(plugin, args);
+<span class='line'>523</span> 			break;
+<span class='line'>524</span> 		}
+<span class='line'>525</span> 	}
+<span class='line'>526</span> 
+<span class='line'>527</span> 	return result;
+<span class='line'>528</span> };
+<span class='line'>529</span> 
+<span class='line'>530</span> /**
+<span class='line'>531</span>  * Registers the plugin with the editor.
+<span class='line'>532</span>  * 
+<span class='line'>533</span>  * @param {jchemhub.controller.Plugin}
+<span class='line'>534</span>  *            plugin The plugin to register.
+<span class='line'>535</span>  */
+<span class='line'>536</span> jchemhub.controller.ReactionEditor.prototype.registerPlugin = function(plugin) {
+<span class='line'>537</span> 	var classId = plugin.getTrogClassId();
+<span class='line'>538</span> 
+<span class='line'>539</span> 	if (this.plugins_[classId]) {
+<span class='line'>540</span> 		this.logger
+<span class='line'>541</span> 				.severe('Cannot register the same class of plugin twice [' + classId + ']');
+<span class='line'>542</span> 	}
+<span class='line'>543</span> 	this.plugins_[classId] = plugin;
+<span class='line'>544</span> 
+<span class='line'>545</span> 	// Only key events and execute should have these has* functions with a
+<span class='line'>546</span> 	// custom
+<span class='line'>547</span> 	// handler array since they need to be very careful about performance.
+<span class='line'>548</span> 	// The rest of the plugin hooks should be event-based.
+<span class='line'>549</span> 	for ( var op in jchemhub.controller.Plugin.OPCODE) {
+<span class='line'>550</span> 		var opcode = jchemhub.controller.Plugin.OPCODE[op];
+<span class='line'>551</span> 		if (plugin[opcode]) {
+<span class='line'>552</span> 			this.indexedPlugins_[op].push(plugin);
+<span class='line'>553</span> 		}
+<span class='line'>554</span> 	}
+<span class='line'>555</span> 	plugin.registerEditorObject(this);
+<span class='line'>556</span> 
+<span class='line'>557</span> 	// By default we enable all plugins for fields that are currently loaded.
+<span class='line'>558</span> 	if (this.isLoaded()) {
+<span class='line'>559</span> 		plugin.enable(this);
+<span class='line'>560</span> 	}
+<span class='line'>561</span> };
+<span class='line'>562</span> 
+<span class='line'>563</span> /**
+<span class='line'>564</span>  * Unregisters the plugin with this editor.
+<span class='line'>565</span>  * 
+<span class='line'>566</span>  * @param {jchemhub.controller.Plugin}
+<span class='line'>567</span>  *            plugin The plugin to unregister.
+<span class='line'>568</span>  */
+<span class='line'>569</span> jchemhub.controller.ReactionEditor.prototype.unregisterPlugin = function(plugin) {
+<span class='line'>570</span> 	var classId = plugin.getTrogClassId();
+<span class='line'>571</span> 	if (!this.plugins_[classId]) {
+<span class='line'>572</span> 		this.logger
+<span class='line'>573</span> 				.severe('Cannot unregister a plugin that isn\'t registered.');
+<span class='line'>574</span> 	}
+<span class='line'>575</span> 	delete this.plugins_[classId];
+<span class='line'>576</span> 
+<span class='line'>577</span> 	for ( var op in jchemhub.controller.Plugin.OPCODE) {
+<span class='line'>578</span> 		var opcode = jchemhub.controller.Plugin.OPCODE[op];
+<span class='line'>579</span> 		if (plugin[opcode]) {
+<span class='line'>580</span> 			goog.array.remove(this.indexedPlugins_[op], plugin);
+<span class='line'>581</span> 		}
+<span class='line'>582</span> 	}
+<span class='line'>583</span> 
+<span class='line'>584</span> 	plugin.unregisterEditorObject(this);
+<span class='line'>585</span> };
+<span class='line'>586</span> 
+<span class='line'>587</span> /**
+<span class='line'>588</span>  * @return {boolean} Whether the editor has finished loading.
+<span class='line'>589</span>  */
+<span class='line'>590</span> jchemhub.controller.ReactionEditor.prototype.isLoaded = function() {
+<span class='line'>591</span> 	return this.loadState_ == jchemhub.controller.ReactionEditor.LoadState_.EDITABLE;
+<span class='line'>592</span> };
+<span class='line'>593</span> 
+<span class='line'>594</span> /**
+<span class='line'>595</span>  * The load state of the editor.
+<span class='line'>596</span>  * 
+<span class='line'>597</span>  * @enum {number}
+<span class='line'>598</span>  * @private
+<span class='line'>599</span>  */
+<span class='line'>600</span> jchemhub.controller.ReactionEditor.LoadState_ = {
+<span class='line'>601</span> 	UNEDITABLE : 0,
+<span class='line'>602</span> 	LOADING : 1,
+<span class='line'>603</span> 	EDITABLE : 2
+<span class='line'>604</span> };
+<span class='line'>605</span> 
+<span class='line'>606</span> /**
+<span class='line'>607</span>  * Logging object.
+<span class='line'>608</span>  * 
+<span class='line'>609</span>  * @type {goog.debug.Logger}
+<span class='line'>610</span>  * @protected
+<span class='line'>611</span>  */
+<span class='line'>612</span> jchemhub.controller.ReactionEditor.prototype.logger = goog.debug.Logger
+<span class='line'>613</span> 		.getLogger('jchemhub.controller.ReactionEditor');
+<span class='line'>614</span> 
+<span class='line'>615</span> /**
+<span class='line'>616</span>  * Event types that can be stopped/started.
+<span class='line'>617</span>  * 
+<span class='line'>618</span>  * @enum {string}
+<span class='line'>619</span>  */
+<span class='line'>620</span> jchemhub.controller.ReactionEditor.EventType = {
+<span class='line'>621</span> 	/**
+<span class='line'>622</span> 	 * Dispatched when the command state of the selection may have changed. This
+<span class='line'>623</span> 	 * event should be listened to for updating toolbar state.
+<span class='line'>624</span> 	 */
+<span class='line'>625</span> 	COMMAND_VALUE_CHANGE : 'cvc',
+<span class='line'>626</span> 	/**
+<span class='line'>627</span> 	 * Dispatched when the editor is loaded and ready to use.
+<span class='line'>628</span> 	 */
+<span class='line'>629</span> 	LOAD : 'load',
+<span class='line'>630</span> 	/**
+<span class='line'>631</span> 	 * Dispatched when the editor is fully unloaded and uneditable.
+<span class='line'>632</span> 	 */
+<span class='line'>633</span> 	UNLOAD : 'unload',
+<span class='line'>634</span> 	/**
+<span class='line'>635</span> 	 * Dispatched before the editor contents are changed.
+<span class='line'>636</span> 	 */
+<span class='line'>637</span> 	BEFORECHANGE : 'beforechange',
+<span class='line'>638</span> 	/**
+<span class='line'>639</span> 	 * Dispatched when the editor contents change, in FF only. Used for internal
+<span class='line'>640</span> 	 * resizing, please do not use.
+<span class='line'>641</span> 	 */
+<span class='line'>642</span> 	CHANGE : 'change',
+<span class='line'>643</span> 	/**
+<span class='line'>644</span> 	 * Dispatched on a slight delay after changes are made. Use for autosave, or
+<span class='line'>645</span> 	 * other times your app needs to know that the editor contents changed.
+<span class='line'>646</span> 	 */
+<span class='line'>647</span> 	DELAYEDCHANGE : 'delayedchange',
+<span class='line'>648</span> 	/**
+<span class='line'>649</span> 	 * Dispatched before focus in moved into the editor.
+<span class='line'>650</span> 	 */
+<span class='line'>651</span> 	BEFOREFOCUS : 'beforefocus',
+<span class='line'>652</span> 	/**
+<span class='line'>653</span> 	 * Dispatched when focus is moved into the editor.
+<span class='line'>654</span> 	 */
+<span class='line'>655</span> 	FOCUS : 'focus',
+<span class='line'>656</span> 	/**
+<span class='line'>657</span> 	 * Dispatched when the editor is blurred.
+<span class='line'>658</span> 	 */
+<span class='line'>659</span> 	BLUR : 'blur',
+<span class='line'>660</span> 	/**
+<span class='line'>661</span> 	 * Dispach before tab is handled by the editor. This is a legacy way of
+<span class='line'>662</span> 	 * controlling tab behavior. Use trog.plugins.AbstractTabHandler now.
+<span class='line'>663</span> 	 */
+<span class='line'>664</span> 	BEFORETAB : 'beforetab',
+<span class='line'>665</span> 	/**
+<span class='line'>666</span> 	 * Dispatched when the selection changes. Use handleSelectionChange from
+<span class='line'>667</span> 	 * plugin API instead of listening directly to this event.
+<span class='line'>668</span> 	 */
+<span class='line'>669</span> 	SELECTIONCHANGE : 'selectionchange'
+<span class='line'>670</span> };
+<span class='line'>671</span> 
+<span class='line'>672</span> /**
+<span class='line'>673</span>  * Removes all listeners and destroys the eventhandler object.
+<span class='line'>674</span>  * 
+<span class='line'>675</span>  * @override
+<span class='line'>676</span>  */
+<span class='line'>677</span> jchemhub.controller.ReactionEditor.prototype.disposeInternal = function() {
+<span class='line'>678</span> 	if (this.isLoading() || this.isLoaded()) {
+<span class='line'>679</span> 		this.logger.warning('Disposing an editor that is in use.');
+<span class='line'>680</span> 	}
+<span class='line'>681</span> 
+<span class='line'>682</span> 	if (this.getOriginalElement()) {
+<span class='line'>683</span> 		this.execCommand(jchemhub.controller.Command.CLEAR);
+<span class='line'>684</span> 	}
+<span class='line'>685</span> 
+<span class='line'>686</span> 	this.tearDownEditorObject_();
+<span class='line'>687</span> 	this.clearListeners_();
+<span class='line'>688</span> 	this.originalDomHelper = null;
+<span class='line'>689</span> 
+<span class='line'>690</span> 	if (this.eventRegister) {
+<span class='line'>691</span> 		this.eventRegister.dispose();
+<span class='line'>692</span> 		this.eventRegister = null;
+<span class='line'>693</span> 	}
+<span class='line'>694</span> 
+<span class='line'>695</span> 	this.removeAllWrappers();
+<span class='line'>696</span> 
+<span class='line'>697</span> 	if (jchemhub.controller.ReactionEditor.getActiveEditorId() == this.id) {
+<span class='line'>698</span> 		jchemhub.controller.ReactionEditor.setActiveEditorId(null);
+<span class='line'>699</span> 	}
+<span class='line'>700</span> 
+<span class='line'>701</span> 	for ( var classId in this.plugins_) {
+<span class='line'>702</span> 		var plugin = this.plugins_[classId];
+<span class='line'>703</span> 		if (plugin.isAutoDispose()) {
+<span class='line'>704</span> 			plugin.dispose();
+<span class='line'>705</span> 		}
+<span class='line'>706</span> 	}
+<span class='line'>707</span> 	delete (this.plugins_);
+<span class='line'>708</span> 
+<span class='line'>709</span> 	jchemhub.controller.ReactionEditor.superClass_.disposeInternal.call(this);
+<span class='line'>710</span> };
+<span class='line'>711</span> 
+<span class='line'>712</span> /**
+<span class='line'>713</span>  * Returns the registered plugin with the given classId.
+<span class='line'>714</span>  * 
+<span class='line'>715</span>  * @param {string}
+<span class='line'>716</span>  *            classId classId of the plugin.
+<span class='line'>717</span>  * @return {jchemhub.controller.Plugin} Registered plugin with the given classId.
+<span class='line'>718</span>  */
+<span class='line'>719</span> jchemhub.controller.ReactionEditor.prototype.getPluginByClassId = function(classId) {
+<span class='line'>720</span> 	return this.plugins_[classId];
+<span class='line'>721</span> };
+<span class='line'>722</span> 
+<span class='line'>723</span> /**
+<span class='line'>724</span>  * Help make the editor not editable by setting internal data structures to
+<span class='line'>725</span>  * null, and disabling this editor with all registered plugins.
+<span class='line'>726</span>  * 
+<span class='line'>727</span>  * @private
+<span class='line'>728</span>  */
+<span class='line'>729</span> jchemhub.controller.ReactionEditor.prototype.tearDownEditorObject_ = function() {
+<span class='line'>730</span> 	for ( var classId in this.plugins_) {
+<span class='line'>731</span> 		var plugin = this.plugins_[classId];
+<span class='line'>732</span> 		if (!plugin.activeOnUneditableEditors()) {
+<span class='line'>733</span> 			plugin.disable(this);
+<span class='line'>734</span> 		}
+<span class='line'>735</span> 	}
+<span class='line'>736</span> 
+<span class='line'>737</span> 	this.loadState_ = jchemhub.controller.ReactionEditor.LoadState_.UNEDITABLE;
+<span class='line'>738</span> 
+<span class='line'>739</span> };
+<span class='line'>740</span> 
+<span class='line'>741</span> /**
+<span class='line'>742</span>  * @return {boolean} Whether the editor has finished loading.
+<span class='line'>743</span>  */
+<span class='line'>744</span> jchemhub.controller.ReactionEditor.prototype.isLoaded = function() {
+<span class='line'>745</span> 	return this.loadState_ == jchemhub.controller.ReactionEditor.LoadState_.EDITABLE;
+<span class='line'>746</span> };
+<span class='line'>747</span> 
+<span class='line'>748</span> /**
+<span class='line'>749</span>  * @return {boolean} Whether the editor is in the process of loading.
+<span class='line'>750</span>  */
+<span class='line'>751</span> jchemhub.controller.ReactionEditor.prototype.isLoading = function() {
+<span class='line'>752</span> 	return this.loadState_ == jchemhub.controller.ReactionEditor.LoadState_.LOADING;
+<span class='line'>753</span> };
+<span class='line'>754</span> 
+<span class='line'>755</span> /**
+<span class='line'>756</span>  * Returns original DOM element for the Editor null if that element has not yet
+<span class='line'>757</span>  * been found in the appropriate document.
+<span class='line'>758</span>  * 
+<span class='line'>759</span>  * @return {Element} The original element.
+<span class='line'>760</span>  */
+<span class='line'>761</span> jchemhub.controller.ReactionEditor.prototype.getOriginalElement = function() {
+<span class='line'>762</span> 	return this.originalElement;
+<span class='line'>763</span> };
+<span class='line'>764</span> 
+<span class='line'>765</span> // /**
+<span class='line'>766</span> // * Stops the event of the given type from being dispatched.
+<span class='line'>767</span> // *
+<span class='line'>768</span> // * @param {jchemhub.controller.ReactionEditor.EventType}
+<span class='line'>769</span> // * eventType type of event to stop.
+<span class='line'>770</span> // */
+<span class='line'>771</span> // jchemhub.controller.ReactionEditor.prototype.stopEvent = function(eventType) {
+<span class='line'>772</span> // this.stoppedEvents_[eventType] = 1;
+<span class='line'>773</span> // };
+<span class='line'>774</span> 
+<span class='line'>775</span> // /**
+<span class='line'>776</span> // * Re-starts the event of the given type being dispatched, if it had
+<span class='line'>777</span> // previously
+<span class='line'>778</span> // * been stopped with stopEvent().
+<span class='line'>779</span> // *
+<span class='line'>780</span> // * @param {jchemhub.controller.ReactionEditor.EventType}
+<span class='line'>781</span> // * eventType type of event to start.
+<span class='line'>782</span> // */
+<span class='line'>783</span> // jchemhub.controller.ReactionEditor.prototype.startEvent = function(eventType) {
+<span class='line'>784</span> // // Toggling this bit on/off instead of deleting it/re-adding it
+<span class='line'>785</span> // // saves array allocations.
+<span class='line'>786</span> // this.stoppedEvents_[eventType] = 0;
+<span class='line'>787</span> // };
+<span class='line'>788</span> 
+<span class='line'>789</span> /**
+<span class='line'>790</span>  * Stops all listeners and timers.
+<span class='line'>791</span>  * 
+<span class='line'>792</span>  * @private
+<span class='line'>793</span>  */
+<span class='line'>794</span> jchemhub.controller.ReactionEditor.prototype.clearListeners_ = function() {
+<span class='line'>795</span> 	if (this.eventRegister) {
+<span class='line'>796</span> 		this.eventRegister.removeAll();
+<span class='line'>797</span> 	}
+<span class='line'>798</span> 
+<span class='line'>799</span> 	// if (this.changeTimerGecko_) {
+<span class='line'>800</span> 	// this.changeTimerGecko_.stop();
+<span class='line'>801</span> 	// }
+<span class='line'>802</span> 	// this.delayedChangeTimer_.stop();
+<span class='line'>803</span> };
+<span class='line'>804</span> 
+<span class='line'>805</span> /**
+<span class='line'>806</span>  * Removes all wrappers and destroys them.
+<span class='line'>807</span>  */
+<span class='line'>808</span> jchemhub.controller.ReactionEditor.prototype.removeAllWrappers = function() {
+<span class='line'>809</span> 	var wrapper;
+<span class='line'>810</span> 	while (wrapper = this.wrappers_.pop()) {
+<span class='line'>811</span> 		wrapper.dispose();
+<span class='line'>812</span> 	}
+<span class='line'>813</span> };
+<span class='line'>814</span> 
+<span class='line'>815</span> /**
+<span class='line'>816</span>  * Handle the loading of the editor (e.g. once the editor is ready to setup).
+<span class='line'>817</span>  * 
+<span class='line'>818</span>  * @protected
+<span class='line'>819</span>  */
+<span class='line'>820</span> jchemhub.controller.ReactionEditor.prototype.handleEditorLoad = function() {
+<span class='line'>821</span> 
+<span class='line'>822</span> 	if (jchemhub.controller.ReactionEditor.getActiveEditorId() != this.id) {
+<span class='line'>823</span> 		// this.execCommand(jchemhub.controller.Command.CLEAR_EDITOR);
+<span class='line'>824</span> 	}
+<span class='line'>825</span> 
+<span class='line'>826</span> 	this.setupChangeListeners_();
+<span class='line'>827</span> 	this.dispatchLoadEvent_();
+<span class='line'>828</span> 
+<span class='line'>829</span> 	// Enabling plugins after we fire the load event so that clients have a
+<span class='line'>830</span> 	// chance to set initial field contents before we start mucking with
+<span class='line'>831</span> 	// everything.
+<span class='line'>832</span> 	for ( var classId in this.plugins_) {
+<span class='line'>833</span> 		this.plugins_[classId].enable(this);
+<span class='line'>834</span> 	}
+<span class='line'>835</span> };
+<span class='line'>836</span> 
+<span class='line'>837</span> // /**
+<span class='line'>838</span> // * Don't wait for the timer and just fire the delayed change event if it's
+<span class='line'>839</span> // * pending.
+<span class='line'>840</span> // */
+<span class='line'>841</span> // jchemhub.controller.ReactionEditor.prototype.clearDelayedChange = function() {
+<span class='line'>842</span> // // The changeTimerGecko_ will queue up a delayed change so to fully clear
+<span class='line'>843</span> // // delayed change we must also clear this timer.
+<span class='line'>844</span> // if (this.changeTimerGecko_) {
+<span class='line'>845</span> // this.changeTimerGecko_.fireIfActive();
+<span class='line'>846</span> // }
+<span class='line'>847</span> // this.delayedChangeTimer_.fireIfActive();
+<span class='line'>848</span> // };
+<span class='line'>849</span> 
+<span class='line'>850</span> /**
+<span class='line'>851</span>  * Signal that the editor is loaded and ready to use. Change events now are in
+<span class='line'>852</span>  * effect.
+<span class='line'>853</span>  * 
+<span class='line'>854</span>  * @private
+<span class='line'>855</span>  */
+<span class='line'>856</span> jchemhub.controller.ReactionEditor.prototype.dispatchLoadEvent_ = function() {
+<span class='line'>857</span> 	this.installStyles();
+<span class='line'>858</span> 	// this.startChangeEvents();
+<span class='line'>859</span> 	this.logger.info('Dispatching load ' + this.id);
+<span class='line'>860</span> 	this.dispatchEvent(jchemhub.controller.ReactionEditor.EventType.LOAD);
+<span class='line'>861</span> };
+<span class='line'>862</span> 
+<span class='line'>863</span> /**
+<span class='line'>864</span>  * Registers a keyboard event listener on the editor. This is necessary for
+<span class='line'>865</span>  * Gecko since the fields are contained in an iFrame and there is no way to
+<span class='line'>866</span>  * auto-propagate key events up to the main window.
+<span class='line'>867</span>  * 
+<span class='line'>868</span>  * @param {string|Array.&lt;string></span><span class="PUNC">}</span><span class="WHIT"> </span><span class="NAME">type</span><span class="WHIT"> </span><span class="NAME">Event</span><span class="WHIT"> </span><span class="NAME">type</span><span class="WHIT"> </span><span class="NAME">to</span><span class="WHIT"> </span><span class="NAME">listen</span><span class="WHIT"> </span><span class="KEYW">for</span><span class="WHIT"> </span><span class="NAME">or</span><span class="WHIT"> </span><span class="NAME">array</span><span class="WHIT"> </span><span class="NAME">of</span><span class="WHIT"> </span><span class="NAME">event</span><span class="WHIT"> </span><span class="NAME">types</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>869</span>  </span><span class="PUNC">*</span><span class="WHIT">            </span><span class="KEYW">for</span><span class="WHIT"> </span><span class="NAME">example</span><span class="WHIT"> </span><span class="NAME">goog.events.EventType.KEYDOWN.</span><span class="WHIT">
+<span class='line'>870</span>  </span><span class="PUNC">*</span><span class="WHIT"> </span><span class="TOKN">@</span><span class="NAME">param</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="NAME">Function</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>871</span>  </span><span class="PUNC">*</span><span class="WHIT">            </span><span class="NAME">listener</span><span class="WHIT"> </span><span class="NAME">Function</span><span class="WHIT"> </span><span class="NAME">to</span><span class="WHIT"> </span><span class="NAME">be</span><span class="WHIT"> </span><span class="NAME">used</span><span class="WHIT"> </span><span class="NAME">as</span><span class="WHIT"> </span><span class="NAME">the</span><span class="WHIT"> </span><span class="NAME">listener.</span><span class="WHIT">
+<span class='line'>872</span>  </span><span class="PUNC">*</span><span class="WHIT"> </span><span class="TOKN">@</span><span class="NAME">param</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="NAME">boolean</span><span class="PUNC">=</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>873</span>  </span><span class="PUNC">*</span><span class="WHIT">            </span><span class="NAME">opt_capture</span><span class="WHIT"> </span><span class="NAME">Whether</span><span class="WHIT"> </span><span class="NAME">to</span><span class="WHIT"> </span><span class="NAME">use</span><span class="WHIT"> </span><span class="NAME">capture</span><span class="WHIT"> </span><span class="NAME">phase</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">optional</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">defaults</span><span class="WHIT"> </span><span class="NAME">to</span><span class="WHIT">
+<span class='line'>874</span>  </span><span class="PUNC">*</span><span class="WHIT">            </span><span class="KEYW">false</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="WHIT">
+<span class='line'>875</span>  </span><span class="PUNC">*</span><span class="WHIT"> </span><span class="TOKN">@</span><span class="NAME">param</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="NAME">Object</span><span class="PUNC">=</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>876</span>  </span><span class="PUNC">*</span><span class="WHIT">            </span><span class="NAME">opt_handler</span><span class="WHIT"> </span><span class="NAME">Object</span><span class="WHIT"> </span><span class="KEYW">in</span><span class="WHIT"> </span><span class="NAME">whose</span><span class="WHIT"> </span><span class="NAME">scope</span><span class="WHIT"> </span><span class="NAME">to</span><span class="WHIT"> </span><span class="NAME">call</span><span class="WHIT"> </span><span class="NAME">the</span><span class="WHIT"> </span><span class="NAME">listener.</span><span class="WHIT">
+<span class='line'>877</span>  </span><span class="PUNC">*</span><span class="REGX">/
+<span class='line'>878</span> jchemhub.controller.ReactionEditor.prototype.addListener = function(type, listener,
+<span class='line'>879</span> 		opt_capture, opt_handler) {
+<span class='line'>880</span> 	var elem = this.getOriginalElement();
+<span class='line'>881</span> 
+<span class='line'>882</span> 	/</span><span class="REGX">/ On Gecko, keyboard events only reliably fire on the document element.
+<span class='line'>883</span> 	if (elem && goog.editor.BrowserFeature.USE_DOCUMENT_FOR_KEY_EVENTS) {
+<span class='line'>884</span> 		elem = elem.ownerDocument;
+<span class='line'>885</span> 	}
+<span class='line'>886</span> 	this.eventRegister.listen(elem, type, listener, opt_capture, opt_handler);
+<span class='line'>887</span> };
+<span class='line'>888</span> 
+<span class='line'>889</span> /</span><span class="PUNC">*</span><span class="PUNC">*</span><span class="WHIT">
+<span class='line'>890</span>  </span><span class="PUNC">*</span><span class="WHIT"> </span><span class="NAME">Initialize</span><span class="WHIT"> </span><span class="NAME">listeners</span><span class="WHIT"> </span><span class="NAME">on</span><span class="WHIT"> </span><span class="NAME">the</span><span class="WHIT"> </span><span class="NAME">editor.</span><span class="WHIT">
+<span class='line'>891</span>  </span><span class="PUNC">*</span><span class="WHIT"> 
+<span class='line'>892</span>  </span><span class="PUNC">*</span><span class="WHIT"> </span><span class="TOKN">@</span><span class="NAME">private</span><span class="WHIT">
+<span class='line'>893</span>  </span><span class="PUNC">*</span><span class="REGX">/
+<span class='line'>894</span> jchemhub.controller.ReactionEditor.prototype.setupChangeListeners_ = function() {
+<span class='line'>895</span> 
+<span class='line'>896</span> 	this.addListener(goog.events.EventType.BLUR, this.dispatchBlur,
+<span class='line'>897</span> 			goog.editor.BrowserFeature.USE_MUTATION_EVENTS);
+<span class='line'>898</span> 
+<span class='line'>899</span> 	if (goog.editor.BrowserFeature.USE_MUTATION_EVENTS) {
+<span class='line'>900</span> 		/</span><span class="REGX">/ Ways to detect changes in Mozilla:
+<span class='line'>901</span> 		/</span><span class="REGX">/
+<span class='line'>902</span> 		/</span><span class="REGX">/ keypress - check event.charCode (only typable characters has a
+<span class='line'>903</span> 		/</span><span class="REGX">/ charCode), but also keyboard commands lile Ctrl+C will
+<span class='line'>904</span> 		/</span><span class="REGX">/ return a charCode.
+<span class='line'>905</span> 		/</span><span class="REGX">/ dragdrop - fires when the user drops something. This does not
+<span class='line'>906</span> 		/</span><span class="REGX">/ necessary
+<span class='line'>907</span> 		/</span><span class="REGX">/ lead to a change but we cannot detect if it will or not
+<span class='line'>908</span> 		/</span><span class="REGX">/
+<span class='line'>909</span> 		/</span><span class="REGX">/ Known Issues: We cannot detect cut and paste using menus
+<span class='line'>910</span> 		/</span><span class="REGX">/ We cannot detect when someone moves something out of the
+<span class='line'>911</span> 		/</span><span class="REGX">/ field using drag and drop.
+<span class='line'>912</span> 		/</span><span class="REGX">/
+<span class='line'>913</span> 		this.setupMutationEventHandlersGecko();
+<span class='line'>914</span> 	} else {
+<span class='line'>915</span> 		/</span><span class="REGX">/ Ways to detect that a change is about to happen in other browsers.
+<span class='line'>916</span> 		/</span><span class="REGX">/ (IE and Safari have these events. Opera appears to work, but we
+<span class='line'>917</span> 		/</span><span class="REGX">/ haven't
+<span class='line'>918</span> 		/</span><span class="REGX">/ researched it.)
+<span class='line'>919</span> 		/</span><span class="REGX">/
+<span class='line'>920</span> 		/</span><span class="REGX">/ onbeforepaste
+<span class='line'>921</span> 		/</span><span class="REGX">/ onbeforecut
+<span class='line'>922</span> 		/</span><span class="REGX">/ ondrop - happens when the user drops something on the editable text
+<span class='line'>923</span> 		/</span><span class="REGX">/ field the value at this time does not contain the dropped text
+<span class='line'>924</span> 		/</span><span class="REGX">/ ondragleave - when the user drags something from the current
+<span class='line'>925</span> 		/</span><span class="REGX">/ document.
+<span class='line'>926</span> 		/</span><span class="REGX">/ This might not cause a change if the action was copy
+<span class='line'>927</span> 		/</span><span class="REGX">/ instead of move
+<span class='line'>928</span> 		/</span><span class="REGX">/ onkeypress - IE only fires keypress events if the key will generate
+<span class='line'>929</span> 		/</span><span class="REGX">/ output. It will not trigger for delete and backspace
+<span class='line'>930</span> 		/</span><span class="REGX">/ onkeydown - For delete and backspace
+<span class='line'>931</span> 		/</span><span class="REGX">/
+<span class='line'>932</span> 		/</span><span class="REGX">/ known issues: IE triggers beforepaste just by opening the edit menu
+<span class='line'>933</span> 		/</span><span class="REGX">/ delete at the end should not cause beforechange
+<span class='line'>934</span> 		/</span><span class="REGX">/ backspace at the beginning should not cause beforechange
+<span class='line'>935</span> 		/</span><span class="REGX">/ see above in ondragleave
+<span class='line'>936</span> 		/</span><span class="REGX">/ TODO: Why don't we dispatchBeforeChange from the
+<span class='line'>937</span> 		/</span><span class="REGX">/ handleDrop event for all browsers?
+<span class='line'>938</span> 		this.addListener( [ 'beforecut', 'beforepaste', 'drop', 'dragend' ],
+<span class='line'>939</span> 				this.dispatchBeforeChange);
+<span class='line'>940</span> 		this.addListener( [ 'cut', 'paste' ], this.dispatchChange);
+<span class='line'>941</span> 		this.addListener('drop', this.handleDrop_);
+<span class='line'>942</span> 	}
+<span class='line'>943</span> 
+<span class='line'>944</span> 	/</span><span class="REGX">/ TODO: Figure out why we use dragend vs dragdrop and
+<span class='line'>945</span> 	/</span><span class="REGX">/ document this better.
+<span class='line'>946</span> 	var dropEventName = goog.userAgent.WEBKIT ? 'dragend' : 'dragdrop';
+<span class='line'>947</span> 	this.addListener(dropEventName, this.handleDrop_);
+<span class='line'>948</span> 
+<span class='line'>949</span> 	this.addListener(goog.events.EventType.KEYDOWN, this.handleKeyDown_);
+<span class='line'>950</span> 	this.addListener(goog.events.EventType.KEYPRESS, this.handleKeyPress_);
+<span class='line'>951</span> 	this.addListener(goog.events.EventType.KEYUP, this.handleKeyUp_);
+<span class='line'>952</span> 
+<span class='line'>953</span> 	var selectionChange = goog.bind(this.dispatchSelectionChangeEvent, this);
+<span class='line'>954</span> 	this.selectionChangeTimer_ = new goog.async.Delay(selectionChange,
+<span class='line'>955</span> 			jchemhub.controller.ReactionEditor.SELECTION_CHANGE_FREQUENCY_);
+<span class='line'>956</span> 
+<span class='line'>957</span> 	this.addListener(goog.events.EventType.MOUSEDOWN, this.handleMouseDown_);
+<span class='line'>958</span> 	this.addListener(goog.events.EventType.MOUSEUP, this.handleMouseUp_);
+<span class='line'>959</span> 
+<span class='line'>960</span> 	this.addEventListener(jchemhub.controller.AtomController.EventType.MOUSEOUT, this.handleAtomMouseOut_);
+<span class='line'>961</span> 	this.addEventListener(jchemhub.controller.AtomController.EventType.MOUSEOVER, this.handleAtomMouseOver_);
+<span class='line'>962</span> 	this.addEventListener(jchemhub.controller.AtomController.EventType.MOUSEDOWN, this.handleAtomMouseDown_);
+<span class='line'>963</span> 	this.addEventListener(jchemhub.controller.BondController.EventType.MOUSEOUT, this.handleBondMouseOut_);
+<span class='line'>964</span> 	this.addEventListener(jchemhub.controller.BondController.EventType.MOUSEOVER, this.handleBondMouseOver_);
+<span class='line'>965</span> 	this.addEventListener(jchemhub.controller.BondController.EventType.MOUSEDOWN, this.handleBondMouseDown_);
+<span class='line'>966</span> 
+<span class='line'>967</span> };
+<span class='line'>968</span> 
+<span class='line'>969</span> /</span><span class="PUNC">*</span><span class="PUNC">*</span><span class="WHIT">
+<span class='line'>970</span>  </span><span class="PUNC">*</span><span class="WHIT"> </span><span class="NAME">Mutation</span><span class="WHIT"> </span><span class="NAME">events</span><span class="WHIT"> </span><span class="NAME">tell</span><span class="WHIT"> </span><span class="NAME">us</span><span class="WHIT"> </span><span class="NAME">when</span><span class="WHIT"> </span><span class="NAME">something</span><span class="WHIT"> </span><span class="NAME">has</span><span class="WHIT"> </span><span class="NAME">changed</span><span class="WHIT"> </span><span class="KEYW">for</span><span class="WHIT"> </span><span class="NAME">mozilla.</span><span class="WHIT">
+<span class='line'>971</span>  </span><span class="PUNC">*</span><span class="WHIT"> 
+<span class='line'>972</span>  </span><span class="PUNC">*</span><span class="WHIT"> </span><span class="TOKN">@</span><span class="NAME">protected</span><span class="WHIT">
+<span class='line'>973</span>  </span><span class="PUNC">*</span><span class="REGX">/
+<span class='line'>974</span> jchemhub.controller.ReactionEditor.prototype.setupMutationEventHandlersGecko = function() {
+<span class='line'>975</span> 	if (goog.editor.BrowserFeature.HAS_DOM_SUBTREE_MODIFIED_EVENT) {
+<span class='line'>976</span> 		this.eventRegister.listen(this.getElement(), 'DOMSubtreeModified',
+<span class='line'>977</span> 				this.handleMutationEventGecko_);
+<span class='line'>978</span> 	} else {
+<span class='line'>979</span> 		var doc = this.getEditableDomHelper().getDocument();
+<span class='line'>980</span> 		this.eventRegister.listen(doc,
+<span class='line'>981</span> 				jchemhub.controller.ReactionEditor.MUTATION_EVENTS_GECKO,
+<span class='line'>982</span> 				this.handleMutationEventGecko_, true);
+<span class='line'>983</span> 
+<span class='line'>984</span> 		/</span><span class="REGX">/ DOMAttrModified fires for a lot of events we want to ignore. This
+<span class='line'>985</span> 		/</span><span class="REGX">/ goes
+<span class='line'>986</span> 		/</span><span class="REGX">/ through a different handler so that we can ignore many of these.
+<span class='line'>987</span> 		this.eventRegister.listen(doc, 'DOMAttrModified',
+<span class='line'>988</span> 				goog.bind(this.handleDomAttrChange, this,
+<span class='line'>989</span> 						this.handleMutationEventGecko_), true);
+<span class='line'>990</span> 	}
+<span class='line'>991</span> };
+<span class='line'>992</span> 
+<span class='line'>993</span> /</span><span class="PUNC">*</span><span class="PUNC">*</span><span class="WHIT">
+<span class='line'>994</span>  </span><span class="PUNC">*</span><span class="WHIT"> </span><span class="NAME">Installs</span><span class="WHIT"> </span><span class="NAME">styles</span><span class="WHIT"> </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="NAME">needed.</span><span class="WHIT"> </span><span class="NAME">Only</span><span class="WHIT"> </span><span class="NAME">writes</span><span class="WHIT"> </span><span class="NAME">styles</span><span class="WHIT"> </span><span class="NAME">when</span><span class="WHIT"> </span><span class="NAME">they</span><span class="WHIT"> </span><span class="NAME">can</span><span class="STRN">'t be written
+<span class='line'>995</span>  * inline directly into the field.
+<span class='line'>996</span>  * 
+<span class='line'>997</span>  * @protected
+<span class='line'>998</span>  */
+<span class='line'>999</span> jchemhub.controller.ReactionEditor.prototype.installStyles = function() {
+<span class='line'>1000</span> 	if (this.cssStyles && this.shouldLoadAsynchronously()) {
+<span class='line'>1001</span> 		goog.style.installStyles(this.cssStyles, this.getElement());
+<span class='line'>1002</span> 	}
+<span class='line'>1003</span> };
+<span class='line'>1004</span> //
+<span class='line'>1005</span> // /**
+<span class='line'>1006</span> // * Start change events again and fire once if desired.
+<span class='line'>1007</span> // *
+<span class='line'>1008</span> // * @param {boolean=}
+<span class='line'>1009</span> // * opt_fireChange Whether to fire the change event immediately.
+<span class='line'>1010</span> // * @param {boolean=}
+<span class='line'>1011</span> // * opt_fireDelayedChange Whether to fire the delayed change event
+<span class='line'>1012</span> // * immediately.
+<span class='line'>1013</span> // */
+<span class='line'>1014</span> // jchemhub.controller.ReactionEditor.prototype.startChangeEvents = function(
+<span class='line'>1015</span> // opt_fireChange, opt_fireDelayedChange) {
+<span class='line'>1016</span> //
+<span class='line'>1017</span> // if (!opt_fireChange && this.changeTimerGecko_) {
+<span class='line'>1018</span> // // In the case where change events were stopped and we'</span><span class="NAME">re</span><span class="WHIT"> </span><span class="NAME">not</span><span class="WHIT"> </span><span class="NAME">firing</span><span class="WHIT">
+<span class='line'>1019</span> </span><span class="COMM">// // them on start, the user was trying to suppress all change or delayed</span><span class="WHIT">
+<span class='line'>1020</span> </span><span class="COMM">// // change events. Clear the change timer now while the events are still</span><span class="WHIT">
+<span class='line'>1021</span> </span><span class="COMM">// // stopped so that its firing doesn't fire a stopped change event, or</span><span class="WHIT">
+<span class='line'>1022</span> </span><span class="COMM">// // queue up a delayed change event that we were trying to stop.</span><span class="WHIT">
+<span class='line'>1023</span> </span><span class="COMM">// this.changeTimerGecko_.fireIfActive();</span><span class="WHIT">
+<span class='line'>1024</span> </span><span class="COMM">// }</span><span class="WHIT">
+<span class='line'>1025</span> </span><span class="COMM">//</span><span class="WHIT">
+<span class='line'>1026</span> </span><span class="COMM">// this.startEvent(jchemhub.controller.ReactionEditor.EventType.CHANGE);</span><span class="WHIT">
+<span class='line'>1027</span> </span><span class="COMM">// this.startEvent(jchemhub.controller.ReactionEditor.EventType.DELAYEDCHANGE);</span><span class="WHIT">
+<span class='line'>1028</span> </span><span class="COMM">// if (opt_fireChange) {</span><span class="WHIT">
+<span class='line'>1029</span> </span><span class="COMM">// this.handleChange();</span><span class="WHIT">
+<span class='line'>1030</span> </span><span class="COMM">// }</span><span class="WHIT">
+<span class='line'>1031</span> </span><span class="COMM">//</span><span class="WHIT">
+<span class='line'>1032</span> </span><span class="COMM">// if (opt_fireDelayedChange) {</span><span class="WHIT">
+<span class='line'>1033</span> </span><span class="COMM">// this.dispatchDelayedChange_();</span><span class="WHIT">
+<span class='line'>1034</span> </span><span class="COMM">// }</span><span class="WHIT">
+<span class='line'>1035</span> </span><span class="COMM">// };</span><span class="WHIT">
+<span class='line'>1036</span> 
+<span class='line'>1037</span> </span><span class="COMM">/**
+<span class='line'>1038</span>  * Frequency to check for selection changes.
+<span class='line'>1039</span>  * 
+<span class='line'>1040</span>  * @type {number}
+<span class='line'>1041</span>  * @private
+<span class='line'>1042</span>  */</span><span class="WHIT">
+<span class='line'>1043</span> </span><span class="NAME">jchemhub.controller.ReactionEditor.SELECTION_CHANGE_FREQUENCY_</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">250</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>1044</span> 
+<span class='line'>1045</span> </span><span class="COMM">/**
+<span class='line'>1046</span>  * A default configuration for the reaction editor.
+<span class='line'>1047</span>  */</span><span class="WHIT">
+<span class='line'>1048</span> </span><span class="NAME">jchemhub.controller.ReactionEditor.defaultConfig</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>1049</span> 	</span><span class="NAME">background</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>1050</span> 		</span><span class="NAME">color</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'#F0FFF0'</span><span class="WHIT">
+<span class='line'>1051</span> 	</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>1052</span> 	</span><span class="NAME">margin</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NUMB">20</span><span class="WHIT">
+<span class='line'>1053</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>1054</span> </span></pre></body></html>

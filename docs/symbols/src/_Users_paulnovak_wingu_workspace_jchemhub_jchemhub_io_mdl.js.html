@@ -1,0 +1,325 @@
+<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"> <style>
+	.KEYW {color: #933;}
+	.COMM {color: #bbb; font-style: italic;}
+	.NUMB {color: #393;}
+	.STRN {color: #393;}
+	.REGX {color: #339;}
+	.line {border-right: 1px dotted #666; color: #666; font-style: normal;}
+	</style></head><body><pre><span class='line'>  1</span> <span class="COMM">//License and copyright</span><span class="WHIT">
+<span class='line'>  2</span> 
+<span class='line'>  3</span> </span><span class="COMM">/**
+<span class='line'>  4</span>  * @fileoverview io utility functions and factory methods for MDL formats
+<span class='line'>  5</span>  */</span><span class="WHIT">
+<span class='line'>  6</span> 
+<span class='line'>  7</span> </span><span class="NAME">goog.provide</span><span class="PUNC">(</span><span class="STRN">'jchemhub.io.mdl'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>  8</span> 
+<span class='line'>  9</span> </span><span class="NAME">goog.require</span><span class="PUNC">(</span><span class="STRN">'goog.i18n.DateTimeFormat'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 10</span> </span><span class="NAME">goog.require</span><span class="PUNC">(</span><span class="STRN">'goog.string'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 11</span> </span><span class="NAME">goog.require</span><span class="PUNC">(</span><span class="STRN">'jchemhub.model.Reaction'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 12</span> </span><span class="NAME">goog.require</span><span class="PUNC">(</span><span class="STRN">'jchemhub.model.Molecule'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 13</span> </span><span class="NAME">goog.require</span><span class="PUNC">(</span><span class="STRN">'jchemhub.model.SingleBond'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 14</span> </span><span class="NAME">goog.require</span><span class="PUNC">(</span><span class="STRN">'jchemhub.model.SingleBondUp'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 15</span> </span><span class="NAME">goog.require</span><span class="PUNC">(</span><span class="STRN">'jchemhub.model.SingleBondDown'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 16</span> </span><span class="NAME">goog.require</span><span class="PUNC">(</span><span class="STRN">'jchemhub.model.SingleBondUpOrDown'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 17</span> </span><span class="NAME">goog.require</span><span class="PUNC">(</span><span class="STRN">'jchemhub.model.DoubleBond'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 18</span> </span><span class="NAME">goog.require</span><span class="PUNC">(</span><span class="STRN">'jchemhub.model.TripleBond'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 19</span> </span><span class="NAME">goog.require</span><span class="PUNC">(</span><span class="STRN">'jchemhub.model.AromaticBond'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 20</span> </span><span class="NAME">goog.require</span><span class="PUNC">(</span><span class="STRN">'jchemhub.model.QuadrupleBond'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 21</span> </span><span class="NAME">goog.require</span><span class="PUNC">(</span><span class="STRN">'jchemhub.model.Bond'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 22</span> </span><span class="NAME">goog.require</span><span class="PUNC">(</span><span class="STRN">'jchemhub.model.Atom'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 23</span> 
+<span class='line'> 24</span> </span><span class="COMM">/** @const */</span><span class="WHIT"> </span><span class="NAME">jchemhub.io.mdl.SINGLE_BOND</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">1</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 25</span> </span><span class="COMM">/** @const */</span><span class="WHIT"> </span><span class="NAME">jchemhub.io.mdl.DOUBLE_BOND</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">2</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 26</span> </span><span class="COMM">/** @const */</span><span class="WHIT"> </span><span class="NAME">jchemhub.io.mdl.TRIPLE_BOND</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">3</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 27</span> </span><span class="COMM">/** @const */</span><span class="WHIT"> </span><span class="NAME">jchemhub.io.mdl.AROMATIC_BOND</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">4</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 28</span> </span><span class="COMM">/** @const */</span><span class="WHIT"> </span><span class="NAME">jchemhub.io.mdl.SINGLE_OR_DOUBLE</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">5</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 29</span> </span><span class="COMM">/** @const */</span><span class="WHIT"> </span><span class="NAME">jchemhub.io.mdl.SINGLE_OR_AROMATIC</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">6</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 30</span> </span><span class="COMM">/** @const */</span><span class="WHIT"> </span><span class="NAME">jchemhub.io.mdl.DOUBLE_OR_AROMATIC</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">7</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 31</span> </span><span class="COMM">/** @const */</span><span class="WHIT"> </span><span class="NAME">jchemhub.io.mdl.ANY</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">8</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 32</span> </span><span class="COMM">/** @const */</span><span class="WHIT"> </span><span class="NAME">jchemhub.io.mdl.TRIPLE_BOND</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">3</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 33</span> 
+<span class='line'> 34</span> </span><span class="COMM">/** @const */</span><span class="WHIT"> </span><span class="NAME">jchemhub.io.mdl.NOT_STEREO</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 35</span> </span><span class="COMM">/** @const */</span><span class="WHIT"> </span><span class="NAME">jchemhub.io.mdl.SINGLE_BOND_UP</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">1</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 36</span> </span><span class="COMM">/** @const */</span><span class="WHIT"> </span><span class="NAME">jchemhub.io.mdl.SINGLE_BOND_UP_OR_DOWN</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">4</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 37</span> </span><span class="COMM">/** @const */</span><span class="WHIT"> </span><span class="NAME">jchemhub.io.mdl.SINGLE_BOND_DOWN</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">6</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 38</span> 
+<span class='line'> 39</span> </span><span class="COMM">/**
+<span class='line'> 40</span>  * maps bond class to mdl molfile bond type code
+<span class='line'> 41</span>  * @param{jchemhub.model.Bond} bond
+<span class='line'> 42</span>  * @return{number}
+<span class='line'> 43</span>  */</span><span class="WHIT">
+<span class='line'> 44</span> </span><span class="NAME">jchemhub.io.mdl.getTypeCode</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">bond</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 45</span> </span><span class="WHIT">	</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">bond</span><span class="WHIT"> </span><span class="KEYW">instanceof</span><span class="WHIT"> </span><span class="NAME">jchemhub.model.SingleBond</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 46</span> </span><span class="WHIT">		</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">jchemhub.io.mdl.SINGLE_BOND</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 47</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 48</span> </span><span class="WHIT">	</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">bond</span><span class="WHIT"> </span><span class="KEYW">instanceof</span><span class="WHIT"> </span><span class="NAME">jchemhub.model.DoubleBond</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 49</span> </span><span class="WHIT">		</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">jchemhub.io.mdl.DOUBLE_BOND</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 50</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 51</span> </span><span class="WHIT">	</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">bond</span><span class="WHIT"> </span><span class="KEYW">instanceof</span><span class="WHIT"> </span><span class="NAME">jchemhub.model.TripleBond</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 52</span> </span><span class="WHIT">		</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">jchemhub.io.mdl.TRIPLE_BOND</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 53</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 54</span> </span><span class="WHIT">	</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">bond</span><span class="WHIT"> </span><span class="KEYW">instanceof</span><span class="WHIT"> </span><span class="NAME">jchemhub.model.AromaticBond</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 55</span> </span><span class="WHIT">		</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">jchemhub.io.mdl.AROMATIC_BOND</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 56</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 57</span> </span><span class="WHIT">	</span><span class="KEYW">throw</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">Error</span><span class="PUNC">(</span><span class="STRN">"Invalid bond type ["</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="NAME">bond</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="STRN">"]"</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 58</span> </span><span class="WHIT">	</span><span class="WHIT">
+<span class='line'> 59</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 60</span> 
+<span class='line'> 61</span> </span><span class="COMM">/**
+<span class='line'> 62</span>  * maps bond class to mdl molfile stereo type code
+<span class='line'> 63</span>  * @param{jchemhub.model.Bond}
+<span class='line'> 64</span>  * @return{number}
+<span class='line'> 65</span>  */</span><span class="WHIT">
+<span class='line'> 66</span> </span><span class="NAME">jchemhub.io.mdl.getStereoCode</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">bond</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 67</span> </span><span class="WHIT">	</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">bond</span><span class="WHIT"> </span><span class="KEYW">instanceof</span><span class="WHIT"> </span><span class="NAME">jchemhub.model.SingleBondUp</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 68</span> </span><span class="WHIT">		</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">jchemhub.io.mdl.SINGLE_BOND_UP</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 69</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 70</span> </span><span class="WHIT">	</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">bond</span><span class="WHIT"> </span><span class="KEYW">instanceof</span><span class="WHIT"> </span><span class="NAME">jchemhub.model.SingleBondDown</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 71</span> </span><span class="WHIT">		</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">jchemhub.io.mdl.SINGLE_BOND_DOWN</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 72</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 73</span> </span><span class="WHIT">	</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">bond</span><span class="WHIT"> </span><span class="KEYW">instanceof</span><span class="WHIT"> </span><span class="NAME">jchemhub.model.SingleBondUpOrDown</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 74</span> </span><span class="WHIT">		</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">jchemhub.io.mdl.SINGLE_BOND_UP_OR_DOWN</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 75</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 76</span> </span><span class="WHIT">	</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">jchemhub.io.mdl.NOT_STEREO</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 77</span> </span><span class="WHIT">	</span><span class="WHIT">
+<span class='line'> 78</span> </span><span class="WHIT">	</span><span class="WHIT">
+<span class='line'> 79</span> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 80</span> 
+<span class='line'> 81</span> </span><span class="COMM">/**
+<span class='line'> 82</span>  * factory method for bonds
+<span class='line'> 83</span>  * 
+<span class='line'> 84</span>  * @param{number}type mdl type code
+<span class='line'> 85</span>  * @param{number}stereo mdl stereo type code
+<span class='line'> 86</span>  * @param{jchemhub.model.Atom} source atom at source end of bond
+<span class='line'> 87</span>  * @param{jchemhub.model.Atom} target atom at target end of bond
+<span class='line'> 88</span>  * 
+<span class='line'> 89</span>  * @return{jchemhub.model.Bond}
+<span class='line'> 90</span>  */</span><span class="WHIT">
+<span class='line'> 91</span> </span><span class="NAME">jchemhub.io.mdl.createBond</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">type</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">stereo</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">source</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">target</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 92</span> </span><span class="WHIT">	</span><span class="KEYW">switch</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">type</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 93</span> </span><span class="WHIT">	</span><span class="KEYW">case</span><span class="WHIT"> </span><span class="NAME">jchemhub.io.mdl.SINGLE_BOND</span><span class="PUNC">:</span><span class="WHIT">
+<span class='line'> 94</span> </span><span class="WHIT">		</span><span class="KEYW">switch</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">stereo</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 95</span> </span><span class="WHIT">		</span><span class="KEYW">case</span><span class="WHIT"> </span><span class="NAME">jchemhub.io.mdl.NOT_STEREO</span><span class="PUNC">:</span><span class="WHIT">
+<span class='line'> 96</span> </span><span class="WHIT">			</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">jchemhub.model.SingleBond</span><span class="PUNC">(</span><span class="NAME">source</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">target</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 97</span> </span><span class="WHIT">		</span><span class="KEYW">case</span><span class="WHIT"> </span><span class="NAME">jchemhub.io.mdl.SINGLE_BOND_UP</span><span class="PUNC">:</span><span class="WHIT">
+<span class='line'> 98</span> </span><span class="WHIT">			</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">jchemhub.model.SingleBondUp</span><span class="PUNC">(</span><span class="NAME">source</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">target</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 99</span> </span><span class="WHIT">		</span><span class="KEYW">case</span><span class="WHIT"> </span><span class="NAME">jchemhub.io.mdl.SINGLE_BOND_UP_OR_DOWN</span><span class="PUNC">:</span><span class="WHIT">
+<span class='line'>100</span> </span><span class="WHIT">			</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">jchemhub.model.SingleBondUpOrDown</span><span class="PUNC">(</span><span class="NAME">source</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">target</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>101</span> </span><span class="WHIT">		</span><span class="KEYW">case</span><span class="WHIT"> </span><span class="NAME">jchemhub.io.mdl.SINGLE_BOND_DOWN</span><span class="PUNC">:</span><span class="WHIT">
+<span class='line'>102</span> </span><span class="WHIT">			</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">jchemhub.model.SingleBondDown</span><span class="PUNC">(</span><span class="NAME">source</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">target</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>103</span> </span><span class="WHIT">		</span><span class="KEYW">default</span><span class="PUNC">:</span><span class="WHIT">
+<span class='line'>104</span> </span><span class="WHIT">			</span><span class="KEYW">throw</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">Error</span><span class="PUNC">(</span><span class="STRN">"invalid bond type/stereo ["</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="NAME">type</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="STRN">"]/["</span><span class="WHIT">
+<span class='line'>105</span> </span><span class="WHIT">					</span><span class="PUNC">+</span><span class="WHIT"> </span><span class="NAME">stereo</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="STRN">"]"</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>106</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>107</span> </span><span class="WHIT">	</span><span class="KEYW">case</span><span class="WHIT"> </span><span class="NAME">jchemhub.io.mdl.DOUBLE_BOND</span><span class="PUNC">:</span><span class="WHIT">
+<span class='line'>108</span> </span><span class="WHIT">		</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">jchemhub.model.DoubleBond</span><span class="PUNC">(</span><span class="NAME">source</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">target</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>109</span> </span><span class="WHIT">	</span><span class="KEYW">case</span><span class="WHIT"> </span><span class="NAME">jchemhub.io.mdl.TRIPLE_BOND</span><span class="PUNC">:</span><span class="WHIT">
+<span class='line'>110</span> </span><span class="WHIT">		</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">jchemhub.model.TripleBond</span><span class="PUNC">(</span><span class="NAME">source</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">target</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>111</span> </span><span class="WHIT">	</span><span class="KEYW">case</span><span class="WHIT"> </span><span class="NAME">jchemhub.io.mdl.AROMATIC_BOND</span><span class="PUNC">:</span><span class="WHIT">
+<span class='line'>112</span> </span><span class="WHIT">		</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">jchemhub.model.AromaticBond</span><span class="PUNC">(</span><span class="NAME">source</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">target</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>113</span> </span><span class="WHIT">	</span><span class="KEYW">case</span><span class="WHIT"> </span><span class="NAME">jchemhub.io.mdl.SINGLE_OR_DOUBLE</span><span class="PUNC">:</span><span class="WHIT">
+<span class='line'>114</span> </span><span class="WHIT">		</span><span class="KEYW">throw</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">Error</span><span class="PUNC">(</span><span class="STRN">"type not implemented ["</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="NAME">type</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="STRN">"]"</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>115</span> </span><span class="WHIT">	</span><span class="KEYW">case</span><span class="WHIT"> </span><span class="NAME">jchemhub.io.mdl.SINGLE_OR_AROMATIC</span><span class="PUNC">:</span><span class="WHIT">
+<span class='line'>116</span> </span><span class="WHIT">		</span><span class="KEYW">throw</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">Error</span><span class="PUNC">(</span><span class="STRN">"type not implemented ["</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="NAME">type</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="STRN">"]"</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>117</span> </span><span class="WHIT">	</span><span class="KEYW">case</span><span class="WHIT"> </span><span class="NAME">jchemhub.io.mdl.DOUBLE_OR_AROMATIC</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="WHIT">
+<span class='line'>118</span> </span><span class="WHIT">		</span><span class="KEYW">throw</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">Error</span><span class="PUNC">(</span><span class="STRN">"type not implemented ["</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="NAME">type</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="STRN">"]"</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>119</span> </span><span class="WHIT">	</span><span class="KEYW">case</span><span class="WHIT"> </span><span class="NAME">jchemhub.io.mdl.ANY</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="WHIT">
+<span class='line'>120</span> </span><span class="WHIT">		</span><span class="KEYW">throw</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">Error</span><span class="PUNC">(</span><span class="STRN">"type not implemented ["</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="NAME">type</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="STRN">"]"</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>121</span> </span><span class="WHIT">	</span><span class="KEYW">default</span><span class="PUNC">:</span><span class="WHIT">
+<span class='line'>122</span> </span><span class="WHIT">		</span><span class="KEYW">throw</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">Error</span><span class="PUNC">(</span><span class="STRN">"invalid bond type/stereo ["</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="NAME">type</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="STRN">"]/["</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="NAME">stereo</span><span class="WHIT">
+<span class='line'>123</span> </span><span class="WHIT">				</span><span class="PUNC">+</span><span class="WHIT"> </span><span class="STRN">"]"</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>124</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>125</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>126</span> 
+<span class='line'>127</span> </span><span class="COMM">/**
+<span class='line'>128</span>  * convert a mdl block string to a molecule
+<span class='line'>129</span>  *  
+<span class='line'>130</span>  * @param {String} mdl to convert
+<span class='line'>131</span>  * @return {jchemhub.model.Molecule}
+<span class='line'>132</span>  */</span><span class="WHIT">
+<span class='line'>133</span> </span><span class="NAME">jchemhub.io.mdl.readMolfile</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">molfile</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>134</span> 
+<span class='line'>135</span> </span><span class="WHIT">	</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">lineDelimiter</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">molfile.indexOf</span><span class="PUNC">(</span><span class="STRN">"\r\n"</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">></span><span class="WHIT"> </span><span class="NUMB">0</span><span class="WHIT"> </span><span class="PUNC">?</span><span class="WHIT"> </span><span class="STRN">"\r\n"</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">"\n"</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>136</span> </span><span class="WHIT">	</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">mol_lines</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">molfile.split</span><span class="PUNC">(</span><span class="NAME">lineDelimiter</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>137</span> </span><span class="WHIT">	</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">name</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">mol_lines</span><span class="PUNC">[</span><span class="NUMB">0</span><span class="PUNC">]</span><span class="WHIT">
+<span class='line'>138</span> </span><span class="WHIT">	</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">mol</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">jchemhub.model.Molecule</span><span class="PUNC">(</span><span class="NAME">name</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>139</span> </span><span class="WHIT">	</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">atom_count</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">parseInt</span><span class="PUNC">(</span><span class="NAME">mol_lines</span><span class="PUNC">[</span><span class="NUMB">3</span><span class="PUNC">]</span><span class="PUNC">.</span><span class="NAME">substr</span><span class="PUNC">(</span><span class="NUMB">0</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NUMB">3</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>140</span> </span><span class="WHIT">	</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">bond_count</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">parseInt</span><span class="PUNC">(</span><span class="NAME">mol_lines</span><span class="PUNC">[</span><span class="NUMB">3</span><span class="PUNC">]</span><span class="PUNC">.</span><span class="NAME">substr</span><span class="PUNC">(</span><span class="NUMB">3</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NUMB">3</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>141</span> 
+<span class='line'>142</span> </span><span class="WHIT">	</span><span class="KEYW">for</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="WHIT"> </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">i</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">1</span><span class="PUNC">;</span><span class="WHIT"> </span><span class="NAME">i</span><span class="WHIT"> </span><span class="XML">&lt;= atom_count; i++) {
+<span class='line'>143</span> 		var line = mol_lines[i + 3];
+<span class='line'>144</span> 		var symbol = line.substr(30, 4).replace(/(^\s*)|(\s*$)/g, "");
+<span class='line'>145</span> 
+<span class='line'>146</span> 		var x = parseFloat(line.substr(0, 10));
+<span class='line'>147</span> 		var y = parseFloat(line.substr(10, 10));
+<span class='line'>148</span> 		// atom.z = parseFloat(line.substr(20, 10));
+<span class='line'>149</span> 
+<span class='line'>150</span> 		// see page 15 of ctfile for details
+<span class='line'>151</span> 		// http://www.symyx.com/downloads/public/ctfile/ctfile.pdf
+<span class='line'>152</span> 		var ctfile_dd = parseInt(line.substr(34, 2)); // TODO implement
+<span class='line'>153</span> 		// isotopic support
+<span class='line'>154</span> 		var ctfile_ccc = parseInt(line.substr(36, 3));
+<span class='line'>155</span> 		// TODO support old-fashioned M ISO
+<span class='line'>156</span> 
+<span class='line'>157</span> 		var charge = 0;
+<span class='line'>158</span> 
+<span class='line'>159</span> 		if (ctfile_ccc == 0) {
+<span class='line'>160</span> 		} else if (ctfile_ccc == 1) {
+<span class='line'>161</span> 			charge = 3;
+<span class='line'>162</span> 		} else if (ctfile_ccc == 2) {
+<span class='line'>163</span> 			charge = 2;
+<span class='line'>164</span> 		} else if (ctfile_ccc == 3) {
+<span class='line'>165</span> 			charge = 1;
+<span class='line'>166</span> 		} else if (ctfile_ccc == 4) {
+<span class='line'>167</span> 			// TODO support doublet radical
+<span class='line'>168</span> 		} else if (ctfile_ccc == 5) {
+<span class='line'>169</span> 			charge = -1;
+<span class='line'>170</span> 		} else if (ctfile_ccc == 6) {
+<span class='line'>171</span> 			charge = -2;
+<span class='line'>172</span> 		} else if (ctfile_ccc == 7) {
+<span class='line'>173</span> 			charge = -3;
+<span class='line'>174</span> 		}
+<span class='line'>175</span> 		var atom = new jchemhub.model.Atom(symbol, x, y, charge);
+<span class='line'>176</span> 		mol.addAtom(atom);
+<span class='line'>177</span> 	}
+<span class='line'>178</span> 
+<span class='line'>179</span> 	for ( var i = 1; i &lt;= bond_count; i++) {
+<span class='line'>180</span> 		var line = mol_lines[i + 3 + atom_count];
+<span class='line'>181</span> 		// Don't forget to -1 because molfile numbering from 1 instead of 0
+<span class='line'>182</span> 
+<span class='line'>183</span> 		var sourceAtom = mol.getAtom(parseInt(line.substr(0, 3)) - 1);
+<span class='line'>184</span> 
+<span class='line'>185</span> 		var targetAtom = mol.getAtom(parseInt(line.substr(3, 3)) - 1);
+<span class='line'>186</span> 
+<span class='line'>187</span> 		var bondType = parseInt(line.substr(6, 3));
+<span class='line'>188</span> 		var bondStereoType = parseInt(line.substr(9, 3));
+<span class='line'>189</span> 		var bond = jchemhub.io.mdl.createBond(bondType, bondStereoType,
+<span class='line'>190</span> 				sourceAtom, targetAtom);
+<span class='line'>191</span> 
+<span class='line'>192</span> 		mol.addBond(bond);
+<span class='line'>193</span> 
+<span class='line'>194</span> 	}
+<span class='line'>195</span> 
+<span class='line'>196</span> 	// Read M CHG
+<span class='line'>197</span> 	var i = 4 + atom_count + bond_count, il = mol_lines.length;
+<span class='line'>198</span> 	var superseded = false;
+<span class='line'>199</span> 	while (true) {
+<span class='line'>200</span> 		var line = mol_lines[i++];
+<span class='line'>201</span> 		if (i == il || line.indexOf("M  END") ></span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>202</span> </span><span class="WHIT">			</span><span class="KEYW">break</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>203</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>204</span> </span><span class="WHIT">		</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">line.indexOf</span><span class="PUNC">(</span><span class="STRN">"M  CHG"</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">>=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>205</span> </span><span class="WHIT">			</span><span class="COMM">/*
+<span class='line'>206</span> 			 * TODO Charge [Generic] M CHGnn8 aaa vvv ... vvv: -15 to +15.
+<span class='line'>207</span> 			 * Default of 0 = uncharged atom. When present, this property
+<span class='line'>208</span> 			 * supersedes all charge and radical values in the atom block,
+<span class='line'>209</span> 			 * forcing a 0 charge on all atoms not listed in an M CHG or M RAD
+<span class='line'>210</span> 			 * line.
+<span class='line'>211</span> 			 * 
+<span class='line'>212</span> 			 */</span><span class="WHIT">
+<span class='line'>213</span> </span><span class="WHIT">			</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">superseded</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>214</span> </span><span class="WHIT">				</span><span class="KEYW">for</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="WHIT"> </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">j</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">jl</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">mol.countAtoms</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT"> </span><span class="NAME">j</span><span class="WHIT"> </span><span class="XML">&lt; jl; j++) {
+<span class='line'>215</span> 					mol.getAtom(j).charge = 0;
+<span class='line'>216</span> 				}
+<span class='line'>217</span> 				superseded = true;
+<span class='line'>218</span> 			}
+<span class='line'>219</span> 			var nn = parseInt(line.substr(6, 3));
+<span class='line'>220</span> 			for ( var k = 0; k &lt; nn; k++) {
+<span class='line'>221</span> 				var atomNum = parseInt(line.substr(10 + 8 * k, 3));
+<span class='line'>222</span> 				// console.debug(atomNum);
+<span class='line'>223</span> 				var charge = parseInt(line.substr(14 + 8 * k, 3));
+<span class='line'>224</span> 				// console.debug(charge);
+<span class='line'>225</span> 				mol.getAtom(atomNum - 1).charge = charge;
+<span class='line'>226</span> 			}
+<span class='line'>227</span> 
+<span class='line'>228</span> 		}
+<span class='line'>229</span> 		// console.debug(line);
+<span class='line'>230</span> 	}
+<span class='line'>231</span> 
+<span class='line'>232</span> 	// TODO parse Charge, SuperAtom groups, Properties....
+<span class='line'>233</span> 
+<span class='line'>234</span> 	return mol;
+<span class='line'>235</span> 
+<span class='line'>236</span> };
+<span class='line'>237</span> 
+<span class='line'>238</span> /**
+<span class='line'>239</span>  * convert Molecule to molfile string
+<span class='line'>240</span>  * 
+<span class='line'>241</span>  * @param {jchemhub.model.Molecule} mol molecule to write
+<span class='line'>242</span>  * 
+<span class='line'>243</span>  * @return{string}
+<span class='line'>244</span>  */
+<span class='line'>245</span> jchemhub.io.mdl.writeMolfile = function(mol) {
+<span class='line'>246</span> 	var molFile = new String();
+<span class='line'>247</span> 	var headerBlock = new String();
+<span class='line'>248</span> 	var countsLine = new String();
+<span class='line'>249</span> 	var atomBlock = new String();
+<span class='line'>250</span> 	var bondBlock = new String();
+<span class='line'>251</span> 
+<span class='line'>252</span> 	// Header block
+<span class='line'>253</span> 	// Line 1: Molecule name
+<span class='line'>254</span> 	// Line 2: This line has the format:
+<span class='line'>255</span> 	// IIPPPPPPPPMMDDYYHHmmddSSssssssssssEEEEEEEEEEEERRRRRR
+<span class='line'>256</span> 	// Line 3: A line for comments. If no comment is entered, a blank line must
+<span class='line'>257</span> 	// be present.
+<span class='line'>258</span> 	var now = new Date();
+<span class='line'>259</span> 	var line1 = mol.name + "\n";
+<span class='line'>260</span> 	var fmt = new goog.i18n.DateTimeFormat('mmddyyHHMM');
+<span class='line'>261</span> 	var line2 = " " + "JChemHub" + fmt.format(now) + "\n";
+<span class='line'>262</span> 	var line3 = "\n";
+<span class='line'>263</span> 	var headerBlock = line1 + line2 + line3;
+<span class='line'>264</span> 
+<span class='line'>265</span> 	// Counts line
+<span class='line'>266</span> 	var atomCount = (goog.string.repeat(" ", 3) + mol.countAtoms()).slice(-3);
+<span class='line'>267</span> 	var bondCount = (goog.string.repeat(" ", 3) + mol.countBonds()).slice(-3);
+<span class='line'>268</span> 
+<span class='line'>269</span> 	// TODO complete lll, fff, ccc, sss
+<span class='line'>270</span> 	countsLine = atomCount + bondCount + "  0  0  0  0            999 V2000\n";
+<span class='line'>271</span> 
+<span class='line'>272</span> 	// Atom block
+<span class='line'>273</span> 	for (i = 0; i &lt; mol.countAtoms(); i++) {
+<span class='line'>274</span> 		var atom = mol.getAtom(i);
+<span class='line'>275</span> 		var xPos = (goog.string.repeat(" ", 10) + atom.coord.x.toFixed(4)).slice(-10);
+<span class='line'>276</span> 		var yPos = (goog.string.repeat(" ", 10) + atom.coord.y.toFixed(4)).slice(-10);
+<span class='line'>277</span> 		var zPos = (goog.string.repeat(" ", 10) + (0).toFixed(4)).slice(-10);
+<span class='line'>278</span> 		var atomSymbol = (goog.string.repeat(" ", 3) + atom.symbol).slice(-3);
+<span class='line'>279</span> 
+<span class='line'>280</span> 		// TODO: fill in more details on rest of atom line
+<span class='line'>281</span> 		var filler = "  0  0  0  0  0  0  0  0  0  0  0  0";
+<span class='line'>282</span> 		atomBlock += xPos + yPos + zPos + atomSymbol + "\n";
+<span class='line'>283</span> 	}
+<span class='line'>284</span> 
+<span class='line'>285</span> 	// Bond Block
+<span class='line'>286</span> 	for (i = 0; i &lt; mol.countBonds(); i++) {
+<span class='line'>287</span> 		var bond = mol.getBond(i);
+<span class='line'>288</span> 		var firstAtomNumber = mol.indexOfAtom(bond.source) + 1;
+<span class='line'>289</span> 		var firstAtomString = (goog.string.repeat(" ", 3) + firstAtomNumber)
+<span class='line'>290</span> 				.slice(-3);
+<span class='line'>291</span> 		var secondAtomNumber = mol.indexOfAtom(bond.target) + 1;
+<span class='line'>292</span> 		var secondAtomString = (goog.string.repeat(" ", 3) + secondAtomNumber)
+<span class='line'>293</span> 				.slice(-3);
+<span class='line'>294</span> 		var bondTypeString = (goog.string.repeat(" ", 3) + jchemhub.io.mdl.getTypeCode(bond))
+<span class='line'>295</span> 				.slice(-3);
+<span class='line'>296</span> 		var stereoTypeString = (goog.string.repeat(" ", 3) + jchemhub.io.mdl.getStereoCode(bond))
+<span class='line'>297</span> 				.slice(-3);
+<span class='line'>298</span> 		bondBlock += firstAtomString + secondAtomString + bondTypeString
+<span class='line'>299</span> 				+ stereoTypeString + "\n";
+<span class='line'>300</span> 	}
+<span class='line'>301</span> 
+<span class='line'>302</span> 	molFile = headerBlock + countsLine + atomBlock + bondBlock;
+<span class='line'>303</span> 	// alert(molFile);
+<span class='line'>304</span> 	return molFile;
+<span class='line'>305</span> 
+<span class='line'>306</span> };
+<span class='line'>307</span> 
+<span class='line'>308</span> 
+<span class='line'>309</span> /**
+<span class='line'>310</span>  * convert rxnfile format string to reaction
+<span class='line'>311</span>  * 
+<span class='line'>312</span>  * @param {String} rxnfile to parse
+<span class='line'>313</span>  * @return{jchemhub.model.Reaction}
+<span class='line'>314</span>  */
+<span class='line'>315</span> jchemhub.io.mdl.readRxnfile = function(rxnfile) {
+<span class='line'>316</span> 	var lineDelimiter = rxnfile.indexOf("\r\n") ></span><span class="WHIT"> </span><span class="NUMB">0</span><span class="WHIT"> </span><span class="PUNC">?</span><span class="WHIT"> </span><span class="STRN">"\r\n"</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">"\n"</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>317</span> </span><span class="WHIT">	</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">rxn_lines</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">rxnfile.split</span><span class="PUNC">(</span><span class="NAME">lineDelimiter</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NUMB">5</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="COMM">// only need first 5 lines</span><span class="WHIT">
+<span class='line'>318</span> </span><span class="WHIT">	</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">rxn_lines</span><span class="PUNC">[</span><span class="NUMB">0</span><span class="PUNC">]</span><span class="PUNC">.</span><span class="NAME">indexOf</span><span class="PUNC">(</span><span class="STRN">"$RXN"</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="TOKN"></span></pre></body></html>

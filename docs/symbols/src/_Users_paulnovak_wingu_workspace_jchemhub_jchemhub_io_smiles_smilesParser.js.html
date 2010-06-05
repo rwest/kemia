@@ -1,0 +1,435 @@
+<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"> <style>
+	.KEYW {color: #933;}
+	.COMM {color: #bbb; font-style: italic;}
+	.NUMB {color: #393;}
+	.STRN {color: #393;}
+	.REGX {color: #339;}
+	.line {border-right: 1px dotted #666; color: #666; font-style: normal;}
+	</style></head><body><pre><span class='line'>  1</span> <span class="COMM">/*
+<span class='line'>  2</span>  * Copyright [2010] [Mark Rijnbeek] 
+<span class='line'>  3</span>  * Licensed under the Apache License, Version 2.0 (the "License"); 
+<span class='line'>  4</span>  * you may not use this file except in compliance with the License. 
+<span class='line'>  5</span>  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 
+<span class='line'>  6</span>  * 
+<span class='line'>  7</span>  * Unless required by applicable law or agreed to in writing, software distributed under the License 
+<span class='line'>  8</span>  * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+<span class='line'>  9</span>  * See the License for the specific language governing permissions and limitations under the License.
+<span class='line'> 10</span>  */</span><span class="WHIT">
+<span class='line'> 11</span> 
+<span class='line'> 12</span> </span><span class="NAME">goog.provide</span><span class="PUNC">(</span><span class="STRN">'jchemhub.io.smiles.SmilesParser'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 13</span> </span><span class="NAME">goog.require</span><span class="PUNC">(</span><span class="STRN">'goog.array'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 14</span> </span><span class="NAME">goog.require</span><span class="PUNC">(</span><span class="STRN">'jchemhub.model.Atom'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 15</span> </span><span class="NAME">goog.require</span><span class="PUNC">(</span><span class="STRN">'jchemhub.model.Atom.Hybridizations'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 16</span> </span><span class="NAME">goog.require</span><span class="PUNC">(</span><span class="STRN">'jchemhub.model.PseudoAtom'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 17</span> </span><span class="NAME">goog.require</span><span class="PUNC">(</span><span class="STRN">'jchemhub.model.Molecule'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 18</span> </span><span class="NAME">goog.require</span><span class="PUNC">(</span><span class="STRN">'jchemhub.model.Bond'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 19</span> </span><span class="NAME">goog.require</span><span class="PUNC">(</span><span class="STRN">'jchemhub.model.SingleBond'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 20</span> </span><span class="NAME">goog.require</span><span class="PUNC">(</span><span class="STRN">'jchemhub.model.DoubleBond'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 21</span> </span><span class="NAME">goog.require</span><span class="PUNC">(</span><span class="STRN">'jchemhub.model.TripleBond'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 22</span> </span><span class="NAME">goog.require</span><span class="PUNC">(</span><span class="STRN">'jchemhub.model.QuadrupleBond'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 23</span> </span><span class="NAME">goog.require</span><span class="PUNC">(</span><span class="STRN">'jchemhub.util.BondUtil'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 24</span> </span><span class="NAME">goog.require</span><span class="PUNC">(</span><span class="STRN">'jchemhub.util.BondUtil.Orders'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 25</span> 
+<span class='line'> 26</span> 
+<span class='line'> 27</span> </span><span class="COMM">/*  
+<span class='line'> 28</span>  * SMILES parsing.
+<span class='line'> 29</span>  * For more on SMILES, see: http://www.daylight.com/dayhtml_tutorials/languages/smiles/index.html
+<span class='line'> 30</span>  * This parser is more or less a Java->Javascript port of the CDK's SMILES parser.
+<span class='line'> 31</span>  * See: http://cdk.git.sourceforge.net/git/gitweb.cgi?p=cdk/cdk;a=summary
+<span class='line'> 32</span>  * 
+<span class='line'> 33</span>  * @author Mark Rijnbeek (markr@ebi.ac.uk)
+<span class='line'> 34</span>  */</span><span class="WHIT">
+<span class='line'> 35</span> 
+<span class='line'> 36</span> 
+<span class='line'> 37</span> </span><span class="COMM">//TODO - why is stereo information ignored in the parser??</span><span class="WHIT">
+<span class='line'> 38</span> 
+<span class='line'> 39</span> </span><span class="NAME">jchemhub.io.smiles.SmilesParser</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 40</span> 	</span><span class="NAME">alert</span><span class="PUNC">(</span><span class="STRN">"jchemhub.smiles.SmilesParser = function()"</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'> 41</span> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 42</span> 
+<span class='line'> 43</span> </span><span class="COMM">/**
+<span class='line'> 44</span>  * Parse a SMILES String into a jchemhub.model.Molecule.
+<span class='line'> 45</span>  */</span><span class="WHIT">
+<span class='line'> 46</span> </span><span class="NAME">jchemhub.io.smiles.SmilesParser.parse</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">smiles</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 47</span> 
+<span class='line'> 48</span>     </span><span class="COMM">//Initialization before parse </span><span class="WHIT">
+<span class='line'> 49</span>     </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">bond</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">jchemhub.model.Bond</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 50</span>     </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">nodeCounter</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 51</span>     </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">bondOrder</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">;</span><span class="WHIT">  
+<span class='line'> 52</span>     </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">bondOrderForRingClosure</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">jchemhub.util.BondUtil.Orders.SINGLE</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 53</span>     </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">bondIsAromatic</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="PUNC">;</span><span class="WHIT"> 
+<span class='line'> 54</span>     </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">bondExists</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">true</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 55</span>     </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">thisRing</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">-</span><span class="NUMB">1</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 56</span>     </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">currentSymbol</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 57</span>     </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">molecule</span><span class="PUNC">=</span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">jchemhub.model.Molecule</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 58</span>     </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">position</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 59</span>     </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">rings</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">Array</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">  </span><span class="COMM">// array with atoms</span><span class="WHIT">
+<span class='line'> 60</span>     </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">ringbonds</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">Array</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT"> </span><span class="COMM">// array with bonds </span><span class="WHIT">
+<span class='line'> 61</span>     </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">mychar</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">'X'</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 62</span>     </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">chars</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">Array</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT"> </span><span class="COMM">// char[1];</span><span class="WHIT">
+<span class='line'> 63</span>     </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">lastNode</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">;</span><span class="WHIT"> </span><span class="COMM">//Atom</span><span class="WHIT">
+<span class='line'> 64</span>     </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">atomStack</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">Array</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT"> </span><span class="COMM">// stack with atoms</span><span class="WHIT">
+<span class='line'> 65</span>     </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">bondStack</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">Array</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT"> </span><span class="COMM">// stack with bond orders</span><span class="WHIT">
+<span class='line'> 66</span>     </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">atom</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 67</span> 
+<span class='line'> 68</span>     </span><span class="COMM">//Parser loep</span><span class="WHIT">
+<span class='line'> 69</span> 	</span><span class="KEYW">do</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 70</span>         </span><span class="NAME">mychar</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">smiles.charAt</span><span class="PUNC">(</span><span class="NAME">position</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 71</span> 
+<span class='line'> 72</span>         </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">(</span><span class="NAME">mychar</span><span class="WHIT"> </span><span class="PUNC">>=</span><span class="WHIT"> </span><span class="STRN">'A'</span><span class="WHIT"> </span><span class="PUNC">&&</span><span class="WHIT"> </span><span class="NAME">mychar</span><span class="WHIT"> </span><span class="XML">&lt;= 'Z') || (mychar ></span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">'a'</span><span class="WHIT"> </span><span class="PUNC">&&</span><span class="WHIT"> </span><span class="NAME">mychar</span><span class="WHIT"> </span><span class="XML">&lt;= 'z') ||(mychar == '*'))
+<span class='line'> 73</span>         {
+<span class='line'> 74</span>             status = 1;
+<span class='line'> 75</span>             atom = null;
+<span class='line'> 76</span> 			// A star means a pseudo atom 
+<span class='line'> 77</span>             if (mychar == '*') {
+<span class='line'> 78</span>                 currentSymbol = "*";
+<span class='line'> 79</span>                 atom = new jchemhub.model.PseudoAtom("*",0,0);
+<span class='line'> 80</span>             }
+<span class='line'> 81</span> 			else {
+<span class='line'> 82</span>                 currentSymbol = this.getSymbolForOrganicSubsetElement(smiles,position);
+<span class='line'> 83</span> 				//alert(currentSymbol);
+<span class='line'> 84</span> 				if (currentSymbol != null) {
+<span class='line'> 85</span>                     if (currentSymbol.length == 1) {
+<span class='line'> 86</span>                         if (currentSymbol.toUpperCase() != currentSymbol ) { 
+<span class='line'> 87</span>                             currentSymbol = currentSymbol.toUpperCase();
+<span class='line'> 88</span>                             atom = new jchemhub.model.Atom(currentSymbol);
+<span class='line'> 89</span> 							atom.hybridization=jchemhub.model.Atom.Hybridizations.SP2;
+<span class='line'> 90</span>                         } 
+<span class='line'> 91</span> 						else
+<span class='line'> 92</span>                             atom = new jchemhub.model.Atom(currentSymbol);
+<span class='line'> 93</span>                     } 
+<span class='line'> 94</span> 					else
+<span class='line'> 95</span>                         atom = new jchemhub.model.Atom(currentSymbol);
+<span class='line'> 96</span>                 } else
+<span class='line'> 97</span>                      throw "Found element which is not a 'organic subset' element. You must use [" + mychar + "].";
+<span class='line'> 98</span>             }
+<span class='line'> 99</span> 			molecule.addAtom(atom); 
+<span class='line'>100</span> 
+<span class='line'>101</span>             if ((lastNode != null) && bondExists) {
+<span class='line'>102</span> 				bond = jchemhub.util.BondUtil.getBond (atom, lastNode,bondOrder);
+<span class='line'>103</span>                 if (bondIsAromatic) {
+<span class='line'>104</span>                     bond.aromatic=true;
+<span class='line'>105</span>                 }
+<span class='line'>106</span>                 molecule.addBond(bond);
+<span class='line'>107</span>             }
+<span class='line'>108</span>             bondOrder = jchemhub.util.BondUtil.Orders.SINGLE;
+<span class='line'>109</span>             lastNode = atom;
+<span class='line'>110</span>             nodeCounter++;
+<span class='line'>111</span>             position = position + currentSymbol.length;
+<span class='line'>112</span>             bondExists = true;
+<span class='line'>113</span>             bondIsAromatic = false;
+<span class='line'>114</span>         } 
+<span class='line'>115</span> 
+<span class='line'>116</span>         else if (mychar == '=') {
+<span class='line'>117</span> 			//alert(mychar);
+<span class='line'>118</span>             position++;
+<span class='line'>119</span>             if (status == 2 || !((smiles.charAt(position) ></span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">'0'</span><span class="WHIT"> </span><span class="PUNC">&&</span><span class="WHIT"> </span><span class="NAME">smiles.charAt</span><span class="PUNC">(</span><span class="NAME">position</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="XML">&lt;= '9') || smiles.charAt(position) == '%'))
+<span class='line'>120</span>                 bondOrder = jchemhub.util.BondUtil.Orders.DOUBLE;
+<span class='line'>121</span>             else
+<span class='line'>122</span>                 bondOrderForRingClosure = jchemhub.util.BondUtil.Orders.DOUBLE;
+<span class='line'>123</span>         } 
+<span class='line'>124</span>     	else if (mychar == '#') {
+<span class='line'>125</span>             //alert(mychar);
+<span class='line'>126</span>             position++;
+<span class='line'>127</span>             if (status == 2 || !((smiles.charAt(position) ></span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">'0'</span><span class="WHIT"> </span><span class="PUNC">&&</span><span class="WHIT"> </span><span class="NAME">smiles.charAt</span><span class="PUNC">(</span><span class="NAME">position</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="XML">&lt;= '9') || smiles.charAt(position) == '%')) 
+<span class='line'>128</span>                 bondOrder = jchemhub.util.BondUtil.Orders.TRIPLE;
+<span class='line'>129</span>             else 
+<span class='line'>130</span>                 bondOrderForRingClosure = jchemhub.util.BondUtil.Orders.TRIPLE;
+<span class='line'>131</span>         } 
+<span class='line'>132</span> 		else if (mychar == '(') {
+<span class='line'>133</span>             //alert(mychar);
+<span class='line'>134</span>             atomStack.push(lastNode);
+<span class='line'>135</span>             bondStack.push(bondOrder);
+<span class='line'>136</span>             position++;
+<span class='line'>137</span>         }
+<span class='line'>138</span> 		else if (mychar == ')' ) {
+<span class='line'>139</span>             //alert(mychar);
+<span class='line'>140</span>             lastNode = atomStack.pop();
+<span class='line'>141</span>             bondOrder = bondStack.pop();
+<span class='line'>142</span>             position++;
+<span class='line'>143</span>         } 
+<span class='line'>144</span> 		else if (mychar ></span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">'0'</span><span class="WHIT"> </span><span class="PUNC">&&</span><span class="WHIT"> </span><span class="NAME">mychar</span><span class="WHIT"> </span><span class="XML">&lt;= '9') {
+<span class='line'>145</span>             status = 2;
+<span class='line'>146</span>             chars[0] = mychar;
+<span class='line'>147</span>             currentSymbol = mychar; //new String(chars);
+<span class='line'>148</span>             thisRing = currentSymbol;
+<span class='line'>149</span> 
+<span class='line'>150</span>             //Handle ring__________			 
+<span class='line'>151</span> 			var bondOrd = bondOrderForRingClosure;
+<span class='line'>152</span> 			if (ringbonds[thisRing] ></span><span class="WHIT"> </span><span class="NAME">bondOrd</span><span class="PUNC">)</span><span class="WHIT"> 
+<span class='line'>153</span> 			    </span><span class="NAME">bondOrd</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">ringbonds</span><span class="PUNC">[</span><span class="NAME">thisRing</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>154</span> 			</span><span class="NAME">ringBond</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>155</span> 			</span><span class="NAME">ringPartner</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>156</span> 			</span><span class="NAME">ringNode</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">rings</span><span class="PUNC">[</span><span class="NAME">thisRing</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>157</span> 			</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">ringNode</span><span class="WHIT"> </span><span class="PUNC">!=</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>158</span> 			    </span><span class="NAME">ringPartner</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">ringNode</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>159</span> 			    </span><span class="NAME">ringBond</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">jchemhub.util.BondUtil.getBond</span><span class="PUNC">(</span><span class="NAME">lastNode</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">ringPartner</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">bondOrd</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>160</span> 			    </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">bondIsAromatic</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>161</span> 			        </span><span class="NAME">ringBond.setFlag</span><span class="PUNC">(</span><span class="NAME">CDKConstants.ISAROMATIC</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="KEYW">true</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>162</span> 			    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>163</span> 			    </span><span class="NAME">molecule.addBond</span><span class="PUNC">(</span><span class="NAME">ringBond</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>164</span> 			    </span><span class="NAME">bondIsAromatic</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>165</span> 			    </span><span class="NAME">rings</span><span class="PUNC">[</span><span class="NAME">thisRing</span><span class="PUNC">]</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>166</span> 			    </span><span class="NAME">ringbonds</span><span class="PUNC">[</span><span class="NAME">thisRing</span><span class="PUNC">]</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>167</span> 			</span><span class="PUNC">}</span><span class="WHIT"> 
+<span class='line'>168</span> 			</span><span class="KEYW">else</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>169</span> 			    </span><span class="NAME">rings</span><span class="PUNC">[</span><span class="NAME">thisRing</span><span class="PUNC">]</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">lastNode</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>170</span> 			    </span><span class="NAME">ringbonds</span><span class="PUNC">[</span><span class="NAME">thisRing</span><span class="PUNC">]</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">bondOrderForRingClosure</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>171</span> 			</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>172</span> 			</span><span class="NAME">bondOrderForRingClosure</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">jchemhub.util.BondUtil.Orders.SINGLE</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>173</span>             </span><span class="COMM">//______________________</span><span class="WHIT">
+<span class='line'>174</span>             </span><span class="NAME">position</span><span class="PUNC">++</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>175</span> 
+<span class='line'>176</span>         </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>177</span> 		</span><span class="KEYW">else</span><span class="WHIT"> </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">mychar</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">'%'</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>178</span>         </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>179</span>             </span><span class="NAME">pos</span><span class="PUNC">=</span><span class="NAME">position</span><span class="PUNC">+</span><span class="NUMB">1</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>180</span> 	        </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">pos</span><span class="WHIT"> </span><span class="PUNC">>=</span><span class="WHIT"> </span><span class="NAME">smiles.length</span><span class="WHIT"> </span><span class="PUNC">-</span><span class="WHIT"> </span><span class="NUMB">1</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>181</span> 	            </span><span class="KEYW">throw</span><span class="WHIT"> </span><span class="STRN">"Percent sign ring closure numbers must be two-digit."</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>182</span> 	
+<span class='line'>183</span> 	        </span><span class="NAME">currentSymbol</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">smiles.substring</span><span class="PUNC">(</span><span class="NAME">pos</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">pos</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="NUMB">2</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>184</span> 	
+<span class='line'>185</span> 	        </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">currentSymbol.charAt</span><span class="PUNC">(</span><span class="NUMB">0</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="XML">&lt; '0' || currentSymbol.charAt(0) ></span><span class="WHIT"> </span><span class="STRN">'9'</span><span class="WHIT"> </span><span class="PUNC">||</span><span class="WHIT"> 
+<span class='line'>186</span> 	            </span><span class="NAME">currentSymbol.charAt</span><span class="PUNC">(</span><span class="NUMB">1</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="XML">&lt; '0' || currentSymbol.charAt(1) ></span><span class="WHIT"> </span><span class="STRN">'9'</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>187</span> 	            </span><span class="KEYW">throw</span><span class="WHIT"> </span><span class="STRN">"Percent sign ring closure numbers must be two-digit."</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>188</span> 
+<span class='line'>189</span>             </span><span class="NAME">thisRing</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">currentSymbol</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>190</span> 
+<span class='line'>191</span>             </span><span class="COMM">//Handle ring_______________            </span><span class="WHIT">
+<span class='line'>192</span>             </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">bondOrd</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">bondOrderForRingClosure</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>193</span>             </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">ringbonds</span><span class="PUNC">[</span><span class="NAME">thisRing</span><span class="PUNC">]</span><span class="WHIT"> </span><span class="PUNC">></span><span class="WHIT"> </span><span class="NAME">bondOrd</span><span class="PUNC">)</span><span class="WHIT"> 
+<span class='line'>194</span>                 </span><span class="NAME">bondOrd</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">ringbonds</span><span class="PUNC">[</span><span class="NAME">thisRing</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>195</span>             </span><span class="NAME">ringBond</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>196</span>             </span><span class="NAME">ringPartner</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>197</span>             </span><span class="NAME">ringNode</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">rings</span><span class="PUNC">[</span><span class="NAME">thisRing</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>198</span>             </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">ringNode</span><span class="WHIT"> </span><span class="PUNC">!=</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>199</span>                 </span><span class="NAME">ringPartner</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">ringNode</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>200</span>                 </span><span class="NAME">ringBond</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">jchemhub.util.BondUtil.getBond</span><span class="PUNC">(</span><span class="NAME">lastNode</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">ringPartner</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">bondOrd</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>201</span>                 </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">bondIsAromatic</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>202</span>                     </span><span class="NAME">ringBond.setFlag</span><span class="PUNC">(</span><span class="NAME">CDKConstants.ISAROMATIC</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="KEYW">true</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>203</span>                 </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>204</span>                 </span><span class="NAME">molecule.addBond</span><span class="PUNC">(</span><span class="NAME">ringBond</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>205</span>                 </span><span class="NAME">bondIsAromatic</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>206</span>                 </span><span class="NAME">rings</span><span class="PUNC">[</span><span class="NAME">thisRing</span><span class="PUNC">]</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>207</span>                 </span><span class="NAME">ringbonds</span><span class="PUNC">[</span><span class="NAME">thisRing</span><span class="PUNC">]</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>208</span>             </span><span class="PUNC">}</span><span class="WHIT"> 
+<span class='line'>209</span>             </span><span class="KEYW">else</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>210</span>                 </span><span class="NAME">rings</span><span class="PUNC">[</span><span class="NAME">thisRing</span><span class="PUNC">]</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">lastNode</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>211</span>                 </span><span class="NAME">ringbonds</span><span class="PUNC">[</span><span class="NAME">thisRing</span><span class="PUNC">]</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">bondOrderForRingClosure</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>212</span>             </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>213</span>             </span><span class="NAME">bondOrderForRingClosure</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">jchemhub.util.BondUtil.Orders.SINGLE</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>214</span> 			</span><span class="COMM">//_____________</span><span class="WHIT">
+<span class='line'>215</span> 
+<span class='line'>216</span>             </span><span class="NAME">position</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">currentSymbol.length</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="NUMB">1</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>217</span>         </span><span class="PUNC">}</span><span class="WHIT"> 
+<span class='line'>218</span> 		</span><span class="KEYW">else</span><span class="WHIT"> </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">mychar</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">'['</span><span class="PUNC">)</span><span class="WHIT">  </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>219</span>             </span><span class="NAME">currentSymbol</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.getAtomString</span><span class="PUNC">(</span><span class="NAME">smiles</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">position</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>220</span>             </span><span class="NAME">atom</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.assembleAtom</span><span class="PUNC">(</span><span class="NAME">currentSymbol</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>221</span>             </span><span class="NAME">molecule.addAtom</span><span class="PUNC">(</span><span class="NAME">atom</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>222</span>             </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">lastNode</span><span class="WHIT"> </span><span class="PUNC">!=</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="WHIT"> </span><span class="PUNC">&&</span><span class="WHIT"> </span><span class="NAME">bondExists</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>223</span>                 </span><span class="NAME">bond</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">jchemhub.util.BondUtil.getBond</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">atom</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">lastNode</span><span class="PUNC">,</span><span class="NAME">bondOrder</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>224</span>                 </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">bondIsAromatic</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>225</span>                     </span><span class="NAME">bond.aromatic</span><span class="PUNC">=</span><span class="KEYW">true</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>226</span>                 </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>227</span>                 </span><span class="NAME">molecule.addBond</span><span class="PUNC">(</span><span class="NAME">bond</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>228</span>             </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>229</span>             </span><span class="NAME">bondOrder</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">jchemhub.util.BondUtil.Orders.SINGLE</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>230</span>             </span><span class="NAME">bondIsAromatic</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>231</span>             </span><span class="NAME">lastNode</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">atom</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>232</span>             </span><span class="NAME">nodeCounter</span><span class="PUNC">++</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>233</span>             </span><span class="NAME">position</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">position</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="NAME">currentSymbol.length</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="NUMB">2</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>234</span> 
+<span class='line'>235</span>             </span><span class="COMM">//TODO change atom class</span><span class="WHIT">
+<span class='line'>236</span>             </span><span class="COMM">//if (atom.getHydrogenCount() == null) {</span><span class="WHIT">
+<span class='line'>237</span>                 </span><span class="COMM">// zero implicit hydrogens is implied when the Hx syntax is not used</span><span class="WHIT">
+<span class='line'>238</span>             </span><span class="COMM">//    atom.setHydrogenCount(0);</span><span class="WHIT">
+<span class='line'>239</span>             </span><span class="COMM">//}</span><span class="WHIT">
+<span class='line'>240</span>             </span><span class="NAME">bondExists</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">true</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>241</span>         </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>242</span> 		</span><span class="KEYW">else</span><span class="WHIT"> </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">mychar</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">'.'</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>243</span>         </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>244</span>             </span><span class="NAME">bondExists</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>245</span>             </span><span class="NAME">position</span><span class="PUNC">++</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>246</span>         </span><span class="PUNC">}</span><span class="WHIT"> </span><span class="KEYW">else</span><span class="WHIT"> </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">mychar</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">'-'</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>247</span>         </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>248</span>             </span><span class="NAME">bondExists</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">true</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>249</span>             </span><span class="NAME">position</span><span class="PUNC">++</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>250</span>         </span><span class="PUNC">}</span><span class="WHIT"> </span><span class="KEYW">else</span><span class="WHIT"> </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">mychar</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">':'</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>251</span>             </span><span class="NAME">bondExists</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">true</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>252</span>             </span><span class="NAME">bondIsAromatic</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">true</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>253</span>             </span><span class="NAME">position</span><span class="PUNC">++</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>254</span>         </span><span class="PUNC">}</span><span class="WHIT"> </span><span class="KEYW">else</span><span class="WHIT"> </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">mychar</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">'/'</span><span class="WHIT"> </span><span class="PUNC">||</span><span class="WHIT"> </span><span class="NAME">mychar</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">'\\'</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>255</span>         </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>256</span>             </span><span class="NAME">position</span><span class="PUNC">++</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>257</span>         </span><span class="PUNC">}</span><span class="WHIT"> </span><span class="KEYW">else</span><span class="WHIT"> </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">mychar</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">'@'</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>258</span>         </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>259</span>             </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">position</span><span class="WHIT"> </span><span class="XML">&lt; smiles.length - 1 && smiles.charAt(position + 1) == '@')
+<span class='line'>260</span>             {
+<span class='line'>261</span>                 position++;
+<span class='line'>262</span>             }
+<span class='line'>263</span>             position++;
+<span class='line'>264</span>         } else
+<span class='line'>265</span>         {
+<span class='line'>266</span>             throw "Invalid SMILES: found unexpected char: " + mychar;
+<span class='line'>267</span>         }
+<span class='line'>268</span>         
+<span class='line'>269</span> 	}
+<span class='line'>270</span> 	while (position &lt; smiles.length)
+<span class='line'>271</span>     return molecule;
+<span class='line'>272</span> }
+<span class='line'>273</span> 
+<span class='line'>274</span> 
+<span class='line'>275</span> /**
+<span class='line'>276</span>  *  Gets the element symbol for an element in the 'organic subset' for which
+<span class='line'>277</span>  *  brackets may be omitted.
+<span class='line'>278</span>  *
+<span class='line'>279</span>  */
+<span class='line'>280</span> jchemhub.io.smiles.SmilesParser.getSymbolForOrganicSubsetElement = function(s, pos){
+<span class='line'>281</span>     var possibleSymbol="";
+<span class='line'>282</span> 	if (pos &lt; s.length - 1){
+<span class='line'>283</span>         possibleSymbol = s.substring(pos, pos + 2);
+<span class='line'>284</span>         if (("ClBr".indexOf(possibleSymbol) ></span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>285</span>             </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">possibleSymbol</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>286</span>         </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>287</span>     </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>288</span>     </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="STRN">"BCcNnOoFPSsI"</span><span class="PUNC">.</span><span class="NAME">indexOf</span><span class="PUNC">(</span><span class="PUNC">(</span><span class="NAME">s.charAt</span><span class="PUNC">(</span><span class="NAME">pos</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">>=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>289</span>         </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">s.substring</span><span class="PUNC">(</span><span class="NAME">pos</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">pos</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="NUMB">1</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>290</span>     </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>291</span>     </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="STRN">"fpi"</span><span class="PUNC">.</span><span class="NAME">indexOf</span><span class="PUNC">(</span><span class="PUNC">(</span><span class="NAME">s.charAt</span><span class="PUNC">(</span><span class="NAME">pos</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">>=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>292</span>         </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">s.substring</span><span class="PUNC">(</span><span class="NAME">pos</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">pos</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="NUMB">1</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>293</span>     </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>294</span>     </span><span class="NAME">alert</span><span class="PUNC">(</span><span class="STRN">"SMILES parser problem: subset element not found at position "</span><span class="PUNC">+</span><span class="NAME">pos</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>295</span>     </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>296</span> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>297</span> 
+<span class='line'>298</span> 
+<span class='line'>299</span> </span><span class="NAME">jchemhub.io.smiles.SmilesParser.getAtomString</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">smiles</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">pos</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>300</span>     </span><span class="NAME">atomString</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">""</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>301</span>     </span><span class="KEYW">for</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">f</span><span class="PUNC">=</span><span class="NAME">pos</span><span class="PUNC">+</span><span class="NUMB">1</span><span class="PUNC">;</span><span class="WHIT"> </span><span class="NAME">f</span><span class="PUNC">&lt;</span><span class="NAME">smiles.length</span><span class="PUNC">;</span><span class="WHIT"> </span><span class="NAME">f</span><span class="PUNC">++</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>302</span>         </span><span class="NAME">character</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">smiles.charAt</span><span class="PUNC">(</span><span class="NAME">f</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>303</span>         </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">character</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">']'</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>304</span>            </span><span class="KEYW">break</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>305</span>         </span><span class="KEYW">else</span><span class="WHIT">
+<span class='line'>306</span>            </span><span class="NAME">atomString</span><span class="PUNC">+</span><span class="PUNC">=</span><span class="NAME">character</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>307</span>     </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>308</span>     </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">atomString</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>309</span> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>310</span> 
+<span class='line'>311</span> 
+<span class='line'>312</span> </span><span class="NAME">jchemhub.io.smiles.SmilesParser.getElementSymbol</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">s</span><span class="PUNC">,</span><span class="NAME">pos</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>313</span>     </span><span class="COMM">// Try to match elements not in the organic subset.</span><span class="WHIT">
+<span class='line'>314</span>     </span><span class="COMM">// first, the two char elements</span><span class="WHIT">
+<span class='line'>315</span>     </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">pos</span><span class="WHIT"> </span><span class="XML">&lt; s.length - 1)
+<span class='line'>316</span>     {
+<span class='line'>317</span>         possibleSymbol = s.substring(pos, pos + 2);
+<span class='line'>318</span>         if (("HeLiBeNeNaMgAlSiClArCaScTiCrMnFeCoNiCuZnGaGeAsSe".indexOf(possibleSymbol) ></span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">||</span><span class="WHIT">
+<span class='line'>319</span>             </span><span class="PUNC">(</span><span class="STRN">"BrKrRbSrZrNbMoTcRuRhPdAgCdInSnSbTeXeCsBaLuHfTaRe"</span><span class="PUNC">.</span><span class="NAME">indexOf</span><span class="PUNC">(</span><span class="NAME">possibleSymbol</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">>=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">||</span><span class="WHIT">
+<span class='line'>320</span>             </span><span class="PUNC">(</span><span class="STRN">"OsIrPtAuHgTlPbBiPoAtRnFrRaLrRfDbSgBhHsMtDs"</span><span class="PUNC">.</span><span class="NAME">indexOf</span><span class="PUNC">(</span><span class="NAME">possibleSymbol</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">>=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>321</span>             </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">possibleSymbol</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>322</span>     </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>323</span> 
+<span class='line'>324</span>     </span><span class="COMM">// if that fails, the one char elements</span><span class="WHIT">
+<span class='line'>325</span>     </span><span class="NAME">possibleSymbol</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">s.substring</span><span class="PUNC">(</span><span class="NAME">pos</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">pos</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="NUMB">1</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>326</span>     </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">(</span><span class="STRN">"HKUVYW"</span><span class="PUNC">.</span><span class="NAME">indexOf</span><span class="PUNC">(</span><span class="NAME">possibleSymbol</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">>=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>327</span>         </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">possibleSymbol</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>328</span> 
+<span class='line'>329</span>     </span><span class="COMM">// if that failed too, then possibly a organic subset element</span><span class="WHIT">
+<span class='line'>330</span>     </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">this.getSymbolForOrganicSubsetElement</span><span class="PUNC">(</span><span class="NAME">s</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">pos</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>331</span> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>332</span> 
+<span class='line'>333</span> 
+<span class='line'>334</span> 
+<span class='line'>335</span> </span><span class="NAME">jchemhub.io.smiles.SmilesParser.getImplicitHydrogenCount</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">s</span><span class="PUNC">,</span><span class="NAME">position</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>336</span>     </span><span class="NAME">count</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">  
+<span class='line'>337</span>     </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">s.charAt</span><span class="PUNC">(</span><span class="NAME">position</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">'H'</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>338</span>         </span><span class="NAME">multiplier</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">""</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>339</span>         </span><span class="KEYW">while</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">position</span><span class="WHIT"> </span><span class="XML">&lt; (s.length - 1) && isDigit(s.charAt(position + 1))){
+<span class='line'>340</span>             multiplier+=s.charAt(position + 1);
+<span class='line'>341</span>             position++;
+<span class='line'>342</span>         }
+<span class='line'>343</span>         if (multiplier.length ></span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>344</span>             </span><span class="NAME">count</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">parseInt</span><span class="PUNC">(</span><span class="NAME">multiplier</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>345</span>         </span><span class="PUNC">}</span><span class="WHIT"> 
+<span class='line'>346</span> 		</span><span class="KEYW">else</span><span class="WHIT"> </span><span class="NAME">count</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">-</span><span class="NUMB">1</span><span class="PUNC">;</span><span class="WHIT"> 
+<span class='line'>347</span>     </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>348</span>     </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">count</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>349</span> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>350</span> 
+<span class='line'>351</span> 
+<span class='line'>352</span> </span><span class="NAME">jchemhub.io.smiles.SmilesParser.assembleAtom</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">s</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>353</span>     </span><span class="NAME">atom</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>354</span>     </span><span class="NAME">position</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>355</span>     </span><span class="NAME">currentSymbol</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>356</span>     </span><span class="NAME">isotopicNumber</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">""</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>357</span>     </span><span class="NAME">mychar</span><span class="PUNC">=</span><span class="STRN">''</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>358</span>     </span><span class="KEYW">do</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>359</span>         </span><span class="NAME">mychar</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">s.charAt</span><span class="PUNC">(</span><span class="NAME">position</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>360</span>         </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">(</span><span class="NAME">mychar</span><span class="WHIT"> </span><span class="PUNC">>=</span><span class="WHIT"> </span><span class="STRN">'A'</span><span class="WHIT"> </span><span class="PUNC">&&</span><span class="WHIT"> </span><span class="NAME">mychar</span><span class="WHIT"> </span><span class="XML">&lt;= 'Z') || (mychar ></span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">'a'</span><span class="WHIT"> </span><span class="PUNC">&&</span><span class="WHIT"> </span><span class="NAME">mychar</span><span class="WHIT"> </span><span class="XML">&lt;= 'z'))
+<span class='line'>361</span>         {
+<span class='line'>362</span>             currentSymbol = this.getElementSymbol(s, position);
+<span class='line'>363</span>             if (currentSymbol == null) {
+<span class='line'>364</span>                 throw "Expected element symbol, found null!";
+<span class='line'>365</span>             } 
+<span class='line'>366</span> 			else {
+<span class='line'>367</span>                 position = position + currentSymbol.length;
+<span class='line'>368</span>                 if (currentSymbol.length == 1){
+<span class='line'>369</span>                     if ( currentSymbol.toUpperCase()!=currentSymbol ) {
+<span class='line'>370</span>                         currentSymbol = currentSymbol.toUpperCase();
+<span class='line'>371</span>                         atom = new jchemhub.model.Atom(currentSymbol);
+<span class='line'>372</span>                         atom.hybridization=jchemhub.model.Atom.Hybridizations.SP2;
+<span class='line'>373</span>                         //TODO here: hydrogen count
+<span class='line'>374</span> 
+<span class='line'>375</span>                     } else
+<span class='line'>376</span>                         atom = new jchemhub.model.Atom(currentSymbol);
+<span class='line'>377</span>                 } else
+<span class='line'>378</span>                         atom = new jchemhub.model.Atom(currentSymbol);
+<span class='line'>379</span>             }
+<span class='line'>380</span>             break;
+<span class='line'>381</span> 
+<span class='line'>382</span>         } else if (mychar ></span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">'0'</span><span class="WHIT"> </span><span class="PUNC">&&</span><span class="WHIT"> </span><span class="NAME">mychar</span><span class="WHIT"> </span><span class="XML">&lt;= '9'){
+<span class='line'>383</span>             isotopicNumber+=mychar;
+<span class='line'>384</span>             position++;
+<span class='line'>385</span>         } else if (mychar == '*') {
+<span class='line'>386</span>             currentSymbol = "*";
+<span class='line'>387</span>             atom = new jchemhub.model.PseudoAtom("*",0,0);
+<span class='line'>388</span>             position++;
+<span class='line'>389</span>             break;
+<span class='line'>390</span>         } else
+<span class='line'>391</span>             throw "Invalid SMILES: found unexpected char: " + mychar;
+<span class='line'>392</span>     } 
+<span class='line'>393</span> 	while (position &lt; s.length);
+<span class='line'>394</span> 
+<span class='line'>395</span> 
+<span class='line'>396</span>     //TODO ></span><span class="PUNC">>></span><span class="WHIT"> </span><span class="NAME">change</span><span class="WHIT"> </span><span class="NAME">atom</span><span class="WHIT"> </span><span class="NAME">class</span><span class="WHIT">
+<span class='line'>397</span>     </span><span class="COMM">//if (isotopicNumber.toString().length() > 0)</span><span class="WHIT">
+<span class='line'>398</span>     </span><span class="COMM">//{</span><span class="WHIT">
+<span class='line'>399</span>     </span><span class="COMM">//   atom.setMassNumber(Integer.parseInt(isotopicNumber.toString()));</span><span class="WHIT">
+<span class='line'>400</span>     </span><span class="COMM">//}</span><span class="WHIT">
+<span class='line'>401</span> 	
+<span class='line'>402</span>     </span><span class="NAME">charge</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>403</span>     </span><span class="NAME">implicitHydrogens</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>404</span>     </span><span class="KEYW">while</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">position</span><span class="WHIT"> </span><span class="XML">&lt; s.length)
+<span class='line'>405</span>     {
+<span class='line'>406</span>         mychar = s.charAt(position);
+<span class='line'>407</span>         if (mychar == 'H')
+<span class='line'>408</span>         {
+<span class='line'>409</span>             implicitHydrogens = this.getImplicitHydrogenCount(s, position);
+<span class='line'>410</span>             position++;
+<span class='line'>411</span>             if (implicitHydrogens ></span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>412</span>                 </span><span class="NAME">position</span><span class="PUNC">++</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>413</span>             </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>414</span>             </span><span class="COMM">//TODO >> change atom class                     </span><span class="WHIT">
+<span class='line'>415</span>             </span><span class="COMM">//if (implicitHydrogens == -1) implicitHydrogens = 1;</span><span class="WHIT">
+<span class='line'>416</span>             </span><span class="COMM">//  atom.setHydrogenCount(implicitHydrogens);</span><span class="WHIT">
+<span class='line'>417</span>         </span><span class="PUNC">}</span><span class="WHIT"> </span><span class="KEYW">else</span><span class="WHIT"> </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">mychar</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">'+'</span><span class="WHIT"> </span><span class="PUNC">||</span><span class="WHIT"> </span><span class="NAME">mychar</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">'-'</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>418</span>         </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>419</span>             </span><span class="NAME">charge</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">getCharge</span><span class="PUNC">(</span><span class="NAME">s</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">position</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>420</span>             </span><span class="NAME">position</span><span class="PUNC">++</span><span class="PUNC">;</span><span class="WHIT"> 
+<span class='line'>421</span>             </span><span class="KEYW">while</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">position</span><span class="WHIT"> </span><span class="XML">&lt; s.length && isDigit(s.charAt(position))) {
+<span class='line'>422</span>                 position++;
+<span class='line'>423</span>             }
+<span class='line'>424</span>             //TODO ></span><span class="PUNC">></span><span class="WHIT"> </span><span class="NAME">change</span><span class="WHIT"> </span><span class="NAME">atom</span><span class="WHIT"> </span><span class="NAME">class</span><span class="WHIT">                     
+<span class='line'>425</span>             </span><span class="NAME">atom.setFormalCharge</span><span class="PUNC">(</span><span class="NAME">charge</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>426</span>         </span><span class="PUNC">}</span><span class="WHIT"> </span><span class="KEYW">else</span><span class="WHIT"> </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">mychar</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">'@'</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>427</span>         </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>428</span>             </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">position</span><span class="WHIT"> </span><span class="TOKN"></span></pre></body></html>

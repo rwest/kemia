@@ -1,0 +1,38 @@
+<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"> <style>
+	.KEYW {color: #933;}
+	.COMM {color: #bbb; font-style: italic;}
+	.NUMB {color: #393;}
+	.STRN {color: #393;}
+	.REGX {color: #339;}
+	.line {border-right: 1px dotted #666; color: #666; font-style: normal;}
+	</style></head><body><pre><span class='line'>  1</span> <span class="WHIT">
+<span class='line'>  2</span> </span><span class="NAME">goog.provide</span><span class="PUNC">(</span><span class="STRN">'jchemhub.model.PseudoAtom'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>  3</span> </span><span class="NAME">goog.require</span><span class="PUNC">(</span><span class="STRN">'jchemhub.model.Atom'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>  4</span> 
+<span class='line'>  5</span> </span><span class="COMM">/**
+<span class='line'>  6</span>  * Class representing a pseudo atom (*, RGroup etc) 
+<span class='line'>  7</span>  * 
+<span class='line'>  8</span>  * @param {string}
+<span class='line'>  9</span>  *            _label, text label for the PseudoAtom (like R1, R10 or what u like) 
+<span class='line'> 10</span>  * @param {number}
+<span class='line'> 11</span>  *            x, X-coordinate of atom.
+<span class='line'> 12</span>  * @param {number}
+<span class='line'> 13</span>  *            y, Y-coordinate of atom.
+<span class='line'> 14</span>  * @constructor
+<span class='line'> 15</span>  * @extends {jchemhub.model.Atom}
+<span class='line'> 16</span>  */</span><span class="WHIT">
+<span class='line'> 17</span> 
+<span class='line'> 18</span> </span><span class="NAME">jchemhub.model.PseudoAtom</span><span class="PUNC">=</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">_label</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">x</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">y</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 19</span> 
+<span class='line'> 20</span> 	</span><span class="NAME">jchemhub.model.Atom.call</span><span class="PUNC">(</span><span class="KEYW">this</span><span class="PUNC">,</span><span class="STRN">"R"</span><span class="PUNC">,</span><span class="NAME">x</span><span class="PUNC">,</span><span class="NAME">y</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT"> </span><span class="COMM">//?</span><span class="WHIT">
+<span class='line'> 21</span> 
+<span class='line'> 22</span>     </span><span class="NAME">this.label</span><span class="PUNC">=</span><span class="STRN">""</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 23</span>     </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">_label</span><span class="PUNC">==</span><span class="KEYW">null</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'> 24</span> 	   </span><span class="NAME">this.label</span><span class="PUNC">=</span><span class="STRN">"*"</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 25</span> 	</span><span class="KEYW">else</span><span class="WHIT">
+<span class='line'> 26</span> 	   </span><span class="NAME">this.label</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">_label</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 27</span> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 28</span> 
+<span class='line'> 29</span> </span><span class="NAME">goog.inherits</span><span class="PUNC">(</span><span class="NAME">jchemhub.model.PseudoAtom</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">jchemhub.model.Atom</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">  
+<span class='line'> 30</span> 
+<span class='line'> 31</span> </span></pre></body></html>
