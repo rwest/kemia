@@ -9,6 +9,7 @@
  -->
 <script src="build/jchemhub-whitespace-only.js"></script>
 <script src="jchemhub/io/json_test_rxn.js"></script>
+<script src="jchemhub/io/io_test_molsample2.js"></script>
 
 <link rel="stylesheet"
 	href="css/demo.css">
@@ -20,6 +21,8 @@
 	href="css/linkbutton.css" />
 <link rel="stylesheet"
 	href="css/menus.css" />
+<link rel="stylesheet"
+	href="css/menubutton.css" />
 <link rel="stylesheet"
 	href="css/tab.css" />
 <link rel="stylesheet"
@@ -36,36 +39,13 @@
 	href="css/editortoolbar.css" />
 
 <script>
-    
 function initPage(){
 
-	var buttons = []; 
-	buttons.push(jchemhub.controller.ToolbarFactory.makeButton( 
-    	jchemhub.controller.plugins.ClearEditor.COMMAND, 'Clear Editor', 'Clear')); 
-    buttons.push(jchemhub.controller.ToolbarFactory.makeButton(jchemhub.controller.plugins.Zoom.COMMAND.ZOOM_IN, 'zoom in', '+'));
-    buttons.push(jchemhub.controller.ToolbarFactory.makeButton(jchemhub.controller.plugins.Zoom.COMMAND.ZOOM_OUT, 'zoom out', '-'));
-    buttons.push(jchemhub.controller.ToolbarFactory.makeButton(jchemhub.controller.plugins.UndoRedo.COMMAND.UNDO, 'undo', 'undo'));
-    buttons.push(jchemhub.controller.ToolbarFactory.makeButton(jchemhub.controller.plugins.UndoRedo.COMMAND.REDO, 'redo', 'redo'));
-    var atom_select = jchemhub.controller.ToolbarFactory.makeSelectButton(jchemhub.controller.plugins.SymbolSelect.COMMAND, 'select Symbol', 'Symbol');
-    var atom_menu = new goog.ui.Menu();
-    atom_menu.addItem(m1 = new goog.ui.Option(goog.dom.createDom(goog.dom.TagName.DIV,{style:"color:black"},'C')));
-    atom_menu.addItem(m1 = new goog.ui.Option(goog.dom.createDom(goog.dom.TagName.DIV,{style:"color:blue"},'N')));
-    atom_menu.addItem(m1 = new goog.ui.Option(goog.dom.createDom(goog.dom.TagName.DIV,{style:"color:red"},'O')));
-    atom_menu.addItem(m1 = new goog.ui.Option(goog.dom.createDom(goog.dom.TagName.DIV,{style:"color:yellow"},'S')));
-    atom_menu.addItem(m1 = new goog.ui.Option('...'));
-    atom_select.setMenu(atom_menu);
-    buttons.push(atom_select);
+// uncomment next two lines to debug to console
+	//var c = new goog.debug.Console(); 
+	//c.setCapturing(true); 
 
- 	var bond_select = jchemhub.controller.ToolbarFactory.makeSelectButton(jchemhub.controller.plugins.BondSelect.COMMAND, 'select Bond Type', 'Bond');
-    var bond_menu = new goog.ui.Menu();  
-    goog.array.forEach(jchemhub.controller.plugins.BondSelect.BOND_TYPES, function(entry){
-    	bond_menu.addItem(new goog.ui.Option(entry.caption, entry.klass));
-    });
-    bond_select.setMenu(bond_menu);
-    buttons.push(bond_select);
-
-
-	var toolbar = jchemhub.controller.DefaultToolbar.makeToolbar(buttons, goog.dom.getElement('reactionEditorToolbar')); 
+	var toolbar = jchemhub.controller.DefaultToolbar.makeDefaultToolbar(goog.dom.getElement('reactionEditorToolbar'));  
 	var model = jchemhub.io.json.readReaction(reactionDrawing); 
 	var editor = new jchemhub.controller.ReactionEditor(goog.dom.getElement('reactionEditorContainer'));
 	editor.registerPlugin(new jchemhub.controller.plugins.ClearEditor());
@@ -74,28 +54,32 @@ function initPage(){
 	editor.registerPlugin(new jchemhub.controller.plugins.Highlight());
 	editor.registerPlugin(new jchemhub.controller.plugins.SymbolSelect());
 	editor.registerPlugin(new jchemhub.controller.plugins.BondSelect());
+	editor.registerPlugin(new jchemhub.controller.plugins.Erase());
 	
     var toolbarController = new jchemhub.controller.ToolbarController(editor, toolbar);
-	editor.setModel(model);
+	editor.setModels([model]);
+	
+	
 };
-
-
-</script>
+--></script>
 </head>
 
 <body onload="initPage();">
-
+<h1>Reaction Editing</h1>
 <table style="width: 100%">
-	<tr style="height: 400px">
+	<tr>
 		<td>
-		<div id="reactionEditorContainer" style="height: 400px"></div>
-		</td>
-		<td style="width: 50px">
 		<div id="reactionEditorToolbar"></div>
 		</td>
 	</tr>
-
+	<tr>
+		<td>
+		<div id="reactionEditorContainer" style="height: 300px"></div>
+		</td>
+	</tr>
 </table>
+
+
 
 </body>
 </html>
