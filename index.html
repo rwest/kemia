@@ -22,7 +22,7 @@
 <link rel="stylesheet"
 	href="css/menus.css" />
 <link rel="stylesheet"
-	href="css/menubutton.css" />
+	href="css/menubutton.css">
 <link rel="stylesheet"
 	href="css/tab.css" />
 <link rel="stylesheet"
@@ -47,7 +47,7 @@ function initPage(){
 
 	var toolbar = jchemhub.controller.DefaultToolbar.makeDefaultToolbar(goog.dom.getElement('reactionEditorToolbar'));  
 	var model = jchemhub.io.json.readReaction(reactionDrawing); 
-	var editor = new jchemhub.controller.ReactionEditor(goog.dom.getElement('reactionEditorContainer'));
+	var editor = new jchemhub.controller.ReactionEditor(goog.dom.getElement('reactionEditorContainer'),{background : {color : 'white'}});
 	editor.registerPlugin(new jchemhub.controller.plugins.ClearEditor());
 	editor.registerPlugin(new jchemhub.controller.plugins.Zoom());
 	editor.registerPlugin(new jchemhub.controller.plugins.UndoRedo());
@@ -58,13 +58,48 @@ function initPage(){
 	
     var toolbarController = new jchemhub.controller.ToolbarController(editor, toolbar);
 	editor.setModels([model]);
+	var sdfs = sdf.split("$$$$\n");
+	var mol_renderer = new jchemhub.controller.ReactionEditor(goog.dom.getElement('moleculeContainer'),{background : {color : 'white'}});
+ 
+    var select1 = new goog.ui.Select();
+    select1.addItem(new goog.ui.MenuItem('1', 1));
+    select1.addItem(new goog.ui.MenuItem('2', 2));
+    select1.addItem(new goog.ui.MenuItem('3 (bucky ball)', 3));
+    select1.addItem(new goog.ui.MenuItem('4', 4));
+    select1.addItem(new goog.ui.MenuItem('5', 5));
+    select1.addItem(new goog.ui.MenuItem('6', 6));
+    select1.addItem(new goog.ui.MenuItem('7', 7));
+    select1.addItem(new goog.ui.MenuItem('8', 8));
+    select1.addItem(new goog.ui.MenuItem('9', 9));
+    select1.addItem(new goog.ui.MenuItem('10', 10));
+  //  select1.addItem(new goog.ui.MenuItem('11 (too large right now)', 11));
+    select1.addItem(new goog.ui.MenuItem('12', 12));
+    
+    select1.setSelectedIndex(0);
+    select1.render(goog.dom.getElement('selectMolecule'));
+    
+        goog.events.listen(select1, goog.ui.Component.EventType.ACTION,
+        function(e) {
+          var timer = goog.now();
+          var select = e.target;
+          var idx = select.getValue();
+          var molfile=sdfs[idx];
+          var mol=jchemhub.io.mdl.readMolfile(molfile);
+	      mol_renderer.setModels([mol]);
+	      goog.dom.setTextContent(goog.dom.getElement('perf'), (goog.now() - timer) + 'ms');
+        });
+        
+
+
 	
 };
---></script>
+</script>
 </head>
 
 <body onload="initPage();">
-<h1>Reaction Editing</h1>
+<h1>Reaction Editor</h1>
+<fieldset>
+<legend>Demo:</legend>
 <table style="width: 100%">
 	<tr>
 		<td>
@@ -73,12 +108,29 @@ function initPage(){
 	</tr>
 	<tr>
 		<td>
-		<div id="reactionEditorContainer" style="height: 300px"></div>
+		<div
+			style="width: 1000px; height: 400px; overflow: auto; padding: 5px">
+		<div id="reactionEditorContainer" style="width: 1000px; height: 400px"></div>
+		</div>
 		</td>
 	</tr>
+
 </table>
 
+</fieldset>
+<h1>Molecule Renderer</h1>
+<fieldset>
+<legend>Demo:</legend> 
+<br>
+<label id="selectMolecule">Select a molecule to render: </label>
+<br>
 
+<br>
+<div id="moleculeContainer" style="width: 600px; height: 600px"></div>
+<br>
+</fieldset>
+  <div id="perf"></div> 
+<br> 
 
 </body>
 </html>
