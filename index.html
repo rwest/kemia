@@ -4,39 +4,15 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Jchemhub Demo</title>
 <!-- 
-<script src="build/jchemhub-advanced.js"></script>
-<script src="build/jchemhub-simple.js"></script>
+<script src="build/kemia-advanced.js"></script>
+<script src="build/kemia-simple.js"></script>
  -->
-<script src="build/jchemhub-whitespace-only.js"></script>
-<script src="jchemhub/io/json_test_rxn.js"></script>
-<script src="jchemhub/io/io_test_molsample2.js"></script>
+<script src="build/kemia-whitespace-only.js"></script>
+<script src="kemia/io/json_test_rxn.js"></script>
+<script src="kemia/io/io_test_molsample2.js"></script>
 
-<link rel="stylesheet"
-	href="css/demo.css">
-<link rel="stylesheet"
-	href="css/button.css" />
-<link rel="stylesheet"
-	href="css/dialog.css" />
-<link rel="stylesheet"
-	href="css/linkbutton.css" />
-<link rel="stylesheet"
-	href="css/menus.css" />
-<link rel="stylesheet"
-	href="css/menubutton.css">
-<link rel="stylesheet"
-	href="css/tab.css" />
-<link rel="stylesheet"
-	href="css/tabbar.css" />
-<link rel="stylesheet"
-	href="css/toolbar.css" />
-<link rel="stylesheet"
-	href="css/colormenubutton.css" />
-<link rel="stylesheet"
-	href="css/palette.css" />
-<link rel="stylesheet"
-	href="css/colorpalette.css" />
-<link rel="stylesheet"
-	href="css/editortoolbar.css" />
+<link rel="stylesheet" href="css/kemia.css" />
+<link rel="stylesheet"	href="css/demo.css" />
 
 <script>
 function initPage(){
@@ -45,21 +21,24 @@ function initPage(){
 	//var c = new goog.debug.Console(); 
 	//c.setCapturing(true); 
 
-	var toolbar = jchemhub.controller.DefaultToolbar.makeDefaultToolbar(goog.dom.getElement('reactionEditorToolbar'));  
-	var model = jchemhub.io.json.readReaction(reactionDrawing); 
-	var editor = new jchemhub.controller.ReactionEditor(goog.dom.getElement('reactionEditorContainer'),{background : {color : 'white'}});
-	editor.registerPlugin(new jchemhub.controller.plugins.ClearEditor());
-	editor.registerPlugin(new jchemhub.controller.plugins.Zoom());
-	editor.registerPlugin(new jchemhub.controller.plugins.UndoRedo());
-	editor.registerPlugin(new jchemhub.controller.plugins.Highlight());
-	editor.registerPlugin(new jchemhub.controller.plugins.SymbolSelect());
-	editor.registerPlugin(new jchemhub.controller.plugins.BondSelect());
-	editor.registerPlugin(new jchemhub.controller.plugins.Erase());
+	var toolbar = kemia.controller.DefaultToolbar.makeDefaultToolbar(goog.dom.getElement('reactionEditorToolbar'));  
+	var model = kemia.io.json.readReaction(reactionDrawing); 
+	model.reagentsText = "NaOH";
+	model.conditionsText = "90" + String.fromCharCode(186) +"C";
+	var editor = new kemia.controller.ReactionEditor(goog.dom.getElement('reactionEditorContainer'),{background : {color : 'white'}});
+	editor.registerPlugin(new kemia.controller.plugins.ClearEditor());
+	editor.registerPlugin(new kemia.controller.plugins.Zoom());
+	editor.registerPlugin(new kemia.controller.plugins.UndoRedo());
+	editor.registerPlugin(new kemia.controller.plugins.Highlight());
+	editor.registerPlugin(new kemia.controller.plugins.Erase());
+	editor.registerPlugin(new kemia.controller.plugins.AtomEdit());
+	editor.registerPlugin(new kemia.controller.plugins.BondEdit());
+	editor.registerPlugin(new kemia.controller.plugins.ArrowPlusEdit());
 	
-    var toolbarController = new jchemhub.controller.ToolbarController(editor, toolbar);
+    var toolbarController = new kemia.controller.ToolbarController(editor, toolbar);
 	editor.setModels([model]);
 	var sdfs = sdf.split("$$$$\n");
-	var mol_renderer = new jchemhub.controller.ReactionEditor(goog.dom.getElement('moleculeContainer'),{background : {color : 'white'}});
+	var mol_renderer = new kemia.controller.ReactionEditor(goog.dom.getElement('moleculeContainer'),{background : {color : 'white'}});
  
     var select1 = new goog.ui.Select();
     select1.addItem(new goog.ui.MenuItem('1', 1));
@@ -72,7 +51,7 @@ function initPage(){
     select1.addItem(new goog.ui.MenuItem('8', 8));
     select1.addItem(new goog.ui.MenuItem('9', 9));
     select1.addItem(new goog.ui.MenuItem('10', 10));
-  //  select1.addItem(new goog.ui.MenuItem('11 (too large right now)', 11));
+    select1.addItem(new goog.ui.MenuItem('11 (not too large now!)', 11));
     select1.addItem(new goog.ui.MenuItem('12', 12));
     
     select1.setSelectedIndex(0);
@@ -84,7 +63,7 @@ function initPage(){
           var select = e.target;
           var idx = select.getValue();
           var molfile=sdfs[idx];
-          var mol=jchemhub.io.mdl.readMolfile(molfile);
+          var mol=kemia.io.mdl.readMolfile(molfile);
 	      mol_renderer.setModels([mol]);
 	      goog.dom.setTextContent(goog.dom.getElement('perf'), (goog.now() - timer) + 'ms');
         });
