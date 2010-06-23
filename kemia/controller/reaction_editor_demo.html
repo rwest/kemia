@@ -46,15 +46,15 @@ function initPage(){
 	var toolbar = kemia.controller.DefaultToolbar.makeDefaultToolbar(goog.dom.getElement('reactionEditorToolbar'));  
 	var model = kemia.io.json.readReaction(reactionDrawing); 
 	model.reagentsText = "NaOH";
-	model.conditionsText = "60 MPa";
+	model.conditionsText = "90" + String.fromCharCode(186) +"C";
 	var editor = new kemia.controller.ReactionEditor(goog.dom.getElement('reactionEditorContainer'));
 	editor.registerPlugin(new kemia.controller.plugins.ClearEditor());
 	editor.registerPlugin(new kemia.controller.plugins.Zoom());
 	editor.registerPlugin(new kemia.controller.plugins.UndoRedo());
 	editor.registerPlugin(new kemia.controller.plugins.Highlight());
+	editor.registerPlugin(new kemia.controller.plugins.Erase());
 	editor.registerPlugin(new kemia.controller.plugins.AtomEdit());
 	editor.registerPlugin(new kemia.controller.plugins.BondEdit());
-	editor.registerPlugin(new kemia.controller.plugins.Erase());
 	editor.registerPlugin(new kemia.controller.plugins.ArrowPlusEdit());
 	
     var toolbarController = new kemia.controller.ToolbarController(editor, toolbar);
