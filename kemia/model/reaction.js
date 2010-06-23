@@ -11,6 +11,8 @@ kemia.model.Reaction = function() {
 	this.products = [];
 	this.arrows = [];
 	this.pluses = [];
+	this.reagentsText = "";
+	this.conditionsText = "";
 };
 // TODO add docs
 kemia.model.Reaction.prototype.addReactant = function(mol) {

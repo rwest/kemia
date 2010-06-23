@@ -45,6 +45,8 @@ function initPage(){
 
 	var toolbar = kemia.controller.DefaultToolbar.makeDefaultToolbar(goog.dom.getElement('reactionEditorToolbar'));  
 	var model = kemia.io.json.readReaction(reactionDrawing); 
+	model.reagentsText = "NaOH";
+	model.conditionsText = "60 MPa";
 	var editor = new kemia.controller.ReactionEditor(goog.dom.getElement('reactionEditorContainer'));
 	editor.registerPlugin(new kemia.controller.plugins.ClearEditor());
 	editor.registerPlugin(new kemia.controller.plugins.Zoom());
