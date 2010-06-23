@@ -95,8 +95,8 @@
     	var a1 = new kemia.model.Atom("C", -1, 1);
     	var a2 = new kemia.model.Atom("C", 0, 0);
     	var a3 = new kemia.model.Atom("C", 1, 1);
-    	var b1 = new kemia.model.SingleBond(a1, a2);
-    	var b2 = new kemia.model.SingleBond(a2, a3);
+    	var b1 = new kemia.model.Bond(a1, a2);
+    	var b2 = new kemia.model.Bond(a2, a3);
     	m1.addAtom(a1);
     	m1.addAtom(a2);
     	m1.addAtom(a3);
@@ -107,8 +107,8 @@
     	var aa1 = new kemia.model.Atom("C", 10, -1);
     	var aa2 = new kemia.model.Atom("C", 11, 0);
     	var aa3 = new kemia.model.Atom("C", 10, 1);
-    	var bb1 = new kemia.model.SingleBond(aa1, aa2);
-    	var bb2 = new kemia.model.SingleBond(aa2, aa3);
+    	var bb1 = new kemia.model.Bond(aa1, aa2);
+    	var bb2 = new kemia.model.Bond(aa2, aa3);
     	m2.addAtom(aa1);
     	m2.addAtom(aa2);
     	m2.addAtom(aa3);
