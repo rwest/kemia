@@ -377,13 +377,27 @@ kemia.controller.ReactionEditor.prototype.handleMouseDown_ = function(e) {
 
 kemia.controller.ReactionEditor.prototype.findTarget = function(e) {
 	var trans = this.reactionRenderer.moleculeRenderer.transform.createInverse();
-	var target = trans.transformCoords( [ new goog.math.Coordinate(e.offsetX,
-			e.offsetY) ])[0];
+	var elem = e.currentTarget;
+
+	var posx = e.clientX  + document.body.scrollLeft + document.documentElement.scrollLeft;
+	var posy = e.clientY  + document.body.scrollTop + document.documentElement.scrollTop;
+	
+	posx -=elem.offsetLeft;
+	posy -= elem.offsetTop;
+
+    while (elem = elem.offsetParent) {
+        posx -= elem.offsetLeft;
+        posy -= elem.offsetTop;
+}
+	var target = trans.transformCoords( [ new goog.math.Coordinate(posx,
+			posy) ])[0];
 	var nearest = this.neighborList.getNearest( {
 		x : target.x,
 		y : target.y
 	});
-
+	if(nearest instanceof kemia.model.Atom){
+		this.logger.info(nearest.symbol + " " +nearest.coord.x + ", " + nearest.coord.y + ": nearest to " + posx + ", " + posy );
+	}
 	return nearest;
 }
 
