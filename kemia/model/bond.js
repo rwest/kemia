@@ -8,9 +8,19 @@ goog.require('kemia.model.Atom');
  *            source, Atom at one end of bond.
  * @param {kemia.model.Atom}
  *            target, Atom at other end of bond.
+ * @param {kemia.model.Bond.ORDER}
+ *            opt_order, order of bond
+ * 
+ * @param {kemia.model.Bond.STEREO}
+ *            opt_stereo, stereochemistry of bond
+ * 
+ * @param {boolean}
+ *            opt_aromatic, true if aromatic
+ * 
  * @constructor
  */
-kemia.model.Bond = function(source, target, opt_order, opt_molecule) {
+kemia.model.Bond = function(source, target, opt_order, opt_stereo,
+		opt_aromatic, opt_molecule) {
 	/**
 	 * source Atom
 	 * 
@@ -24,52 +34,84 @@ kemia.model.Bond = function(source, target, opt_order, opt_molecule) {
 	 */
 	this.target = target;
 
-	if (opt_molecule) {
-		this.molecule = opt_molecule;
-	}
+	/**
+	 * The bond order.
+	 * 
+	 * @type {kemia.model.Bond.ORDER}
+	 */
+	this.order = goog.isDef(opt_order) ? opt_order : kemia.model.Bond.ORDER.SINGLE;
 
-        /**
-         * The bond order.
-         * @type {number}
-         */
-        this.order = opt_order ? opt_order : 1;
+	/**
+	 * Stereochemistry
+	 * 
+	 * @type {kemia.model.Bond.STEREO}
+	 */
+	this.stereo = goog.isDef(opt_stereo) ? opt_stereo : kemia.model.Bond.STEREO.NOT_STEREO;
 
-        /**
-         * Aromatic flag.
-         * @type {boolean}
-         */
-        this.aromatic = false;
+	/**
+	 * Aromatic flag.
+	 * 
+	 * @type {boolean}
+	 */
+	this.aromatic = goog.isDef(opt_aromatic) ? opt_aromatic : false;
 
-        /**
-         * Stereo flag (i.e. 'up', 'down', 'up_or_down', 'cis_or_trans')
-         * @type {string}
-         */
-        this.stereo = '';
+	/**
+	 * parent molecule
+	 * 
+	 * @type {kemia.model.Molecule}
+	 */
+	this.molecule = goog.isDef(opt_molecule) ? opt_molecule : null;
 };
 
 /**
- * Get the other bond atom
+ * Get the atom at the other end of the bond from the subject atom
  * 
- * @return {kemia.model.Atom} The other bond atom or null if the specified
- *         atom is not part of the bond.
+ * @param {kemia.model.Atom}
+ *            atom, the subject atom
+ * 
+ * @return {kemia.model.Atom} The other bond atom or null if the specified atom
+ *         is not part of the bond.
  */
 kemia.model.Bond.prototype.otherAtom = function(atom) {
-    if (atom === this.source) {
-        return this.target;
-    }
-    if (atom === this.target) {
-        return this.source
-    }
-    return null;
+	if (atom === this.source) {
+		return this.target;
+	}
+	if (atom === this.target) {
+		return this.source
+	}
+	return null;
 };
 
 /**
+ * clones this bond
  * 
  * @return {kemia.model.Bond}
  */
 kemia.model.Bond.prototype.clone = function() {
-    var bond = new kemia.model.Bond(this.source, this.target, this.order, this.molecule);
-    bond.aromatic = this.aromatic;
-    bond.stereo = this.stereo;
-    return bond;
+	return new kemia.model.Bond(this.source, this.target, this.order,
+			this.stereo, this.aromatic, this.molecule);
+}
+
+/**
+ * enum for bond order
+ * 
+ * @enum {number}
+ */
+kemia.model.Bond.ORDER = {
+	SINGLE : 1,
+	DOUBLE : 2,
+	TRIPLE : 3,
+	QUADRUPLE : 4
+}
+
+/**
+ * enum for bond stereochemistry
+ * 
+ * @enum {number}
+ */
+kemia.model.Bond.STEREO = {
+	NOT_STEREO : 10,
+	UP : 11,
+	UP_OR_DOWN : 12,
+	DOWN : 13
 }
