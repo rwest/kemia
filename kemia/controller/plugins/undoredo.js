@@ -264,32 +264,14 @@ kemia.controller.plugins.UndoRedo.prototype.enable = function(editorObject) {
 	kemia.controller.plugins.UndoRedo.superClass_.enable.call(this,
 			editorObject);
 
-	// Don't want pending delayed changes from when undo-redo was disabled
-	// firing after undo-redo is enabled since they might cause undo-redo stack
-	// updates.
-	// editorObject.clearDelayedChange();
 
 	this.eventHandler = new goog.events.EventHandler(this);
-	// It also seems like the if check below is just a bad one. We should do
-	// this
-	// for browsers that use mutation events as well even though the
-	// beforechange
-	// happens too late...maybe not. I don't know about this.
-	if (!goog.editor.BrowserFeature.USE_MUTATION_EVENTS) {
-		// We don't listen to beforechange in mutation-event browsers because
-		// there we fire beforechange, then syncronously file change. The point
-		// of before change is to capture before the user has changed anything.
+
 		this.eventHandler.listen(editorObject,
 				kemia.controller.ReactionEditor.EventType.BEFORECHANGE,
 				this.handleBeforeChange_);
-	}
-	this.eventHandler.listen(editorObject,
-			kemia.controller.ReactionEditor.EventType.DELAYEDCHANGE,
-			this.handleDelayedChange_);
-	this.eventHandler
-			.listen(editorObject,
-					kemia.controller.ReactionEditor.EventType.BLUR,
-					this.handleBlur_);
+
+
 
 	// We want to capture the initial state of a Trogedit field before any
 	// editing has happened. This is necessary so that we can undo the first

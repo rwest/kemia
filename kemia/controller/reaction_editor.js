@@ -61,16 +61,9 @@ kemia.controller.ReactionEditor = function(element, opt_config) {
 	this.reactionRenderer = new kemia.view.ReactionRenderer(
 			this.reactionController, this.graphics, this.config);
 
-	// The editor will not listen to change events until it has finished loading
-	// this.stoppedEvents_ = {};
-	// this.stopEvent(kemia.controller.ReactionEditor.EventType.CHANGE);
-	// this.stopEvent(kemia.controller.ReactionEditor.EventType.DELAYEDCHANGE);
 	this.isModified_ = false;
 	this.isEverModified_ = false;
-	//
-	// this.delayedChangeTimer_ = new goog.async.Delay(
-	// this.dispatchDelayedChange_,
-	// kemia.controller.ReactionEditor.DELAYED_CHANGE_FREQUENCY, this);
+
 
 	/**
 	 * @type {goog.events.EventHandler}
@@ -232,9 +225,7 @@ kemia.controller.ReactionEditor.prototype.invokeShortCircuitingOp_ = function(
 
 /**
  * Handle a change in the Editor. Marks the editor as modified, dispatches the
- * change event on the editable field (moz only), starts the timer for the
- * delayed change event. Note that these actions only occur if the proper events
- * are not stopped.
+ * change event on the editable field 
  */
 kemia.controller.ReactionEditor.prototype.handleChange = function() {
 	this.isModified_ = true;
@@ -280,10 +271,6 @@ kemia.controller.ReactionEditor.prototype.handleKeyUp_ = function(e) {
 
 };
 
-kemia.controller.ReactionEditor.prototype.handleMouseDown_ = function(e) {
-	this.invokeShortCircuitingOp_(kemia.controller.Plugin.Op.MOUSEDOWN, e);
-};
-
 kemia.controller.ReactionEditor.prototype.findTarget = function(e) {
 	var trans = this.reactionRenderer.moleculeRenderer.transform.createInverse();
 	var elem = e.currentTarget;
@@ -323,6 +310,10 @@ kemia.controller.ReactionEditor.prototype.handleMouseMove_ = function(e) {
 kemia.controller.ReactionEditor.prototype.handleMouseUp_ = function(e) {
 	this.invokeShortCircuitingOp_(kemia.controller.Plugin.Op.MOUSEUP, e);
 }
+
+kemia.controller.ReactionEditor.prototype.handleMouseDown_ = function(e) {
+	this.invokeShortCircuitingOp_(kemia.controller.Plugin.Op.MOUSEDOWN, e);
+};
 
 
 /**
@@ -379,13 +370,8 @@ kemia.controller.ReactionEditor.prototype.queryCommandValue = function(
 /**
  * Dispatches the appropriate set of change events.
  * 
- * @param {boolean=}
- *            opt_noDelay True if
- *            kemia.controller.ReactionEditor.DELAYEDCHANGE should be fired
- *            syncronously.
  */
-kemia.controller.ReactionEditor.prototype.dispatchChange = function(
-		opt_noDelay) {
+kemia.controller.ReactionEditor.prototype.dispatchChange = function() {
 	this.handleChange();
 
 };
@@ -552,24 +538,7 @@ kemia.controller.ReactionEditor.EventType = {
 	 * Dispatched when the editor contents change, in FF only. Used for internal
 	 * resizing, please do not use.
 	 */
-	CHANGE : 'change',
-	/**
-	 * Dispatched on a slight delay after changes are made. Use for autosave, or
-	 * other times your app needs to know that the editor contents changed.
-	 */
-	DELAYEDCHANGE : 'delayedchange',
-	/**
-	 * Dispatched before focus in moved into the editor.
-	 */
-	BEFOREFOCUS : 'beforefocus',
-	/**
-	 * Dispatched when focus is moved into the editor.
-	 */
-	FOCUS : 'focus',
-	/**
-	 * Dispatched when the editor is blurred.
-	 */
-	BLUR : 'blur'
+	CHANGE : 'change'
 };
 
 /**
@@ -758,24 +727,12 @@ kemia.controller.ReactionEditor.prototype.addListener = function(type,
  */
 kemia.controller.ReactionEditor.prototype.setupChangeListeners_ = function() {
 
-	this.addListener(goog.events.EventType.BLUR, this.dispatchBlur,
-			goog.editor.BrowserFeature.USE_MUTATION_EVENTS);
-	// TODO: Figure out why we use dragend vs dragdrop and
-	// document this better.
-	var dropEventName = goog.userAgent.WEBKIT ? 'dragend' : 'dragdrop';
-	this.addListener(dropEventName, this.handleDrop_);
-
-	this.addListener(goog.events.EventType.KEYDOWN, this.handleKeyDown_);
-	this.addListener(goog.events.EventType.KEYPRESS, this.handleKeyPress_);
-	this.addListener(goog.events.EventType.KEYUP, this.handleKeyUp_);
-
-	var selectionChange = goog.bind(this.dispatchSelectionChangeEvent, this);
-	this.selectionChangeTimer_ = new goog.async.Delay(selectionChange,
-			kemia.controller.ReactionEditor.SELECTION_CHANGE_FREQUENCY_);
-
+//	this.addListener(goog.events.EventType.KEYDOWN, this.handleKeyDown_);
+//	this.addListener(goog.events.EventType.KEYPRESS, this.handleKeyPress_);
+//	this.addListener(goog.events.EventType.KEYUP, this.handleKeyUp_);
 	this.addListener(goog.events.EventType.MOUSEDOWN, this.handleMouseDown_);
-	this.addListener(goog.events.EventType.MOUSEOVER, this.handleMouseOver_);
-	this.addListener(goog.events.EventType.MOUSEOUT, this.handleMouseOut_);
+//	this.addListener(goog.events.EventType.MOUSEOVER, this.handleMouseOver_);
+//	this.addListener(goog.events.EventType.MOUSEOUT, this.handleMouseOut_);
 	this.addListener(goog.events.EventType.MOUSEMOVE, this.handleMouseMove_);
 
 };
