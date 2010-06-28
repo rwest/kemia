@@ -168,7 +168,7 @@ kemia.controller.ReactionEditor.prototype.render = function() {
 				model.generatePlusCoords(model.reactants);
 				model.generatePlusCoords(model.products);
 			}
-			if (model.arrows.length == 0) {
+			if (model.arrows.length == 0 && model.reactants.length>0 && model.products.length>0) {
 				model.generateArrowCoords(model.reactants, model.products);
 			}
 			this.reactionRenderer.render(model);
