@@ -56,7 +56,7 @@
 		<junit>
 			<classpath refid="classpath.test" />
 			<formatter type="brief" usefile="false" />
-			<test name="com.kemia.ModelTest" />
+			<test name="com.kemia.TestRunner" />
 		</junit>
 	</target>
 

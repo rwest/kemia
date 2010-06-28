@@ -15,7 +15,7 @@
 </head>
 <body>
 
-<script>
+<script><!--
 
 var plugin;
 var editorObject;
@@ -90,13 +90,10 @@ function testExecCommand() {
   var mockField = new goog.testing.StrictMock(kemia.controller.ReactionEditor);
   plugin.registerEditorObject(mockField);
 
-  if (goog.userAgent.GECKO) {
-    mockField.stopChangeEvents(true, true);
-  }
   mockField.dispatchBeforeChange();
   // NOTE: dispatch change turns back on (delayed) change events.
   mockField.dispatchChange();
-  mockField.dispatchSelectionChangeEvent();
+ // mockField.dispatchSelectionChangeEvent();
   mockField.$replay();
 
   var passedCommand, passedArg;
@@ -104,28 +101,26 @@ function testExecCommand() {
     passedCommand = command;
     passedArg = arg;
   };
-  plugin.execCommand('+indent', true);
+  plugin.execCommand('clearEditor', true);
 
   // Verify that execCommand dispatched the expected events.
   mockField.$verify();
   mockField.$reset();
   // Verify that execCommandInternal was called with the correct arguments.
-  assertEquals('+indent', passedCommand);
+  assertEquals('clearEditor', passedCommand);
   assertTrue(passedArg);
 
   plugin.isSilentCommand = goog.functions.constant(true);
   mockField.$replay();
-  plugin.execCommand('+outdent', false);
+  plugin.execCommand('clearEditor', false);
   // Verify that execCommand on a silent plugin dispatched no events.
   mockField.$verify();
   // Verify that execCommandInternal was called with the correct arguments.
-  assertEquals('+outdent', passedCommand);
+  assertEquals('clearEditor', passedCommand);
   assertFalse(passedArg);
 }
 
-/**
- * Regression test for http://b/issue?id=1471355 .
- */
+
 function testExecCommandException() {
   var mockField = new goog.testing.StrictMock(kemia.controller.ReactionEditor);
   plugin.registerEditorObject(mockField);
@@ -133,13 +128,11 @@ function testExecCommandException() {
     throw 1;
   };
 
-  if (goog.userAgent.GECKO) {
-    mockField.stopChangeEvents(true, true);
-  }
+ 
   mockField.dispatchBeforeChange();
   // NOTE: dispatch change turns back on (delayed) change events.
   mockField.dispatchChange();
-  mockField.dispatchSelectionChangeEvent();
+ // mockField.dispatchSelectionChangeEvent();
   mockField.$replay();
 
   assertThrows('Exception should not be swallowed', function() {
@@ -170,6 +163,6 @@ function testIsAndSetAutoDispose() {
   assertTrue(plugin.isAutoDispose());
 }
 
-</script>
+--></script>
 </body>
 </html>

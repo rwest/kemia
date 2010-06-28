@@ -43,21 +43,22 @@ goog.inherits(kemia.view.ReactionRenderer, kemia.view.Renderer);
  */
 kemia.view.ReactionRenderer.prototype.render = function(reaction) {
 	var molecules = goog.array.concat(reaction.reactants, reaction.products);
-	var box = this.boundingBox(molecules);
-	var m = this.config.get("margin");
-	box.expand(m.top, m.right, m.bottom, m.left);
-	this.transform = this.buildTransform(box);
+	if (molecules.length>0){
+		var box = this.boundingBox(molecules);
+		var m = this.config.get("margin");
+		box.expand(m.top, m.right, m.bottom, m.left);
+		this.transform = this.buildTransform(box);
 	
-	goog.array.forEach(molecules, function(mol) {
-		this.moleculeRenderer.render(mol, this.transform);
-	}, this);
-	goog.array.forEach(reaction.pluses, function(plus){
-		this.plusRenderer.render(plus, this.transform);
-	},this)
-	goog.array.forEach(reaction.arrows, function(arrow){
-		this.arrowRenderer.render(arrow, reaction.reagentsText, reaction.conditionsText, this.transform);
-	},this)
-
+		goog.array.forEach(molecules, function(mol) {
+			this.moleculeRenderer.render(mol, this.transform);
+		}, this);
+		goog.array.forEach(reaction.pluses, function(plus){
+			this.plusRenderer.render(plus, this.transform);
+		},this)
+		goog.array.forEach(reaction.arrows, function(arrow){
+			this.arrowRenderer.render(arrow, reaction.reagentsText, reaction.conditionsText, this.transform);
+		},this)
+	}
 }
 
 
@@ -77,7 +78,9 @@ kemia.view.ReactionRenderer.prototype.boundingBox = function(molecules) {
 	var coords = goog.array.map(atoms, function(a) {
 		return a.coord;
 	})
-	return goog.math.Box.boundingBox.apply(null, coords);
+	if(coords.length>0){
+		return goog.math.Box.boundingBox.apply(null, coords);
+	}
 }
 
 /**

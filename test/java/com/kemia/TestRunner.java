@@ -1,6 +1,6 @@
 package com.kemia; 
 import com.thoughtworks.selenium.SeleneseTestCase; 
-public class ModelTest extends SeleneseTestCase { 
+public class TestRunner extends SeleneseTestCase { 
     private final String DIRECTORY_PREFIX = "file:////Users/paulnovak/wingu/workspace/kemia/";
   
   public void setUp() throws Exception { 
@@ -8,8 +8,8 @@ public class ModelTest extends SeleneseTestCase {
     final String browserString = "*firefox"; 
     setUp(url, browserString); 
   } 
-  public void testModel() throws Exception { 
-    selenium.open(DIRECTORY_PREFIX + "kemia/model/model_test.html"); 
+  public void testPlugin() throws Exception { 
+    selenium.open(DIRECTORY_PREFIX + "kemia/controller/plugin_test.html"); 
     selenium.waitForCondition( 
         "window.G_testRunner && window.G_testRunner.isFinished()", 
         "5000"); 

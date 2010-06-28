@@ -228,20 +228,10 @@ kemia.controller.Plugin.OPCODE = goog.object.transpose(goog.reflect.object(
  * @return {*} The result of the execCommand, if any.
  */
 kemia.controller.Plugin.prototype.execCommand = function(command, var_args) {
-	// TODO: Replace all uses of isSilentCommand with plugins that just
-	// override this base execCommand method.
+
 	var silent = this.isSilentCommand(command);
 	if (!silent) {
-		// Stop listening to mutation events in Firefox while text formatting
-		// is happening. This prevents us from trying to size the field in the
-		// middle of an execCommand, catching the field in a strange
-		// intermediary
-		// state where both replacement nodes and original nodes are appended to
-		// the dom. Note that change events get turned back on by
-		// editorObject.dispatchChange.
-		if (goog.userAgent.GECKO) {
-			this.editorObject.stopChangeEvents(true, true);
-		}
+
 
 		this.editorObject.dispatchBeforeChange();
 	}
@@ -249,19 +239,12 @@ kemia.controller.Plugin.prototype.execCommand = function(command, var_args) {
 	try {
 		var result = this.execCommandInternal.apply(this, arguments);
 	} finally {
-		// If the above execCommandInternal call throws an exception, we still
-		// need
-		// to turn change events back on (see http://b/issue?id=1471355).
-		// NOTE: If if you add to or change the methods called in this finally
-		// block, please add them as expected calls to the unit test function
-		// testExecCommandException().
+
 		if (!silent) {
-			// dispatchChange includes a call to startChangeEvents, which
-			// unwinds the
-			// call to stopChangeEvents made before the try block.
+
 			this.editorObject.dispatchChange();
 
-			this.editorObject.dispatchSelectionChangeEvent();
+		
 
 		}
 	}

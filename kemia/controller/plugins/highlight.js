@@ -31,9 +31,7 @@ kemia.controller.plugins.Highlight.prototype.logger = goog.debug.Logger
 		.getLogger('kemia.controller.plugins.Highlight');
 
 kemia.controller.plugins.Highlight.prototype.handleMouseMove = function(e) {
-	if(e.offsetX < 100){
-		this.logger.info(e.offsetX);
-	}
+
 	var target = this.editorObject.findTarget(e);
 	if (e.currentTarget.highlightGroup) {
 		e.currentTarget.highlightGroup.clear();
