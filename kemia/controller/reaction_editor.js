@@ -395,9 +395,7 @@ kemia.controller.ReactionEditor.prototype.findTarget = function(e) {
 		x : target.x,
 		y : target.y
 	});
-	if(nearest instanceof kemia.model.Atom){
-		this.logger.info(nearest.symbol + " " +nearest.coord.x + ", " + nearest.coord.y + ": nearest to " + posx + ", " + posy );
-	}
+
 	return nearest;
 }
 
