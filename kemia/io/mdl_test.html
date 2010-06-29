@@ -51,6 +51,14 @@
         assertEquals(3,reaction.reactants.length);
         assertEquals(4,reaction.products.length);
     }
+    
+    function testReadWriteReadRxnfile(){
+    	var reaction1 = kemia.io.mdl.readRxnfile(rxnsample);
+    	var rxn_string = kemia.io.mdl.writeRxnfile(reaction1);
+    	var reaction2 = kemia.io.mdl.readRxnfile(rxn_string);
+    	assertEquals(reaction1.reactants.length, reaction2.reactants.length);
+    	assertEquals(reaction2.reactants.length, reaction2.reactants.length);
+    }
 		
 	
 

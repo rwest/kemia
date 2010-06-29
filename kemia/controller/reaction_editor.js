@@ -61,16 +61,9 @@ kemia.controller.ReactionEditor = function(element, opt_config) {
 	this.reactionRenderer = new kemia.view.ReactionRenderer(
 			this.reactionController, this.graphics, this.config);
 
-	// The editor will not listen to change events until it has finished loading
-	// this.stoppedEvents_ = {};
-	// this.stopEvent(kemia.controller.ReactionEditor.EventType.CHANGE);
-	// this.stopEvent(kemia.controller.ReactionEditor.EventType.DELAYEDCHANGE);
 	this.isModified_ = false;
 	this.isEverModified_ = false;
-	//
-	// this.delayedChangeTimer_ = new goog.async.Delay(
-	// this.dispatchDelayedChange_,
-	// kemia.controller.ReactionEditor.DELAYED_CHANGE_FREQUENCY, this);
+
 
 	/**
 	 * @type {goog.events.EventHandler}
@@ -90,19 +83,12 @@ kemia.controller.ReactionEditor = function(element, opt_config) {
 
 	// currently selected model objects
 	this.selected = [];
+	
+	this.neighborList = [];
 
 };
 goog.inherits(kemia.controller.ReactionEditor, goog.events.EventTarget);
 
-/**
- * List of mutation events in Gecko browsers.
- * 
- * @type {Array.<string>}
- * @protected
- */
-kemia.controller.ReactionEditor.MUTATION_EVENTS_GECKO = [ 'DOMNodeInserted',
-		'DOMNodeRemoved', 'DOMNodeRemovedFromDocument',
-		'DOMNodeInsertedIntoDocument', 'DOMCharacterDataModified' ];
 
 /**
  * Sets the active editor id.
@@ -155,8 +141,10 @@ kemia.controller.ReactionEditor.prototype.setModels = function(models) {
 			return [ model ];
 		}
 	}));
-	this.logger.info('mols.length: ' + mols.length);
-	this.neighborList = new kemia.model.NeighborList(mols, 1, .5);
+	
+	if(mols.length>0){
+		this.neighborList = new kemia.model.NeighborList(mols, 1, .5);
+	}
 	this.render();
 }
 
@@ -168,7 +156,7 @@ kemia.controller.ReactionEditor.prototype.render = function() {
 				model.generatePlusCoords(model.reactants);
 				model.generatePlusCoords(model.products);
 			}
-			if (model.arrows.length == 0) {
+			if (model.arrows.length == 0 && model.reactants.length>0 && model.products.length>0) {
 				model.generateArrowCoords(model.reactants, model.products);
 			}
 			this.reactionRenderer.render(model);
@@ -192,29 +180,11 @@ kemia.controller.ReactionEditor.prototype.getModels = function() {
  * This dispatches the beforechange event on the editable reaction editor
  */
 kemia.controller.ReactionEditor.prototype.dispatchBeforeChange = function() {
-	// this.logger.info('dispatchBeforeChange');
-	// if (this
-	// .isEventStopped(kemia.controller.ReactionEditor.EventType.BEFORECHANGE))
-	// {
-	// return;
-	// }
 
 	this
 			.dispatchEvent(kemia.controller.ReactionEditor.EventType.BEFORECHANGE);
 };
-//
-// /**
-// * Checks if the event of the given type has stopped being dispatched
-// *
-// * @param {goog.editor.Field.EventType}
-// * eventType type of event to check.
-// * @return {boolean} true if the event has been stopped with stopEvent().
-// * @protected
-// */
-// kemia.controller.ReactionEditor.prototype.isEventStopped =
-// function(eventType) {
-// return !!this.stoppedEvents_[eventType];
-// };
+
 
 /**
  * Calls all the plugins of the given operation, in sequence, with the given
@@ -252,78 +222,15 @@ kemia.controller.ReactionEditor.prototype.invokeShortCircuitingOp_ = function(
 	return false;
 };
 
-/**
- * Handles keyboard shortcuts on the editor. Note that we bake this into our
- * handleKeyPress/handleKeyDown rather than using goog.events.KeyHandler or
- * goog.ui.KeyboardShortcutHandler for performance reasons. Since these are
- * handled on every key stroke, we do not want to be going out to the event
- * system every time.
- * 
- * @param {goog.events.BrowserEvent}
- *            e The browser event.
- * @private
- */
-kemia.controller.ReactionEditor.prototype.handleKeyboardShortcut_ = function(
-		e) {
-	// Alt key is used for i18n languages to enter certain characters. like
-	// control + alt + z (used for IMEs) and control + alt + s for Polish.
-	// So we don't invoke handleKeyboardShortcut at all for alt keys.
-	if (e.altKey) {
-		return;
-	}
-
-	var isModifierPressed = goog.userAgent.MAC ? e.metaKey : e.ctrlKey;
-	if (isModifierPressed
-			|| kemia.controller.ReactionEditor.POTENTIAL_SHORTCUT_KEYCODES_[e.keyCode]) {
-		// TODO: goog.events.KeyHandler uses much more complicated logic
-		// to determine key. Consider changing to what they do.
-		var key = e.charCode || e.keyCode;
-
-		if (key == 17) { // Ctrl key
-			// In IE and Webkit pressing Ctrl key itself results in this event.
-			return;
-		}
-
-		var stringKey = String.fromCharCode(key).toLowerCase();
-		if (this.invokeShortCircuitingOp_(
-				kemia.controller.Plugin.Op.SHORTCUT, e, stringKey,
-				isModifierPressed)) {
-			e.preventDefault();
-			// We don't call stopPropagation as some other handler outside of
-			// trogedit might need it.
-		}
-	}
-};
 
 /**
  * Handle a change in the Editor. Marks the editor as modified, dispatches the
- * change event on the editable field (moz only), starts the timer for the
- * delayed change event. Note that these actions only occur if the proper events
- * are not stopped.
+ * change event on the editable field 
  */
 kemia.controller.ReactionEditor.prototype.handleChange = function() {
-	// if
-	// (this.isEventStopped(kemia.controller.ReactionEditor.EventType.CHANGE))
-	// {
-	// return;
-	// }
-
-	// Clear the changeTimerGecko_ if it's active, since any manual call to
-	// handle change is equiavlent to changeTimerGecko_.fire().
-	if (this.changeTimerGecko_) {
-		this.changeTimerGecko_.stop();
-	}
-
 	this.isModified_ = true;
 	this.isEverModified_ = true;
 
-	// if (this
-	// .isEventStopped(kemia.controller.ReactionEditor.EventType.DELAYEDCHANGE))
-	// {
-	// return;
-	// }
-
-	// this.delayedChangeTimer_.start();
 };
 
 /**
@@ -335,7 +242,6 @@ kemia.controller.ReactionEditor.prototype.handleChange = function() {
  */
 kemia.controller.ReactionEditor.prototype.handleKeyDown_ = function(e) {
 
-	this.handleKeyboardShortcut_(e);
 };
 
 /**
@@ -361,18 +267,8 @@ kemia.controller.ReactionEditor.prototype.handleKeyPress_ = function(e) {
 kemia.controller.ReactionEditor.prototype.handleKeyUp_ = function(e) {
 
 	this.invokeShortCircuitingOp_(kemia.controller.Plugin.Op.KEYUP, e);
-
-	if (this
-			.isEventStopped(kemia.controller.ReactionEditor.EventType.SELECTIONCHANGE)) {
-		return;
-	}
-
 	this.selectionChangeTimer_.start();
 
-};
-
-kemia.controller.ReactionEditor.prototype.handleMouseDown_ = function(e) {
-	this.invokeShortCircuitingOp_(kemia.controller.Plugin.Op.MOUSEDOWN, e);
 };
 
 kemia.controller.ReactionEditor.prototype.findTarget = function(e) {
@@ -414,6 +310,10 @@ kemia.controller.ReactionEditor.prototype.handleMouseMove_ = function(e) {
 kemia.controller.ReactionEditor.prototype.handleMouseUp_ = function(e) {
 	this.invokeShortCircuitingOp_(kemia.controller.Plugin.Op.MOUSEUP, e);
 }
+
+kemia.controller.ReactionEditor.prototype.handleMouseDown_ = function(e) {
+	this.invokeShortCircuitingOp_(kemia.controller.Plugin.Op.MOUSEDOWN, e);
+};
 
 
 /**
@@ -465,66 +365,17 @@ kemia.controller.ReactionEditor.prototype.queryCommandValue = function(
 	}
 };
 
-// /**
-// * Dispatch a delayed change event.
-// *
-// * @private
-// */
-// kemia.controller.ReactionEditor.prototype.dispatchDelayedChange_ =
-// function() {
-// if (this
-// .isEventStopped(kemia.controller.ReactionEditor.EventType.DELAYEDCHANGE))
-// {
-// return;
-// }
-// // Clear the delayedChangeTimer_ if it's active, since any manual call to
-// // dispatchDelayedChange_ is equivalent to delayedChangeTimer_.fire().
-// this.delayedChangeTimer_.stop();
-// this.isModified_ = false;
-// this.dispatchEvent(kemia.controller.ReactionEditor.EventType.DELAYEDCHANGE);
-// };
+
 
 /**
- * Dispatches the appropriate set of change events. This only fires synchronous
- * change events in blended-mode, iframe-using mozilla. It just starts the
- * appropriate timer for kemia.controller.ReactionEditor.DELAYEDCHANGE. This
- * also starts up change events again if they were stopped.
+ * Dispatches the appropriate set of change events.
  * 
- * @param {boolean=}
- *            opt_noDelay True if
- *            kemia.controller.ReactionEditor.DELAYEDCHANGE should be fired
- *            syncronously.
  */
-kemia.controller.ReactionEditor.prototype.dispatchChange = function(
-		opt_noDelay) {
+kemia.controller.ReactionEditor.prototype.dispatchChange = function() {
 	this.handleChange();
-	// this.startChangeEvents(true, opt_noDelay)
+
 };
 
-/**
- * Dispatch a selection change event, optionally caused by the given browser
- * event.
- * 
- * @param {goog.events.BrowserEvent=}
- *            opt_e Optional browser event causing this event.
- */
-kemia.controller.ReactionEditor.prototype.dispatchSelectionChangeEvent = function(
-		opt_e) {
-	// if (this
-	// .isEventStopped(kemia.controller.ReactionEditor.EventType.SELECTIONCHANGE))
-	// {
-	// return;
-	// }
-
-	this.dispatchCommandValueChange();
-	this.dispatchEvent( {
-		type : kemia.controller.ReactionEditor.EventType.SELECTIONCHANGE,
-		originalType : opt_e && opt_e.type
-	});
-
-	this.invokeShortCircuitingOp_(kemia.controller.Plugin.Op.SELECTION,
-			opt_e);
-};
 
 /**
  * Dispatches a command value change event.
@@ -602,7 +453,7 @@ kemia.controller.ReactionEditor.prototype.registerPlugin = function(plugin) {
 	}
 	plugin.registerEditorObject(this);
 
-	// By default we enable all plugins for fields that are currently loaded.
+	// By default we enable all plugins for editors that are currently loaded.
 	if (this.isLoaded()) {
 		plugin.enable(this);
 	}
@@ -687,34 +538,7 @@ kemia.controller.ReactionEditor.EventType = {
 	 * Dispatched when the editor contents change, in FF only. Used for internal
 	 * resizing, please do not use.
 	 */
-	CHANGE : 'change',
-	/**
-	 * Dispatched on a slight delay after changes are made. Use for autosave, or
-	 * other times your app needs to know that the editor contents changed.
-	 */
-	DELAYEDCHANGE : 'delayedchange',
-	/**
-	 * Dispatched before focus in moved into the editor.
-	 */
-	BEFOREFOCUS : 'beforefocus',
-	/**
-	 * Dispatched when focus is moved into the editor.
-	 */
-	FOCUS : 'focus',
-	/**
-	 * Dispatched when the editor is blurred.
-	 */
-	BLUR : 'blur',
-	/**
-	 * Dispach before tab is handled by the editor. This is a legacy way of
-	 * controlling tab behavior. Use trog.plugins.AbstractTabHandler now.
-	 */
-	BEFORETAB : 'beforetab',
-	/**
-	 * Dispatched when the selection changes. Use handleSelectionChange from
-	 * plugin API instead of listening directly to this event.
-	 */
-	SELECTIONCHANGE : 'selectionchange'
+	CHANGE : 'change'
 };
 
 /**
@@ -812,32 +636,6 @@ kemia.controller.ReactionEditor.prototype.getOriginalElement = function() {
 	return this.originalElement;
 };
 
-// /**
-// * Stops the event of the given type from being dispatched.
-// *
-// * @param {kemia.controller.ReactionEditor.EventType}
-// * eventType type of event to stop.
-// */
-// kemia.controller.ReactionEditor.prototype.stopEvent = function(eventType)
-// {
-// this.stoppedEvents_[eventType] = 1;
-// };
-
-// /**
-// * Re-starts the event of the given type being dispatched, if it had
-// previously
-// * been stopped with stopEvent().
-// *
-// * @param {kemia.controller.ReactionEditor.EventType}
-// * eventType type of event to start.
-// */
-// kemia.controller.ReactionEditor.prototype.startEvent = function(eventType)
-// {
-// // Toggling this bit on/off instead of deleting it/re-adding it
-// // saves array allocations.
-// this.stoppedEvents_[eventType] = 0;
-// };
-
 /**
  * Stops all listeners and timers.
  * 
@@ -848,10 +646,6 @@ kemia.controller.ReactionEditor.prototype.clearListeners_ = function() {
 		this.eventRegister.removeAll();
 	}
 
-	// if (this.changeTimerGecko_) {
-	// this.changeTimerGecko_.stop();
-	// }
-	// this.delayedChangeTimer_.stop();
 };
 
 /**
@@ -886,19 +680,6 @@ kemia.controller.ReactionEditor.prototype.handleEditorLoad = function() {
 	}
 };
 
-// /**
-// * Don't wait for the timer and just fire the delayed change event if it's
-// * pending.
-// */
-// kemia.controller.ReactionEditor.prototype.clearDelayedChange = function()
-// {
-// // The changeTimerGecko_ will queue up a delayed change so to fully clear
-// // delayed change we must also clear this timer.
-// if (this.changeTimerGecko_) {
-// this.changeTimerGecko_.fireIfActive();
-// }
-// this.delayedChangeTimer_.fireIfActive();
-// };
 
 /**
  * Signal that the editor is loaded and ready to use. Change events now are in
@@ -908,8 +689,7 @@ kemia.controller.ReactionEditor.prototype.handleEditorLoad = function() {
  */
 kemia.controller.ReactionEditor.prototype.dispatchLoadEvent_ = function() {
 	this.installStyles();
-	// this.startChangeEvents();
-	// this.logger.info('Dispatching load ' + this.id);
+
 	this.dispatchEvent(kemia.controller.ReactionEditor.EventType.LOAD);
 };
 
@@ -933,10 +713,6 @@ kemia.controller.ReactionEditor.prototype.addListener = function(type,
 		listener, opt_capture, opt_handler) {
 	var elem = this.getOriginalElement();
 
-	// On Gecko, keyboard events only reliably fire on the document element.
-	if (elem && goog.editor.BrowserFeature.USE_DOCUMENT_FOR_KEY_EVENTS) {
-		elem = elem.ownerDocument;
-	}
 	this.eventRegister.listen(elem, type, listener, opt_capture, opt_handler);
 };
 
@@ -947,97 +723,17 @@ kemia.controller.ReactionEditor.prototype.addListener = function(type,
  */
 kemia.controller.ReactionEditor.prototype.setupChangeListeners_ = function() {
 
-	this.addListener(goog.events.EventType.BLUR, this.dispatchBlur,
-			goog.editor.BrowserFeature.USE_MUTATION_EVENTS);
-
-	if (goog.editor.BrowserFeature.USE_MUTATION_EVENTS) {
-		// Ways to detect changes in Mozilla:
-		//
-		// keypress - check event.charCode (only typable characters has a
-		// charCode), but also keyboard commands lile Ctrl+C will
-		// return a charCode.
-		// dragdrop - fires when the user drops something. This does not
-		// necessary
-		// lead to a change but we cannot detect if it will or not
-		//
-		// Known Issues: We cannot detect cut and paste using menus
-		// We cannot detect when someone moves something out of the
-		// field using drag and drop.
-		//
-		this.setupMutationEventHandlersGecko();
-	} else {
-		// Ways to detect that a change is about to happen in other browsers.
-		// (IE and Safari have these events. Opera appears to work, but we
-		// haven't
-		// researched it.)
-		//
-		// onbeforepaste
-		// onbeforecut
-		// ondrop - happens when the user drops something on the editable text
-		// field the value at this time does not contain the dropped text
-		// ondragleave - when the user drags something from the current
-		// document.
-		// This might not cause a change if the action was copy
-		// instead of move
-		// onkeypress - IE only fires keypress events if the key will generate
-		// output. It will not trigger for delete and backspace
-		// onkeydown - For delete and backspace
-		//
-		// known issues: IE triggers beforepaste just by opening the edit menu
-		// delete at the end should not cause beforechange
-		// backspace at the beginning should not cause beforechange
-		// see above in ondragleave
-		// TODO: Why don't we dispatchBeforeChange from the
-		// handleDrop event for all browsers?
-		this.addListener( [ 'beforecut', 'beforepaste', 'drop', 'dragend' ],
-				this.dispatchBeforeChange);
-		this.addListener( [ 'cut', 'paste' ], this.dispatchChange);
-		this.addListener('drop', this.handleDrop_);
-	}
-
-	// TODO: Figure out why we use dragend vs dragdrop and
-	// document this better.
-	var dropEventName = goog.userAgent.WEBKIT ? 'dragend' : 'dragdrop';
-	this.addListener(dropEventName, this.handleDrop_);
-
-	this.addListener(goog.events.EventType.KEYDOWN, this.handleKeyDown_);
-	this.addListener(goog.events.EventType.KEYPRESS, this.handleKeyPress_);
-	this.addListener(goog.events.EventType.KEYUP, this.handleKeyUp_);
-
-	var selectionChange = goog.bind(this.dispatchSelectionChangeEvent, this);
-	this.selectionChangeTimer_ = new goog.async.Delay(selectionChange,
-			kemia.controller.ReactionEditor.SELECTION_CHANGE_FREQUENCY_);
-
+//	this.addListener(goog.events.EventType.KEYDOWN, this.handleKeyDown_);
+//	this.addListener(goog.events.EventType.KEYPRESS, this.handleKeyPress_);
+//	this.addListener(goog.events.EventType.KEYUP, this.handleKeyUp_);
 	this.addListener(goog.events.EventType.MOUSEDOWN, this.handleMouseDown_);
-	this.addListener(goog.events.EventType.MOUSEOVER, this.handleMouseOver_);
-	this.addListener(goog.events.EventType.MOUSEOUT, this.handleMouseOut_);
+//	this.addListener(goog.events.EventType.MOUSEOVER, this.handleMouseOver_);
+//	this.addListener(goog.events.EventType.MOUSEOUT, this.handleMouseOut_);
 	this.addListener(goog.events.EventType.MOUSEMOVE, this.handleMouseMove_);
 
 };
 
-/**
- * Mutation events tell us when something has changed for mozilla.
- * 
- * @protected
- */
-kemia.controller.ReactionEditor.prototype.setupMutationEventHandlersGecko = function() {
-	if (goog.editor.BrowserFeature.HAS_DOM_SUBTREE_MODIFIED_EVENT) {
-		this.eventRegister.listen(this.getElement(), 'DOMSubtreeModified',
-				this.handleMutationEventGecko_);
-	} else {
-		var doc = this.getEditableDomHelper().getDocument();
-		this.eventRegister.listen(doc,
-				kemia.controller.ReactionEditor.MUTATION_EVENTS_GECKO,
-				this.handleMutationEventGecko_, true);
 
-		// DOMAttrModified fires for a lot of events we want to ignore. This
-		// goes
-		// through a different handler so that we can ignore many of these.
-		this.eventRegister.listen(doc, 'DOMAttrModified',
-				goog.bind(this.handleDomAttrChange, this,
-						this.handleMutationEventGecko_), true);
-	}
-};
 
 /**
  * Installs styles if needed. Only writes styles when they can't be written
@@ -1050,46 +746,6 @@ kemia.controller.ReactionEditor.prototype.installStyles = function() {
 		goog.style.installStyles(this.cssStyles, this.getElement());
 	}
 };
-//
-// /**
-// * Start change events again and fire once if desired.
-// *
-// * @param {boolean=}
-// * opt_fireChange Whether to fire the change event immediately.
-// * @param {boolean=}
-// * opt_fireDelayedChange Whether to fire the delayed change event
-// * immediately.
-// */
-// kemia.controller.ReactionEditor.prototype.startChangeEvents = function(
-// opt_fireChange, opt_fireDelayedChange) {
-//
-// if (!opt_fireChange && this.changeTimerGecko_) {
-// // In the case where change events were stopped and we're not firing
-// // them on start, the user was trying to suppress all change or delayed
-// // change events. Clear the change timer now while the events are still
-// // stopped so that its firing doesn't fire a stopped change event, or
-// // queue up a delayed change event that we were trying to stop.
-// this.changeTimerGecko_.fireIfActive();
-// }
-//
-// this.startEvent(kemia.controller.ReactionEditor.EventType.CHANGE);
-// this.startEvent(kemia.controller.ReactionEditor.EventType.DELAYEDCHANGE);
-// if (opt_fireChange) {
-// this.handleChange();
-// }
-//
-// if (opt_fireDelayedChange) {
-// this.dispatchDelayedChange_();
-// }
-// };
-
-/**
- * Frequency to check for selection changes.
- * 
- * @type {number}
- * @private
- */
-kemia.controller.ReactionEditor.SELECTION_CHANGE_FREQUENCY_ = 250;
 
 /**
  * A default configuration for the reaction editor.

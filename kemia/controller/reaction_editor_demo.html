@@ -47,6 +47,8 @@ function initPage(){
 	var model = kemia.io.json.readReaction(reactionDrawing); 
 	model.reagentsText = "NaOH";
 	model.conditionsText = "90" + String.fromCharCode(186) +"C";
+//	model.products=[];
+//	model.reactants=[];
 	var editor = new kemia.controller.ReactionEditor(goog.dom.getElement('reactionEditorContainer'));
 	editor.registerPlugin(new kemia.controller.plugins.ClearEditor());
 	editor.registerPlugin(new kemia.controller.plugins.Zoom());
