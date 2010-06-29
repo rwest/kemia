@@ -233,6 +233,33 @@ kemia.io.mdl.readMolfile = function(molfile) {
 };
 
 /**
+ * convert Reaction to mdl RXN string
+ * 
+ * @param {kemia.model.Reaction} reaction, reaction to write
+ * 
+ * @return {string}
+ */
+
+kemia.io.mdl.writeRxnfile = function(reaction) {
+	var result = "";
+	result+= "$RXN\n\n\n\n"; //minimal empty header
+	result+= (goog.string.repeat(" ", 3) + reaction.reactants.length).slice(-3); // reactant 
+	result+= (goog.string.repeat(" ", 3) + reaction.products.length).slice(-3);  // and product counts
+	result+="\n";
+	
+	goog.array.forEach(reaction.reactants, function(mol){
+		result+="$MOL\n";
+		result+=kemia.io.mdl.writeMolfile(mol);
+	});
+	
+	goog.array.forEach(reaction.products, function(mol){
+		result+="$MOL\n";
+		result+=kemia.io.mdl.writeMolfile(mol);
+	});
+	return result;
+}
+
+/**
  * convert Molecule to molfile string
  * 
  * @param {kemia.model.Molecule} mol molecule to write
