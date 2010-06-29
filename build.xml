@@ -52,7 +52,36 @@
 		</javac>
 	</target>
 
-	<target name="test" depends="compile-test" description="Run Selenium unit tests">
+    <target name="start-selenium-server">
+        <java jar="${selenium-server.jar}" fork="true" spawn="true">
+            <arg line="-timeout 30"/>
+            <jvmarg value="-Dhttp.proxyHost=proxy.corporate.com"/>
+            <jvmarg value="-Dhttp.proxyPort=3128"/>
+        </java>
+    </target>
+
+    <target name="stop-selenium-server">
+        <get taskname="selenium-shutdown"
+            src="http://localhost:4444/selenium-server/driver/?cmd=shutDownSeleniumServer"
+            dest="result.txt" ignoreerrors="true" />
+        <echo taskname="selenium-shutdown" message="DGF Errors during shutdown are expected" />
+    </target>
+	
+    <target name="test" description="Start Selenium ; Run Junit tests ; stop Selenium">
+        <parallel>
+            <antcall target="start-selenium-server"></antcall>
+            <sequential>
+                <echo taskname="waitfor" message="Wait for server launch" />
+                <waitfor maxwait="2" maxwaitunit="minute" checkevery="100">
+                    <http url="http://localhost:4444/selenium-server/driver/?cmd=testComplete"/>
+                </waitfor>
+                    <antcall target="run-junit"></antcall>
+                    <antcall target="stop-selenium-server"></antcall>
+            </sequential>
+        </parallel>
+    </target>
+
+	<target name="run-junit" depends="compile-test">
 		<junit>
 			<classpath refid="classpath.test" />
 			<formatter type="brief" usefile="false" />
