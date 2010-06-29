@@ -9,7 +9,6 @@ public class TestRunner extends SeleneseTestCase {
 		setUp(DIRECTORY_PREFIX, "*firefox");
 	}
 	
-	
 
 	public void testPlugin()  {
 		helper("kemia/controller/plugin_test.html");
