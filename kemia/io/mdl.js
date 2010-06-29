@@ -323,7 +323,7 @@ kemia.io.mdl.writeMolfile = function(mol) {
 				+ stereoTypeString + "\n";
 	}
 
-	molFile = headerBlock + countsLine + atomBlock + bondBlock;
+	molFile = headerBlock + countsLine + atomBlock + bondBlock + "M  END\n";;
 	// alert(molFile);
 	return molFile;
 
