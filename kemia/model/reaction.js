@@ -95,7 +95,7 @@ kemia.model.Reaction.prototype.center = function(molecules) {
  * layout molecules to eliminate any molecule overlap, if necessary
  */
 kemia.model.Reaction.prototype.removeOverlap = function(){
-	var margin = 2;
+	var margin = 4;
 	var molecules = goog.array.concat(this.reactants, this.products);
 	var accumulated_rect;
 	goog.array.forEach(molecules, function(mol) {
