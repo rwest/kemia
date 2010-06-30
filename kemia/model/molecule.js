@@ -1,6 +1,7 @@
 goog.provide('kemia.model.Molecule');
 goog.require('goog.array');
 goog.require('kemia.ring.RingFinder');
+goog.require('kemia.model.Atom');
 
 /**
  * Class representing a Molecule

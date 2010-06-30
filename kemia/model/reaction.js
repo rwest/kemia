@@ -1,4 +1,8 @@
 goog.provide('kemia.model.Reaction');
+goog.require('kemia.model.Molecule');
+goog.require('goog.math.Box');
+goog.require('goog.math.Rect');
+
 
 /**
  * Creates a new Reaction.
@@ -14,6 +18,8 @@ kemia.model.Reaction = function() {
 	this.reagentsText = "";
 	this.conditionsText = "";
 };
+
+
 // TODO add docs
 kemia.model.Reaction.prototype.addReactant = function(mol) {
 	this.reactants.push(mol);
@@ -70,7 +76,7 @@ kemia.model.Reaction.prototype.boundingBox = function(molecules){
 		return a.coord;
 	})
 	return goog.math.Box.boundingBox.apply(null, coords);
-}
+};
 
 /**
  * finds center of an array of molecules
@@ -83,4 +89,49 @@ kemia.model.Reaction.prototype.center = function(molecules) {
 
 	return new goog.math.Coordinate((bbox.left + bbox.right) / 2,
 			(bbox.top + bbox.bottom) / 2);
-}
+};
+
+/**
+ * layout molecules to eliminate any molecule overlap, if necessary
+ */
+kemia.model.Reaction.prototype.removeOverlap = function(){
+	var molecules = goog.array.concat(this.reactants, this.products);
+	var accumulated_rect;
+	goog.array.forEach(molecules, function(mol) {
+		var mol_rect = goog.math.Rect.createFromBox(this.boundingBox([mol]));
+		console.log('mol_rect: ' + mol_rect);
+		if (accumulated_rect){
+			console.log("accumulated_rect: " + accumulated_rect);
+			if (goog.math.Rect.intersection(accumulated_rect, mol_rect)){
+				this.translateMolecule(mol, new goog.math.Coordinate(accumulated_rect.left + accumulated_rect.width - mol_rect.left, 0));
+			}
+			// expand to include this molecule location
+			accumulated_rect.boundingRect(goog.math.Rect.createFromBox(this.boundingBox([mol])));
+		} else{ 
+			accumulated_rect = mol_rect;
+		}	
+	}, this);
+	console.log(molecules);
+
+};
+
+/**
+ * change molecule coordinates
+ * 
+ * @param {kemia.model.Molecule}
+ *            molecule, the molecule to translate
+ * @param {goog.math.Coordinate}
+ *            coord, contains x and y change amounts
+ * 
+ * @return {kemia.model.Molecule}
+ */
+kemia.model.Reaction.prototype.translateMolecule = function(molecule, coord){
+	console.log("coord: " + coord);
+	goog.array.forEach(molecule.atoms, function(a) {
+		console.log("from: " + a.coord);
+		a.coord = goog.math.Coordinate.sum(a.coord, coord);
+		console.log("to: " + a.coord);
+	})
+	
+};
+

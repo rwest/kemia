@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="test/java"/>
+	<classpathentry kind="lib" path="third-party/closure-compiler/compiler.jar"/>
+	<classpathentry kind="lib" path="third-party/jsdoc-toolkit/java/classes/js.jar"/>
+	<classpathentry kind="lib" path="third-party/jsdoc-toolkit/jsdebug.jar"/>
+	<classpathentry kind="lib" path="third-party/jsdoc-toolkit/jsrun.jar"/>
+	<classpathentry kind="lib" path="third-party/junit/junit-4.8.2.jar"/>
+	<classpathentry kind="lib" path="third-party/selenium-java-client-driver-1.0.1/selenium-java-client-driver.jar"/>
+	<classpathentry kind="lib" path="third-party/selenium-server-1.0.3/selenium-server.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
