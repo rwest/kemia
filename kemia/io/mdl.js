@@ -37,13 +37,13 @@ kemia.io.mdl.getTypeCode = function(bond){
 	if (bond.aromatic){
 		return kemia.io.mdl.AROMATIC_BOND;
 	}
-	if (bond.order == 1){
+	if (bond.order == kemia.model.Bond.ORDER.SINGLE){
 		return kemia.io.mdl.SINGLE_BOND;
 	}
-	if (bond.order == 2){
+	if (bond.order == kemia.model.Bond.ORDER.DOUBLE){
 		return kemia.io.mdl.DOUBLE_BOND;
 	}
-	if (bond.order == 3){
+	if (bond.order == kemia.model.Bond.ORDER.TRIPLE){
 		return kemia.io.mdl.TRIPLE_BOND;
 	}
         throw new Error("Invalid bond type [" + bond + "]");
@@ -55,13 +55,13 @@ kemia.io.mdl.getTypeCode = function(bond){
  * @return{number}
  */
 kemia.io.mdl.getStereoCode = function(bond){
-	if (bond.stereo == 'up'){
+	if (bond.stereo == kemia.model.Bond.STEREO.UP){
 		return kemia.io.mdl.SINGLE_BOND_UP;
 	}
-	if (bond.stereo == 'down'){
+	if (bond.stereo == kemia.model.Bond.STEREO.DOWN){
 		return kemia.io.mdl.SINGLE_BOND_DOWN;
 	}
-	if (bond.stereo == 'up_or_down'){
+	if (bond.stereo == kemia.model.Bond.STEREO.UP_OR_DOWN){
 		return kemia.io.mdl.SINGLE_BOND_UP_OR_DOWN;
 	}
 	return kemia.io.mdl.NOT_STEREO;
@@ -84,25 +84,19 @@ kemia.io.mdl.createBond = function(type, stereo, source, target) {
 		case kemia.io.mdl.NOT_STEREO:
 			return new kemia.model.Bond(source, target);
 		case kemia.io.mdl.SINGLE_BOND_UP:
-			var bond = new kemia.model.Bond(source, target);
-                        bond.stereo = 'up';
-                        return bond;
+			return new kemia.model.Bond(source, target, kemia.model.Bond.ORDER.SINGLE, kemia.model.Bond.STEREO.UP);
 		case kemia.io.mdl.SINGLE_BOND_UP_OR_DOWN:
-			var bond = new kemia.model.Bond(source, target);
-                        bond.stereo = 'up_or_down';
-                        return bond;
+			return new kemia.model.Bond(source, target, kemia.model.Bond.ORDER.SINGLE, kemia.model.Bond.STEREO.UP_OR_DOWN);
 		case kemia.io.mdl.SINGLE_BOND_DOWN:
-			var bond = new kemia.model.Bond(source, target);
-                        bond.stereo = 'down';
-                        return bond;
+			return new kemia.model.Bond(source, target, kemia.model.Bond.ORDER.SINGLE, kemia.model.Bond.DOWN);
 		default:
 			throw new Error("invalid bond type/stereo [" + type + "]/["
 					+ stereo + "]");
 		};
 	case kemia.io.mdl.DOUBLE_BOND:
-		return new kemia.model.Bond(source, target, 2);
+		return new kemia.model.Bond(source, target, kemia.model.Bond.ORDER.DOUBLE);
 	case kemia.io.mdl.TRIPLE_BOND:
-		return new kemia.model.Bond(source, target, 3);
+		return new kemia.model.Bond(source, target, kemia.model.Bond.ORDER.TRIPLE);
 	case kemia.io.mdl.AROMATIC_BOND:
 		var bond = new kemia.model.Bond(source, target);
                 bond.aromatic = true;

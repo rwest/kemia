@@ -101,7 +101,7 @@ kemia.controller.plugins.BondEdit.prototype.handleMouseDown = function(e) {
 kemia.controller.plugins.BondEdit.prototype.replaceBond = function(bond) {
 
 	if (this.bond_type) {
-		this.logger.info( [ "bond", bond.order, bond.stereo ]);
+
 		this.editorObject.dispatchBeforeChange();
 		if (this.bond_type.stereo != kemia.model.Bond.STEREO.NOT_STEREO
 				&& bond.stereo == this.bond_type.stereo) {
@@ -123,7 +123,7 @@ kemia.controller.plugins.BondEdit.prototype.replaceBond = function(bond) {
 };
 
 kemia.controller.plugins.BondEdit.prototype.addBondToAtom = function(atom) {
-	if (this.bond_klass) {
+	if (this.bond_type) {
 		var angles = goog.array.map(atom.bonds.getValues(), function(bond) {
 			return new kemia.math.Line(atom.coord, bond.otherAtom(atom).coord)
 					.getTheta();
