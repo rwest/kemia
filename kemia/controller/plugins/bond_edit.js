@@ -29,7 +29,7 @@ kemia.controller.plugins.BondEdit.prototype.getTrogClassId = goog.functions
 		.constant(kemia.controller.plugins.BondEdit.COMMAND);
 
 /**
- * sets atom symbol.
+ * sets bond order and stereo.
  * 
  * @param {string}
  *            command Command to execute.
@@ -37,8 +37,7 @@ kemia.controller.plugins.BondEdit.prototype.getTrogClassId = goog.functions
  */
 kemia.controller.plugins.BondEdit.prototype.execCommandInternal = function(
 		command, var_args) {
-
-	this.bond_klass = arguments[1];
+	this.bond_type = arguments[1];
 };
 
 /**
@@ -46,25 +45,32 @@ kemia.controller.plugins.BondEdit.prototype.execCommandInternal = function(
  */
 kemia.controller.plugins.BondEdit.BOND_TYPES = [ {
 	caption : "Single",
-	klass : kemia.model.Bond
+	order : kemia.model.Bond.ORDER.SINGLE,
+	stereo : kemia.model.Bond.STEREO.NOT_STEREO
 }, {
 	caption : "Double",
-	klass : kemia.model.Bond
+	order : kemia.model.Bond.ORDER.DOUBLE,
+	stereo : kemia.model.Bond.STEREO.NOT_STEREO
 }, {
 	caption : "Triple",
-	klass : kemia.model.Bond
+	order : kemia.model.Bond.ORDER.TRIPLE,
+	stereo : kemia.model.Bond.STEREO.NOT_STEREO
 }, {
 	caption : "Quadruple",
-	klass : kemia.model.Bond
+	order : kemia.model.Bond.ORDER.QUADRUPLE,
+	stereo : kemia.model.Bond.STEREO.NOT_STEREO
 }, {
 	caption : "Single Up",
-	klass : kemia.model.Bond
+	order : kemia.model.Bond.ORDER.SINGLE,
+	stereo : kemia.model.Bond.STEREO.UP
 }, {
 	caption : "Single Down",
-	klass : kemia.model.Bond
+	order : kemia.model.Bond.ORDER.SINGLE,
+	stereo : kemia.model.Bond.STEREO.DOWN
 }, {
 	caption : "Single Up or Down",
-	klass : kemia.model.Bond
+	order : kemia.model.Bond.ORDER.SINGLE,
+	stereo : kemia.model.Bond.STEREO.UP_OR_DOWN
 } ]
 
 /**
@@ -77,6 +83,7 @@ kemia.controller.plugins.BondEdit.prototype.logger = goog.debug.Logger
 		.getLogger('kemia.controller.plugins.BondEdit');
 
 kemia.controller.plugins.BondEdit.prototype.handleMouseDown = function(e) {
+	this.logger.info( [ this.bond_type.order, this.bond_type.stereo ]);
 	// if (this.isActive) {
 	this.editorObject.dispatchBeforeChange();
 	var target = this.editorObject.findTarget(e);
@@ -93,14 +100,18 @@ kemia.controller.plugins.BondEdit.prototype.handleMouseDown = function(e) {
 
 kemia.controller.plugins.BondEdit.prototype.replaceBond = function(bond) {
 
-	if (this.bond_klass) {
+	if (this.bond_type) {
+		this.logger.info( [ "bond", bond.order, bond.stereo ]);
 		this.editorObject.dispatchBeforeChange();
-		if (bond.stereo) {
-		//if ((e.bond instanceof kemia.model.SingleBondUp && this.bond_klass == kemia.model.SingleBondUp)
-		//		|| (e.bond instanceof kemia.model.SingleBondDown && this.bond_klass == kemia.model.SingleBondDown)) {
-			var new_bond = new this.bond_klass(bond.target, bond.source);
+		if (this.bond_type.stereo != kemia.model.Bond.STEREO.NOT_STEREO
+				&& bond.stereo == this.bond_type.stereo) {
+				// toggle ends if replacing with the same stereo
+
+			var new_bond = new kemia.model.Bond(bond.target, bond.source,
+					this.bond_type.order, this.bond_type.stereo);
 		} else {
-			var new_bond = new this.bond_klass(bond.source, bond.target);
+			var new_bond = new kemia.model.Bond(bond.source, bond.target,
+					this.bond_type.order, this.bond_type.stereo);
 		}
 		var molecule = bond.molecule;
 		molecule.removeBond(bond);
@@ -114,8 +125,8 @@ kemia.controller.plugins.BondEdit.prototype.replaceBond = function(bond) {
 kemia.controller.plugins.BondEdit.prototype.addBondToAtom = function(atom) {
 	if (this.bond_klass) {
 		var angles = goog.array.map(atom.bonds.getValues(), function(bond) {
-			return new kemia.math.Line(atom.coord,
-					bond.otherAtom(atom).coord).getTheta();
+			return new kemia.math.Line(atom.coord, bond.otherAtom(atom).coord)
+					.getTheta();
 		});
 
 		// this.logger.info("angles.length " + angles.length);
@@ -143,7 +154,8 @@ kemia.controller.plugins.BondEdit.prototype.addBondToAtom = function(atom) {
 			var new_atom = new kemia.model.Atom("C", atom.coord.x
 					+ Math.cos(new_angle) * 1.25, atom.coord.y
 					+ Math.sin(new_angle) * 1.25);
-			var new_bond = new this.bond_klass(atom, new_atom);
+			var new_bond = new kemia.model.Bond(bond.source, bond.target,
+					this.bond_type.order, this.bond_type.stereo);
 			var molecule = atom.molecule;
 			molecule.addBond(new_bond);
 			molecule.addAtom(new_atom);

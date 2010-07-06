@@ -35,65 +35,66 @@ function initPage(){
 	var element = goog.dom.getElement('container')
 	var graphics = goog.graphics.createGraphics(element.clientWidth,
 			element.clientHeight);
-	var group = graphics.createGroup();
+	
 	graphics.render(element);
+
+	var bondPath = new goog.graphics.Path();
 	var sbr = new kemia.view.SingleBondRenderer(undefined, graphics);
 	
 	var trans = new kemia.graphics.AffineTransform(20,0,0,-20,0,0);
 	var c1 = new kemia.model.Atom("C", 2, -2);
 	var o1 = new kemia.model.Atom("O", 3, -3);
-	var b = new kemia.model.Bond(c1, o1);
-	sbr.render(b, trans, group);
+	var b = new kemia.model.Bond(c1, o1, kemia.model.Bond.ORDER.SINGLE);
+	sbr.render(b, trans, bondPath);
 	
 	var mol2 = new kemia.model.Molecule();
 	var c2 = new kemia.model.Atom("C", 5, -2);
 	var o2 = new kemia.model.Atom("O", 6, -2);
-	var b2 = new kemia.model.Bond(c2, o2, 2)
+	var b2 = new kemia.model.Bond(c2, o2, kemia.model.Bond.ORDER.DOUBLE);
 	mol2.addBond(b2);
 	trans = new kemia.graphics.AffineTransform(30,0,0,-30,0,0);
 	var dbr = new kemia.view.DoubleBondRenderer(null, graphics);
-	dbr.render(b2, trans, group);
+	dbr.render(b2, trans, bondPath);
 	
 	var mol3 = new kemia.model.Molecule();
 	var c3 = new kemia.model.Atom("C", 7, -2);
 	var c4 = new kemia.model.Atom("C", 8, -2);
-	var b3 = new kemia.model.Bond(c3, c4, 3);
+	var b3 = new kemia.model.Bond(c3, c4, kemia.model.Bond.ORDER.TRIPLE);
 	mol3.addBond(b3);
 	trans = new kemia.graphics.AffineTransform(40,0,0,-40,0,0);
 	var tbr = new kemia.view.TripleBondRenderer(null, graphics);
-	tbr.render(b3, trans, group);
+	tbr.render(b3, trans, bondPath);
 	
 	var n = new kemia.model.Atom("N", 2, -4);
 	var s = new kemia.model.Atom("S", 2, -5);
-	var b4 = new kemia.model.Bond(n,s,4);
+	var b4 = new kemia.model.Bond(n,s,kemia.model.Bond.ORDER.QUADRUPLE);
 	trans = new kemia.graphics.AffineTransform(30,0,0,-30,0,0);
 	var qbr = new kemia.view.QuadrupleBondRenderer(null, graphics);
-	qbr.render(b4, trans, group);
+	qbr.render(b4, trans, bondPath);
 	
 	var mol4 = new kemia.model.Molecule();
 	var p = new kemia.model.Atom("P", 4, -4);
 	var cl = new kemia.model.Atom("Cl", 4, -5); 
-	var b5 = new kemia.model.Bond(p,cl);
-        b5.stereo = 'up';
+	var b5 = new kemia.model.Bond(p,cl, kemia.model.Bond.ORDER.SINGLE, kemia.model.Bond.STEREO.UP);
+
 	mol4.addBond(b5);
 	var sbur = new kemia.view.SingleUpBondRenderer(null, graphics);
-	sbur.render(b5, trans, group);
+	sbur.render(b5, trans, bondPath);
 
 
 	var f = new kemia.model.Atom("F", 6, -4);
 	var br = new kemia.model.Atom("Br", 6, -5);
-	var b6 = new kemia.model.Bond(f,br);
-        b6.stereo = 'down';
+	var b6 = new kemia.model.Bond(f,br, kemia.model.Bond.ORDER.SINGLE, kemia.model.Bond.STEREO.DOWN);
 	mol4.addBond(b6);
 	var sbdr = new kemia.view.SingleDownBondRenderer(null, graphics);
-	sbdr.render(b6, trans, group);
+	sbdr.render(b6, trans, bondPath);
 	
 	var i = new kemia.model.Atom("I", 8, -4);
 	var h = new kemia.model.Atom("H", 8, -5);
-	var b7 = new kemia.model.Bond(i,h);
-        b7.stereo = 'up_or_down';
+	var b7 = new kemia.model.Bond(i,h, kemia.model.Bond.ORDER.SINGLE, kemia.model.Bond.STEREO.UP_OR_DOWN);
+
 	var sbudr = new kemia.view.SingleUpOrDownBondRenderer(null, graphics);
-	sbudr.render(b7, trans, group);
+	sbudr.render(b7, trans, bondPath);
 	
 	
 //	mol4.addBond(new kemia.model.Bond(p, cl));

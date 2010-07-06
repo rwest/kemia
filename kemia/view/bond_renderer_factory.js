@@ -10,65 +10,144 @@ goog.require('kemia.view.SingleUpOrDownBondRenderer');
 /**
  * factory class for BondRenderers
  * 
- * @param {goog.graphics.AbstractGraphics} graphics
- * @param {Object} opt_config
+ * @param {goog.graphics.AbstractGraphics}
+ *            graphics
+ * @param {Object}
+ *            opt_config
  * @constructor
  */
 kemia.view.BondRendererFactory = function(controller, graphics, opt_config) {
-    this.controller = controller;
-    this.graphics = graphics;
-    this.config = new goog.structs.Map();
-    if (opt_config) {
-        this.config.addAll(opt_config); // merge optional config
-    }
-}
-
-kemia.view.BondRendererFactory.prototype.get = function(bond) {
-    if (bond.order == 1) {
-        if (!bond.stereo.length) {
-	    if (!this.singleBondRenderer) {
-		this.singleBondRenderer = new kemia.view.SingleBondRenderer(this.controller, this.graphics, this.config);
-	    }
-	    return this.singleBondRenderer;
+	this.controller = controller;
+	this.graphics = graphics;
+	this.config = new goog.structs.Map();
+	if (opt_config) {
+		this.config.addAll(opt_config); // merge optional config
 	}
-        if (bond.stereo == 'up') {
-            if (!this.singleUpBondRenderer) {
-                this.singleUpBondRenderer = new kemia.view.SingleUpBondRenderer(this.controller, this.graphics, this.config);
-            }
-            return this.singleUpBondRenderer;
-	}
-        if (bond.stereo == 'down') {
-            if (!this.singleDownBondRenderer) {
-                this.singleDownBondRenderer = new kemia.view.SingleDownBondRenderer(this.controller, this.graphics, this.config);
-            }
-            return this.singleDownBondRenderer;
-	}
-        if (bond.stereo == 'up_or_down') {
-            if (!this.singleUpOrDownBondRenderer) {
-                this.singleUpOrDownBondRenderer = new kemia.view.SingleUpOrDownBondRenderer(this.controller, this.graphics, this.config);
-            }
-            return this.singleUpOrDownBondRenderer;
-	}
-    }
-    if (bond.order == 2) {
-        if (!this.doubleBondRenderer) {
-            this.doubleBondRenderer = new kemia.view.DoubleBondRenderer(
-                    this.controller, this.graphics, this.config);
-        }
-        return this.doubleBondRenderer;
-    }
-    if (bond.order == 3) {
-        if (!this.tripleBondRenderer) {
-            this.tripleBondRenderer = new kemia.view.TripleBondRenderer(
-                    this.controller, this.graphics, this.config);
-        }
-        return this.tripleBondRenderer;
-    }
-    if (bond.order == 4) {
-        if (!this.quadrupleBondRenderer) {
-            this.quadrupleBondRenderer = new kemia.view.QuadrupleBondRenderer(
-                    this.controller, this.graphics, this.config);
-        }
-        return this.quadrupleBondRenderer;
-    }
 };
+
+/**
+ * The logger for this class.
+ * 
+ * @type {goog.debug.Logger}
+ * @protected
+ */
+kemia.view.BondRendererFactory.prototype.logger = goog.debug.Logger
+		.getLogger('kemia.view.BondRendererFactory');
+
+/**
+ * a map from bond order to renderer getter method
+ */
+kemia.view.BondRendererFactory.ORDER_RENDERER = goog.object
+		.transpose(goog.reflect
+				.object(
+						kemia.view.BondRendererFactory,
+						{
+			getSingleBondRenderer : kemia.model.Bond.ORDER.SINGLE,
+			getDoubleBondRenderer : kemia.model.Bond.ORDER.DOUBLE,
+			getTripleBondRenderer : kemia.model.Bond.ORDER.TRIPLE,
+			getQuadrupleBondRenderer : kemia.model.Bond.ORDER.QUADRUPLE
+		}));
+
+/**
+ * a map from bond stereo type to renderer getter method
+ */
+kemia.view.BondRendererFactory.STEREO_RENDERER = goog.object
+		.transpose(goog.reflect
+				.object(
+						kemia.view.BondRendererFactory,
+						{
+							getSingleBondNotStereoRenderer : kemia.model.Bond.STEREO.NOT_STEREO,
+							getSingleBondUpRenderer : kemia.model.Bond.STEREO.UP,
+							getSingleBondDownRenderer : kemia.model.Bond.STEREO.DOWN,
+							getSingleBondUpOrDownRenderer : kemia.model.Bond.STEREO.UP_OR_DOWN
+						}));
+
+/**
+ * factory method to get appropriate renderer for a bond based on its order and
+ * stereo type
+ * 
+ * @param {kemia.model.Bond}
+ *            bond, the bond in need of a renderer
+ * 
+ * @return {kemia.view.BondRenderer}
+ */
+kemia.view.BondRendererFactory.prototype.get = function(bond) {
+	return this[kemia.view.BondRendererFactory.ORDER_RENDERER[bond.order]].apply(this, [bond.stereo]);
+};
+
+/**
+ * helper method to factory to get appropriate renderer based on stereo type
+ * 
+ * @param {kemia.model.Bond.STEREO}
+ *            stereo type of bond in need of a renderer
+ * 
+ * @return {kemia.view.BondRenderer}
+ */
+kemia.view.BondRendererFactory.prototype.getSingleBondRenderer = function(
+		stereo) {
+	return this[kemia.view.BondRendererFactory.STEREO_RENDERER[stereo]].apply(this);
+};
+
+kemia.view.BondRendererFactory.prototype.getSingleBondNotStereoRenderer = function()
+{
+	if (!this.singleNotStereoBondRenderer) {
+		this.singleNotStereoBondRenderer = new kemia.view.SingleBondRenderer(
+				this.controller, this.graphics, this.config);
+	}
+	return this.singleNotStereoBondRenderer;
+};
+
+kemia.view.BondRendererFactory.prototype.getSingleBondUpRenderer = function()
+{
+	if (!this.singleUpBondRenderer) {
+		this.singleUpBondRenderer = new kemia.view.SingleUpBondRenderer(
+				this.controller, this.graphics, this.config);
+	}
+	return this.singleUpBondRenderer;
+};
+
+kemia.view.BondRendererFactory.prototype.getSingleBondDownRenderer = function()
+{
+	if (!this.singleDownBondRenderer) {
+		this.singleDownBondRenderer = new kemia.view.SingleDownBondRenderer(
+				this.controller, this.graphics, this.config);
+	}
+	return this.singleDownBondRenderer;
+};
+
+kemia.view.BondRendererFactory.prototype.getSingleBondUpOrDownRenderer = function()
+{
+	if (!this.singleUpOrDownBondRenderer) {
+		this.singleUpOrDownBondRenderer = new kemia.view.SingleUpOrDownBondRenderer(
+				this.controller, this.graphics, this.config);
+	}
+	return this.singleUpOrDownBondRenderer;
+};
+
+kemia.view.BondRendererFactory.prototype.getDoubleBondRenderer = function()
+{
+	if (!this.doubleBondRenderer) {
+		this.doubleBondRenderer = new kemia.view.DoubleBondRenderer(
+				this.controller, this.graphics, this.config);
+	}
+	return this.doubleBondRenderer;
+};
+
+kemia.view.BondRendererFactory.prototype.getTripleBondRenderer = function()
+{
+	if (!this.tripleBondRenderer) {
+		this.tripleBondRenderer = new kemia.view.TripleBondRenderer(
+				this.controller, this.graphics, this.config);
+	}
+	return this.tripleBondRenderer;
+};
+
+kemia.view.BondRendererFactory.prototype.getQuadrupleBondRenderer = function()
+{
+	if (!this.quadrupleBondRenderer) {
+		this.quadrupleBondRenderer = new kemia.view.QuadrupleBondRenderer(
+				this.controller, this.graphics, this.config);
+	}
+	return this.quadrupleBondRenderer;
+};
+
