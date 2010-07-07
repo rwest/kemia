@@ -154,7 +154,7 @@ kemia.controller.plugins.BondEdit.prototype.addBondToAtom = function(atom) {
 			var new_atom = new kemia.model.Atom("C", atom.coord.x
 					+ Math.cos(new_angle) * 1.25, atom.coord.y
 					+ Math.sin(new_angle) * 1.25);
-			var new_bond = new kemia.model.Bond(bond.source, bond.target,
+			var new_bond = new kemia.model.Bond(atom, new_atom,
 					this.bond_type.order, this.bond_type.stereo);
 			var molecule = atom.molecule;
 			molecule.addBond(new_bond);
