@@ -235,19 +235,19 @@ kemia.io.smiles.createBond = function(type, stereo, source, target) {
         case kemia.io.smiles.BondType.SINGLE_BOND:
                 switch (stereo) {
                 case kemia.io.smiles.BondStereo.CLOCKWISE:
-                        return new kemia.model.Bond(source, target);
+                        return new kemia.model.Bond(source, target, kemia.model.Bond.ORDER.SINGLE, kemia.model.Bond.STEREO.UP);
                 case kemia.io.smiles.BondStereo.COUNTER_CLOCKWISE:
-                        return new kemia.model.Bond(source, target);
+                        return new kemia.model.Bond(source, target, kemia.model.Bond.ORDER.SINGLE, kemia.model.Bond.STEREO.DOWN);
                 case kemia.io.smiles.BondStereo.NONE:
-                        return new kemia.model.Bond(source, target);
+                        return new kemia.model.Bond(source, target, kemia.model.Bond.ORDER.SINGLE);
                 default:
                         throw new Error("invalid bond type/stereo [" + type + "]/["
                                         + stereo + "]");
                 };
         case kemia.io.smiles.BondType.DOUBLE_BOND:
-                return new kemia.model.Bond(source, target, 2);
+                return new kemia.model.Bond(source, target, kemia.model.Bond.ORDER.DOUBLE);
         case kemia.io.smiles.BondType.TRIPLE_BOND:
-                return new kemia.model.Bond(source, target, 3);
+                return new kemia.model.Bond(source, target, kemia.model.Bond.ORDER.TRIPLE);
         case kemia.io.smiles.BondType.AROMATIC_BOND:
                 var bond = new kemia.model.Bond(source, target);
                 bond.aromatic = true;
