@@ -12,6 +12,7 @@
 	goog.require('kemia.model.Bond');
 	goog.require('kemia.model.NeighborList');
 	goog.require('goog.array');
+	goog.require('goog.debug.Trace');
 </script>
 <script>
  
@@ -154,13 +155,55 @@
     	assertEquals('# nearest objects', 0, n.length);
     	n = nl.getNearestList({x:-1, y:0});
     	assertEquals('# nearest objects', 0, n.length);
-
-
-
+    }
+    
+    function testTiming(){
+    	var i = 100;
+    	var mols = [];
+    	while(i>0){
+    		var center_x = Math.random()*10;
+    		var center_y = Math.random()*10;
+    		var mol = new kemia.model.Molecule();
+    		var a1 = new kemia.model.Atom("C", Math.random() + center_x, Math.random() + center_y);
+    		var a2 = new kemia.model.Atom("C", Math.random() + center_x, Math.random() + center_y);
+    		var a3 = new kemia.model.Atom("C", Math.random() + center_x, Math.random() + center_y);
+    		var b1 = new kemia.model.Bond(a1, a2);
+    		var b2 = new kemia.model.Bond(a2, a3);
+    		mol.addAtom(a1);
+    		mol.addAtom(a2);
+    		mol.addAtom(a3);
+    		mol.addBond(b1);
+    		mol.addBond(b2);
+    		mols.push(mol);
+    		i--;
+    	}	
+    	
+    	var defaultThreshold = 0; 
+		goog.debug.Trace.reset(defaultThreshold); 
+    	
+    	var tracer = goog.debug.Trace.startTracer('neighbor list');
+    	var nl = new kemia.model.NeighborList(mols, 2, .25);
+    	goog.debug.Trace.addComment('neighborlist created');
+    	i = 100;
+    	while(i>0){
+    		var x = Math.random()*10;
+    		var y = Math.random()*10;
+    		goog.debug.Trace.addComment('generate random point');
+    		nl.getNearestList({x:x, y:y});
+    		goog.debug.Trace.addComment('getNearestList');
+    	}
+    	// Stop the trace. 
+		goog.debug.Trace.stopTracer(tracer); 
+		// Generate a report of all traces and comments, and print the results in 
+		// a <pre> element to preserve the formatting of the report. 
+		var results = goog.debug.Trace.getFormattedTrace(); 
+		var el = goog.dom.getElement('traceResults'); 
+		el.innerHTML = goog.string.htmlEscape(results); 	
     }
 	
 </script>
 </head>
 <body>
+<pre id='traceResults'></pre>
 </body>
 </html>
