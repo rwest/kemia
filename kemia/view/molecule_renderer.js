@@ -36,7 +36,7 @@ kemia.view.MoleculeRenderer.prototype.logger = goog.debug.Logger
 		.getLogger('kemia.view.MoleculeRenderer');
 
 kemia.view.MoleculeRenderer.prototype.render = function(molecule, trans) {
-	
+
 	var atom_coords = goog.array.map(molecule.atoms, function(a) {
 		return a.coord;
 	});
@@ -72,6 +72,23 @@ kemia.view.MoleculeRenderer.prototype.render = function(molecule, trans) {
 		this.atomRenderer.render(atom, trans);
 	}, this);
 
+};
+
+kemia.view.MoleculeRenderer.prototype.highlightOn = function(molecule,
+		opt_group) {
+	if (!opt_group) {
+		opt_group = this.graphics.createGroup();
+	}
+	goog.array.forEach(molecule.bonds, function(bond) {
+		this.bondRendererFactory.get(bond).highlightOn(bond, opt_group);
+	}, this);
+
+
+	goog.array.forEach(molecule.atoms, function(atom) {
+		this.atomRenderer.highlightOn(atom, opt_group);
+	}, this);
+
+	return opt_group;
 }
 
 /**
