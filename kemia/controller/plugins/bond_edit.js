@@ -83,7 +83,7 @@ kemia.controller.plugins.BondEdit.prototype.logger = goog.debug.Logger
 		.getLogger('kemia.controller.plugins.BondEdit');
 
 kemia.controller.plugins.BondEdit.prototype.handleMouseDown = function(e) {
-	this.logger.info( [ this.bond_type.order, this.bond_type.stereo ]);
+
 	// if (this.isActive) {
 	this.editorObject.dispatchBeforeChange();
 	var target = this.editorObject.findTarget(e);

@@ -62,6 +62,12 @@ kemia.controller.plugins.Erase.prototype.handleMouseDown = function(e) {
 		if (target instanceof kemia.model.Bond) {
 			this.eraseBond(target);
 		}
+		if(target instanceof kemia.model.Molecule){
+			this.eraseMolecule(target);
+		}
+		if (target instanceof goog.math.Coordinate){
+			this.eraseArrowOrPlus(target);
+		}
 		this.editorObject.dispatchChange();
 	}
 
@@ -83,14 +89,14 @@ kemia.controller.plugins.Erase.prototype.eraseBond = function(bond) {
 
 };
 
-kemia.controller.plugins.Erase.prototype.erasePlus = function(coord) {
-	var reaction = coord.reaction;
-	reaction.removePlus(coord);
+kemia.controller.plugins.Erase.prototype.eraseMolecule = function(molecule){
+	var reaction = molecule.reaction;
+	reaction.removeMolecule(molecule);
 	this.editorObject.setModels(this.editorObject.getModels());
-};
+}
 
-kemia.controller.plugins.Erase.prototype.eraseArrow = function(coord) {
+kemia.controller.plugins.Erase.prototype.eraseArrowOrPlus = function(coord) {
 	var reaction = coord.reaction;
-	reaction.removeArrow(coord);
+	reaction.removeArrowOrPlus(coord);
 	this.editorObject.setModels(this.editorObject.getModels());
 };

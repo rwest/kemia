@@ -216,8 +216,13 @@ kemia.io.json.readReaction = function(arg) {
 	}
 	var rxn = new kemia.model.Reaction();
 	rxn.header = jrxn.header;
-	rxn.reactants = goog.array.map(jrxn.reactants, kemia.io.json.readMolecule);
-	rxn.products = goog.array.map(jrxn.products, kemia.io.json.readMolecule);
+	goog.array.forEach(jrxn.reactants, function(mol){
+		rxn.addReactant(kemia.io.json.readMolecule(mol));
+	}, this);
+	goog.array.forEach(jrxn.products, function(mol){
+		rxn.addProduct(kemia.io.json.readMolecule(mol));
+	}, this );
+
 	return rxn;
 };
 
