@@ -1,6 +1,7 @@
-goog.provide('kemia.model._NeighborList');
+goog.provide('kemia.model.NeighborList');
 goog.require('goog.math.Vec2');
 goog.require('goog.array');
+goog.require('goog.math.Line');
 
 /**
  * Class for locating the objects nearest to a specified coordinate.
@@ -94,7 +95,6 @@ kemia.model.NeighborList = function(objects, opt_cellSize, opt_tolerance) {
 
 /**
  * 
- * @param self
  * @param coord
  * @return
  */
@@ -117,6 +117,7 @@ kemia.model.NeighborList.prototype.cellsAroundCoord = function(coord) {
 
 	return cells;
 };
+
 /**
  * 
  */
@@ -124,27 +125,6 @@ kemia.model.NeighborList.prototype.triangleSign = function(a, b, c) {
 	return (a.x - c.x) * (b.y - c.y) - (a.y - c.y) * (b.x - c.x);
 };
 
-kemia.model.NeighborList.prototype.isCoordInBondBoundingBox = function(coord,
-		bond, tolerance) {
-	var bv = goog.math.Vec2.fromCoordinate(goog.math.Coordinate.difference(
-			bond.source.coord, bond.target.coord));
-	var bondLength = bv.magnitude();
-	bv.scale(1 / bondLength);
-	var orthogonal = new goog.math.Vec2(bv.y, -bv.x);
-	orthogonal.scale(tolerance);
-	var corners = [ goog.math.Coordinate.sum(bond.source.coord, orthogonal),
-			goog.math.Coordinate.sum(bond.target.coord, orthogonal),
-			goog.math.Coordinate.difference(bond.target.coord, orthogonal),
-			goog.math.Coordinate.difference(bond.source.coord, orthogonal) ];
-	var sign1 = this.triangleSign(corners[0], corners[1], coord);
-	var sign2 = this.triangleSign(corners[1], corners[2], coord);
-	var sign3 = this.triangleSign(corners[2], corners[3], coord);
-	var sign4 = this.triangleSign(corners[3], corners[0], coord);
-	if (sign1 * sign2 > 0 && sign3 * sign4 > 0 && sign2 * sign3 > 0) {
-		return true;
-	}
-	return false;
-};
 
 /**
  * calculate distance from a point to the nearest point on the bond line segment
