@@ -79,10 +79,6 @@ kemia.view.MoleculeRenderer.prototype.highlightOn = function(molecule,
 	if (!opt_group) {
 		opt_group = this.graphics.createGroup();
 	}
-	goog.array.forEach(molecule.bonds, function(bond) {
-		this.bondRendererFactory.get(bond).highlightOn(bond, opt_group);
-	}, this);
-
 
 	goog.array.forEach(molecule.atoms, function(atom) {
 		this.atomRenderer.highlightOn(atom, opt_group);

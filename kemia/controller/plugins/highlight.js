@@ -59,7 +59,16 @@ kemia.controller.plugins.Highlight.prototype.handleMouseMove = function(e) {
 					e.currentTarget.highlightGroup);
 		}
 
-	} else {
+	} else if (target instanceof goog.math.Coordinate) {
+		if (!e.currentTarget.highlightGroup) {
+			e.currentTarget.highlightGroup = this.highlightArrowOrPlus(target);
+		} else {
+			e.currentTarget.highlightGroup = this.highlightArrowOrPlus(target,
+					e.currentTarget.highlightGroup);
+		}
+	}
+
+	else {
 		e.currentTarget.highlightGroup = undefined;
 	}
 }
@@ -80,4 +89,10 @@ kemia.controller.plugins.Highlight.prototype.highlightMolecule = function(
 		molecule, opt_group) {
 	return this.editorObject.reactionRenderer.moleculeRenderer.highlightOn(
 			molecule, opt_group);
+};
+
+kemia.controller.plugins.Highlight.prototype.highlightArrowOrPlus= function(
+		coord, opt_group) {
+	return this.editorObject.reactionRenderer.arrowRenderer.highlightOn(coord,
+			opt_group);
 }

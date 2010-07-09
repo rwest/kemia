@@ -53,6 +53,20 @@ kemia.model.NeighborList = function(objects, opt_cellSize, opt_tolerance) {
 					this.yMax = atom.coord.y;
 				}
 			}
+		} else if (obj instanceof goog.math.Coordinate) {
+			var coord = obj;
+			if (coord.x < this.xMin) {
+				this.xMin = coord.x;
+			}
+			if (coord.x > this.xMax) {
+				this.xMax = coord.x;
+			}
+			if (coord.y < this.yMin) {
+				this.yMin = coord.y;
+			}
+			if (coord.y > this.yMax) {
+				this.yMax = coord.y;
+			}
 		}
 	}
 
@@ -89,6 +103,11 @@ kemia.model.NeighborList = function(objects, opt_cellSize, opt_tolerance) {
 				var y = Math.floor((midPoint.y - this.yMin) / this.cellSize);
 				this.cells[y * this.xDim + x].push(bond);
 			}, this);
+		} else if (obj instanceof goog.math.Coordinate) {
+			var coord = obj;
+			var x = Math.floor((coord.x - this.xMin) / this.cellSize);
+			var y = Math.floor((coord.y - this.yMin) / this.cellSize);
+			this.cells[y * this.xDim + x].push(coord);
 		}
 	}, this);
 };
@@ -125,7 +144,6 @@ kemia.model.NeighborList.prototype.triangleSign = function(a, b, c) {
 	return (a.x - c.x) * (b.y - c.y) - (a.y - c.y) * (b.x - c.x);
 };
 
-
 /**
  * calculate distance from a point to the nearest point on the bond line segment
  * 
@@ -144,7 +162,7 @@ kemia.model.NeighborList.prototype.bondDistance = function(bond, coord) {
 
 kemia.model.NeighborList.prototype.getNearest = function(coord) {
 	var nearestList = this.getNearestList(coord);
-	if (nearestList.length>0){
+	if (nearestList.length > 0) {
 		return nearestList[0];
 	}
 };
@@ -191,6 +209,14 @@ kemia.model.NeighborList.prototype.getNearestList = function(coord) {
 						distance : r + this.tolerance
 					});
 				}
+			} else if (obj instanceof goog.math.Coordinate) {
+				var r = goog.math.Coordinate.distance(obj, coord);
+				if (r < this.tolerance) {
+					nearest.push( {
+						obj : obj,
+						distance : r
+					});
+				}
 			}
 
 		}
@@ -200,7 +226,7 @@ kemia.model.NeighborList.prototype.getNearestList = function(coord) {
 		return a.distance - b.distance;
 	});
 
-	return goog.array.map(nearest, function(n){
+	return goog.array.map(nearest, function(n) {
 		return n.obj;
 	});
 };

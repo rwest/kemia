@@ -134,23 +134,7 @@ kemia.controller.ReactionEditor.prototype.setScaleFactor = function(scale) {
 kemia.controller.ReactionEditor.prototype.setModels = function(models) {
 	this.clear();
 	this.models = models;
-	var mols = goog.array.flatten(goog.array.map(models, function(model) {
-		if (model instanceof kemia.model.Reaction) {
-			return goog.array.concat(model.reactants, model.products);
-		} else {
-			return [ model ];
-		}
-	}));
-	
-	if(mols.length>0){
-		this.neighborList = new kemia.model.NeighborList(mols, 1, .5);
-	}
-	this.render();
-}
-
-kemia.controller.ReactionEditor.prototype.render = function() {
-	goog.array.forEach(this.models, function(model) {
-
+	var objects = goog.array.flatten(goog.array.map(models, function(model) {
 		if (model instanceof kemia.model.Reaction) {
 			if (model.pluses.length == 0) {
 				model.generatePlusCoords(model.reactants);
@@ -159,6 +143,22 @@ kemia.controller.ReactionEditor.prototype.render = function() {
 			if (model.arrows.length == 0 && model.reactants.length>0 && model.products.length>0) {
 				model.generateArrowCoords(model.reactants, model.products);
 			}
+			return goog.array.concat(model.reactants, model.products, model.pluses, model.arrows);
+		} else {
+			return [ model ];
+		}
+	}));
+	
+	if(objects.length>0){
+		this.neighborList = new kemia.model.NeighborList(objects, 1, .5);
+	}
+	this.render();
+}
+
+kemia.controller.ReactionEditor.prototype.render = function() {
+	goog.array.forEach(this.models, function(model) {
+
+		if (model instanceof kemia.model.Reaction) {
 			this.reactionRenderer.render(model);
 		}
 		if (model instanceof kemia.model.Molecule) {

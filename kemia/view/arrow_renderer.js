@@ -18,6 +18,7 @@ goog.inherits(kemia.view.ArrowRenderer, kemia.view.Renderer);
 
 kemia.view.ArrowRenderer.prototype.render = function(coord, reagents_text,
 		conditions_text, transform) {
+	this.transform = transform;
 
 	var w = this.config.get('arrow')['width'];
 	var h = this.config.get('arrow')['height'];
@@ -59,6 +60,22 @@ kemia.view.ArrowRenderer.prototype.render = function(coord, reagents_text,
 	this.graphics.drawPath(path, arrowStroke);
 }
 
+kemia.view.ArrowRenderer.prototype.highlightOn = function(coord,
+		opt_group) {
+	if (!opt_group) {
+		opt_group = this.graphics.createGroup();
+	}
+	var color = this.config.get("arrow")['highlight']["color"];
+	var stroke = null;
+	var fill = new goog.graphics.SolidFill(color, .3);
+	var radius = this.config.get("arrow")['highlight']['radius'] * this.transform.getScaleX();
+	var coords = this.transform.transformCoords( [ coord ])[0];
+	this.graphics.drawCircle(coords.x, coords.y, radius, stroke, fill,
+			opt_group);
+	
+	return opt_group;
+}
+
 /**
  * A default configuration for renderer
  */
@@ -79,7 +96,10 @@ kemia.view.ArrowRenderer.defaultConfig = {
 				'width' : .1,
 				'color' : 'grey'
 			}
+		},
+		'highlight' : {
+			'radius' : .5,
+			'color' : 'grey'
 		}
-
 	}
 }
