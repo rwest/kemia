@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Jchemhub Demo</title>
+<title>Kemia Demo</title>
 <!-- 
 <script src="build/kemia-advanced.js"></script>
 <script src="build/kemia-simple.js"></script>
@@ -34,6 +34,7 @@ function initPage(){
 	editor.registerPlugin(new kemia.controller.plugins.AtomEdit());
 	editor.registerPlugin(new kemia.controller.plugins.BondEdit());
 	editor.registerPlugin(new kemia.controller.plugins.ArrowPlusEdit());
+	editor.registerPlugin(new kemia.controller.plugins.MoleculeEdit());
 	
     var toolbarController = new kemia.controller.ToolbarController(editor, toolbar);
 	editor.setModels([model]);

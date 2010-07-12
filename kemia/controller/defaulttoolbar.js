@@ -16,6 +16,7 @@ goog.require('kemia.controller.plugins.Highlight');
 goog.require('kemia.controller.plugins.AtomEdit');
 goog.require('kemia.controller.plugins.UndoRedo');
 goog.require('kemia.controller.plugins.ArrowPlusEdit');
+goog.require('kemia.controller.plugins.MoleculeEdit');
 
 
 

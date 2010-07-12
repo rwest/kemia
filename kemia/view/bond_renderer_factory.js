@@ -6,6 +6,9 @@ goog.require('kemia.view.QuadrupleBondRenderer');
 goog.require('kemia.view.SingleUpBondRenderer');
 goog.require('kemia.view.SingleDownBondRenderer');
 goog.require('kemia.view.SingleUpOrDownBondRenderer');
+goog.require('kemia.model.Bond');
+goog.require('goog.object');
+goog.require('goog.reflect');
 
 /**
  * factory class for BondRenderers
