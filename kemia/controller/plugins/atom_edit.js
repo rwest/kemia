@@ -60,13 +60,12 @@ kemia.controller.plugins.AtomEdit.prototype.handleMouseDown = function(e) {
 		}
 
 		this.editorObject.setModels(this.editorObject.getModels());
-		this.editorObject.dispatchChange();	
+		this.editorObject.dispatchChange();
 	}
 };
 
-kemia.controller.plugins.AtomEdit.prototype.setAtomSymbol = function(e, atom){
-	var new_atom = new kemia.model.Atom(this.symbol, atom.coord.x,
-			atom.coord.y);
+kemia.controller.plugins.AtomEdit.prototype.setAtomSymbol = function(e, atom) {
+	var new_atom = new kemia.model.Atom(this.symbol, atom.coord.x, atom.coord.y);
 	goog.array.forEach(atom.bonds.getValues(), function(bond) {
 		var new_bond = bond.clone();
 		new_bond.molecule = undefined;
@@ -79,50 +78,49 @@ kemia.controller.plugins.AtomEdit.prototype.setAtomSymbol = function(e, atom){
 	molecule.addAtom(new_atom);
 };
 
-kemia.controller.plugins.AtomEdit.prototype.drag = function(e, atom){
+kemia.controller.plugins.AtomEdit.prototype.drag = function(e, atom) {
 
 	var d = new goog.fx.Dragger(this.editorObject.getOriginalElement());
 	d._prevX = e.clientX;
 	d._prevY = e.clientY;
-	d._startX = e.clientX;
-	d._startY = e.clientY;
 
 	d.atom = atom;
 	d.editor = this.editorObject;
-	d.addEventListener(goog.fx.Dragger.EventType.DRAG, function(e) {
-
-//			var g_trans = d.group.getTransform();
-//			var newX = e.clientX - d._prevX + g_trans.getTranslateX();
-//			var newY = e.clientY - d._prevY + g_trans.getTranslateY();
-//			d.group.setTransformation(newX, newY, 0, 0, 0);
-
-			d._prevX = e.clientX;
-			d._prevY = e.clientY;
-
-		});
 	d
 			.addEventListener(
-					goog.fx.Dragger.EventType.END,
+					goog.fx.Dragger.EventType.DRAG,
 					function(e) {
+						d.atom.molecule.group.clear();
 						var trans = new goog.graphics.AffineTransform.getTranslateInstance(
-								e.clientX - d._startX, e.clientY - d._startY);
+								e.clientX - d._prevX, e.clientY - d._prevY);
 
 						var coords = d.editor.reactionRenderer.transform
-								.createInverse()
-								.transformCoords(
+								.createInverse().transformCoords(
 										[
 												new goog.math.Coordinate(
 														e.clientX, e.clientY),
 												new goog.math.Coordinate(
-														d._startX, d._startY) ]);
-						var diff = goog.math.Coordinate.difference(coords[0]
-								, coords[1]);
+														d._prevX, d._prevY) ]);
+						var diff = goog.math.Coordinate.difference(coords[0],
+								coords[1]);
 
 						atom.coord = goog.math.Coordinate.sum(atom.coord, diff);
+
+						d.editor.reactionRenderer.moleculeRenderer.render(
+								d.atom.molecule,
+								d.editor.reactionRenderer.transform);
+
+						d._prevX = e.clientX;
+						d._prevY = e.clientY;
+
+					});
+	d
+			.addEventListener(
+					goog.fx.Dragger.EventType.END,
+					function(e) {
+
 						d.editor.setModels(d.editor.getModels());
 						d.dispose();
 					});
 	d.startDrag(e);
 };
-
-
