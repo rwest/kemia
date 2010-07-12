@@ -2,6 +2,7 @@ goog.provide('kemia.model.Reaction');
 goog.require('kemia.model.Molecule');
 goog.require('goog.math.Box');
 goog.require('goog.math.Rect');
+goog.require('goog.debug.Logger');
 
 /**
  * Creates a new Reaction.
@@ -17,6 +18,7 @@ kemia.model.Reaction = function() {
 	this.reagentsText = "";
 	this.conditionsText = "";
 };
+
 
 // TODO add docs
 kemia.model.Reaction.prototype.addReactant = function(mol) {
@@ -152,6 +154,7 @@ kemia.model.Reaction.prototype.removeOverlap = function() {
  * @return {kemia.model.Molecule}
  */
 kemia.model.Reaction.prototype.translateMolecule = function(molecule, coord) {
+
 	goog.array.forEach(molecule.atoms, function(a) {
 		a.coord = goog.math.Coordinate.sum(a.coord, coord);
 	})

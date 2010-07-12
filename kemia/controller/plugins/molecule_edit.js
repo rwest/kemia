@@ -14,6 +14,14 @@ kemia.controller.plugins.MoleculeEdit = function() {
 goog.inherits(kemia.controller.plugins.MoleculeEdit, kemia.controller.Plugin);
 
 /**
+ * Logging object.
+ * 
+ * @type {goog.debug.Logger}
+ * @protected
+ */
+kemia.controller.plugins.MoleculeEdit.prototype.logger = goog.debug.Logger
+		.getLogger('kemia.controller.plugins.MoleculeEdit');
+/**
  * Command implemented by this plugin.
  */
 kemia.controller.plugins.MoleculeEdit.COMMAND = 'selectMolecule';
@@ -27,8 +35,6 @@ kemia.controller.plugins.MoleculeEdit.prototype.isSupportedCommand = function(
 /** @inheritDoc */
 kemia.controller.plugins.MoleculeEdit.prototype.getTrogClassId = goog.functions
 		.constant(kemia.controller.plugins.MoleculeEdit.COMMAND);
-
-
 
 /**
  * The logger for this class.
@@ -46,10 +52,57 @@ kemia.controller.plugins.MoleculeEdit.prototype.handleMouseDown = function(e) {
 	var target = this.editorObject.findTarget(e);
 
 	if (target instanceof kemia.model.Molecule) {
-		this.logger.info('molecule');
+		this.drag(e, target);
+
 	}
 	this.editorObject.dispatchChange();
 	// }
 };
 
+kemia.controller.plugins.MoleculeEdit.prototype.drag = function(e, molecule) {
 
+	var d = new goog.fx.Dragger(this.editorObject.getOriginalElement());
+	d._prevX = e.clientX;
+	d._prevY = e.clientY;
+	d._startX = e.clientX;
+	d._startY = e.clientY;
+	d.group = e.currentTarget.highlightGroup;
+	d.molecule = molecule;
+	d.editor = this.editorObject;
+	d.addEventListener(goog.fx.Dragger.EventType.DRAG, function(e) {
+
+		// goog.array.forEach(d.molecule.getChildren(), function(child) {
+			var g_trans = d.group.getTransform();
+			var newX = e.clientX - d._prevX + g_trans.getTranslateX();
+			var newY = e.clientY - d._prevY + g_trans.getTranslateY();
+			d.group.setTransformation(newX, newY, 0, 0, 0);
+			// });
+
+			d._prevX = e.clientX;
+			d._prevY = e.clientY;
+
+		});
+	d
+			.addEventListener(
+					goog.fx.Dragger.EventType.END,
+					function(e) {
+						var trans = new goog.graphics.AffineTransform.getTranslateInstance(
+								e.clientX - d._startX, e.clientY - d._startY);
+
+						var coords = d.editor.reactionRenderer.transform
+								.createInverse()
+								.transformCoords(
+										[
+												new goog.math.Coordinate(
+														e.clientX, e.clientY),
+												new goog.math.Coordinate(
+														d._startX, d._startY) ]);
+						var diff = goog.math.Coordinate.difference(coords[0]
+								, coords[1]);
+
+						d.molecule.reaction.translateMolecule(d.molecule, diff);
+						d.editor.setModels(d.editor.getModels());
+						d.dispose();
+					});
+	d.startDrag(e);
+};
