@@ -52,8 +52,11 @@ kemia.controller.plugins.MoleculeEdit.prototype.handleMouseDown = function(e) {
 	var target = this.editorObject.findTarget(e);
 
 	if (target instanceof kemia.model.Molecule) {
-		this.drag(e, target);
-
+		if(e.shiftKey){
+			this.rotate(e, target);
+		}else{
+			this.drag(e, target);
+		}
 	}
 	this.editorObject.dispatchChange();
 	// }
@@ -101,6 +104,45 @@ kemia.controller.plugins.MoleculeEdit.prototype.drag = function(e, molecule) {
 								, coords[1]);
 
 						d.molecule.reaction.translateMolecule(d.molecule, diff);
+						d.editor.setModels(d.editor.getModels());
+						d.dispose();
+					});
+	d.startDrag(e);
+};
+
+kemia.controller.plugins.MoleculeEdit.prototype.rotate = function(e, molecule) {
+
+	var d = new goog.fx.Dragger(this.editorObject.getOriginalElement());
+	var elem = e.currentTarget;
+
+	var centerX = e.clientX  + document.body.scrollLeft + document.documentElement.scrollLeft;
+	var centerY= e.clientY  + document.body.scrollTop + document.documentElement.scrollTop;
+	
+	centerX -=elem.offsetLeft;
+	centerY -= elem.offsetTop;
+
+    while (elem = elem.offsetParent) {
+        centerX -= elem.offsetLeft;
+        centerY -= elem.offsetTop;
+    }
+    
+    d._center = new goog.math.Coordinate(centerX, centerY);
+
+	d.group = e.currentTarget.highlightGroup;
+	d.molecule = molecule;
+	d.editor = this.editorObject;
+	d.addEventListener(goog.fx.Dragger.EventType.DRAG, function(e) {		
+			var g_trans = d.group.getTransform();
+			d.group.setTransformation(0, 0, d.deltaX + d.deltaY, d._center.x, d._center.y);
+
+		});
+	d
+			.addEventListener(
+					goog.fx.Dragger.EventType.END,
+					
+					function(e) {
+						var center = d.editor.reactionRenderer.transform.createInverse().transformCoords([d._center ])[0];
+						d.molecule.reaction.rotateMolecule(d.molecule, -(d.deltaX + d.deltaY), center);
 						d.editor.setModels(d.editor.getModels());
 						d.dispose();
 					});

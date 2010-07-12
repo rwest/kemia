@@ -144,7 +144,7 @@ kemia.model.Reaction.prototype.removeOverlap = function() {
 };
 
 /**
- * change molecule coordinates
+ * translate molecule coordinates
  * 
  * @param {kemia.model.Molecule}
  *            molecule, the molecule to translate
@@ -154,9 +154,28 @@ kemia.model.Reaction.prototype.removeOverlap = function() {
  * @return {kemia.model.Molecule}
  */
 kemia.model.Reaction.prototype.translateMolecule = function(molecule, coord) {
-
+	
 	goog.array.forEach(molecule.atoms, function(a) {
 		a.coord = goog.math.Coordinate.sum(a.coord, coord);
-	})
+	});
 
+	return molecule;
 };
+
+/**
+ * rotate molecule coordinates
+ * 
+ * @param {kemia.model.Molecule} molecule, the molecule to rotate
+ * @param {goog.math.Coordinate} center, coordinates of center of rotation
+ * 
+ * @return {kemia.model.Molecule}
+ */
+kemia.model.Reaction.prototype.rotateMolecule = function(molecule, degrees, center) {
+	
+	var trans = kemia.graphics.AffineTransform.getRotateInstance(goog.math.toRadians(degrees), center.x, center.y);
+	goog.array.forEach(molecule.atoms, function(a) {
+		a.coord = trans.transformCoords([a.coord])[0];
+	});
+	return molecule;
+}
+
