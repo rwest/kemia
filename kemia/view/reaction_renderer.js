@@ -44,10 +44,12 @@ goog.inherits(kemia.view.ReactionRenderer, kemia.view.Renderer);
 kemia.view.ReactionRenderer.prototype.render = function(reaction) {
 	var molecules = goog.array.concat(reaction.reactants, reaction.products);
 	if (molecules.length>0){
-		var box = this.boundingBox(molecules);
-		var m = this.config.get("margin");
-		box.expand(m.top, m.right, m.bottom, m.left);
-		this.transform = this.buildTransform(box);
+		if(!this.transform){
+			var box = this.boundingBox(molecules);
+			var m = this.config.get("margin");
+			box.expand(m.top, m.right, m.bottom, m.left);
+			this.transform = this.buildTransform(box);
+		}
 	
 		goog.array.forEach(molecules, function(mol) {
 			this.moleculeRenderer.render(mol, this.transform);
