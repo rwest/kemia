@@ -51,13 +51,13 @@ kemia.controller.plugins.Highlight.prototype.handleMouseMove = function(e) {
 					e.currentTarget.highlightGroup);
 		}
 
-	} else if (target instanceof kemia.model.Molecule) {
-		if (!e.currentTarget.highlightGroup) {
-			e.currentTarget.highlightGroup = this.highlightMolecule(target);
-		} else {
-			e.currentTarget.highlightGroup = this.highlightMolecule(target,
-					e.currentTarget.highlightGroup);
-		}
+//	} else if (target instanceof kemia.model.Molecule) {
+//		if (!e.currentTarget.highlightGroup) {
+//			e.currentTarget.highlightGroup = this.highlightMolecule(target);
+//		} else {
+//			e.currentTarget.highlightGroup = this.highlightMolecule(target,
+//					e.currentTarget.highlightGroup);
+//		}
 
 	} else if (target instanceof goog.math.Coordinate) {
 		if (!e.currentTarget.highlightGroup) {

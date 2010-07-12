@@ -24,7 +24,7 @@ goog.inherits(kemia.view.AtomRenderer, kemia.view.Renderer);
  *            transform
  * @return {goog.graphics.GroupElement}
  */
-kemia.view.AtomRenderer.prototype.render = function(atom, transform) {
+kemia.view.AtomRenderer.prototype.render = function(atom, transform, opt_group) {
 	this.transform = transform;
 
 	var atom_config = this.config.get("atom");
@@ -48,19 +48,19 @@ kemia.view.AtomRenderer.prototype.render = function(atom, transform) {
 
 	if (symbol.text) {
 		graphics.drawText(symbol.text, point.x - w / 2, point.y - h / 2, w, h,
-				symbol.justification, null, font, stroke, fill);
+				symbol.justification, null, font, stroke, fill, opt_group);
 		if (symbol.justification == 'left') {
 			if (symbol.subscript || symbol.superscript) {
 				var subSize = this.config.get("subscriptSize");
 				if (symbol.subscript) {
 					graphics.drawText(symbol.subscript, point.x + w * 0.9,
 							point.y, subSize, subSize, 'center', null, font,
-							stroke, fill);
+							stroke, fill, opt_group);
 				}
 				if (symbol.superscript) {
 					graphics.drawText(symbol.superscript, point.x + w, point.y
 							- h * 0.8, subSize, subSize, 'center', null, font,
-							stroke, fill);
+							stroke, fill, opt_group);
 				}
 			}
 		} else if (symbol.justification == 'right') {
@@ -68,15 +68,15 @@ kemia.view.AtomRenderer.prototype.render = function(atom, transform) {
 				var subSize = this.config.get("subscriptSize");
 				if (symbol.subscript) {
 					graphics.drawText('H', point.x - w * 3, point.y - h / 2, w,
-							h, 'center', null, font, stroke, fill);
+							h, 'center', null, font, stroke, fill, opt_group);
 					graphics.drawText(symbol.subscript, point.x - w * 1.8,
 							point.y, subSize, subSize, 'center', null, font,
-							stroke, fill);
+							stroke, fill, opt_group);
 				}
 				if (symbol.superscript) {
 					graphics.drawText(symbol.superscript, point.x + w, point.y
 							- h * 0.8, subSize, subSize, 'center', null, font,
-							stroke, fill);
+							stroke, fill, opt_group);
 				}
 			}
 		}

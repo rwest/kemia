@@ -36,7 +36,10 @@ kemia.view.MoleculeRenderer.prototype.logger = goog.debug.Logger
 		.getLogger('kemia.view.MoleculeRenderer');
 
 kemia.view.MoleculeRenderer.prototype.render = function(molecule, trans) {
-
+	
+	
+	molecule.group = this.graphics.createGroup();
+	
 	var atom_coords = goog.array.map(molecule.atoms, function(a) {
 		return a.coord;
 	});
@@ -65,11 +68,11 @@ kemia.view.MoleculeRenderer.prototype.render = function(molecule, trans) {
 	goog.array.forEach(molecule.bonds, function(bond) {
 		this.bondRendererFactory.get(bond).render(bond, trans, bondPath);
 	}, this);
-	this.graphics.drawPath(bondPath, bondStroke, bondFill);
+	this.graphics.drawPath(bondPath, bondStroke, bondFill, molecule.group);
 
 	// this.logger.info("molecule has " + molecule.atoms.length + " atoms");
 	goog.array.forEach(molecule.atoms, function(atom) {
-		this.atomRenderer.render(atom, trans);
+		this.atomRenderer.render(atom, trans, molecule.group);
 	}, this);
 
 };

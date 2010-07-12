@@ -69,7 +69,7 @@ kemia.controller.plugins.MoleculeEdit.prototype.drag = function(e, molecule) {
 	d._prevY = e.clientY;
 	d._startX = e.clientX;
 	d._startY = e.clientY;
-	d.group = e.currentTarget.highlightGroup;
+	d.group = molecule.group;
 	d.molecule = molecule;
 	d.editor = this.editorObject;
 	d.addEventListener(goog.fx.Dragger.EventType.DRAG, function(e) {
@@ -127,8 +127,7 @@ kemia.controller.plugins.MoleculeEdit.prototype.rotate = function(e, molecule) {
     }
     
     d._center = new goog.math.Coordinate(centerX, centerY);
-
-	d.group = e.currentTarget.highlightGroup;
+	d.group = molecule.group;
 	d.molecule = molecule;
 	d.editor = this.editorObject;
 	d.addEventListener(goog.fx.Dragger.EventType.DRAG, function(e) {		
