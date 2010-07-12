@@ -91,7 +91,11 @@ kemia.controller.plugins.BondEdit.prototype.handleMouseDown = function(e) {
 		this.addBondToAtom(target);
 	}
 	if (target instanceof kemia.model.Bond) {
-		this.replaceBond(target);
+		if (this.bond_type) {
+			this.replaceBond(target);
+		} else {
+			this.drag(e, target);
+		}
 	}
 	this.editorObject.dispatchChange();
 	// }
@@ -99,13 +103,9 @@ kemia.controller.plugins.BondEdit.prototype.handleMouseDown = function(e) {
 };
 
 kemia.controller.plugins.BondEdit.prototype.replaceBond = function(bond) {
-
-	if (this.bond_type) {
-
-		this.editorObject.dispatchBeforeChange();
 		if (this.bond_type.stereo != kemia.model.Bond.STEREO.NOT_STEREO
 				&& bond.stereo == this.bond_type.stereo) {
-				// toggle ends if replacing with the same stereo
+			// flip ends if replacing with the same stereo
 
 			var new_bond = new kemia.model.Bond(bond.target, bond.source,
 					this.bond_type.order, this.bond_type.stereo);
@@ -117,9 +117,6 @@ kemia.controller.plugins.BondEdit.prototype.replaceBond = function(bond) {
 		molecule.removeBond(bond);
 		molecule.addBond(new_bond);
 		this.editorObject.setModels(this.editorObject.getModels());
-		this.editorObject.dispatchChange();
-	}
-
 };
 
 kemia.controller.plugins.BondEdit.prototype.addBondToAtom = function(atom) {
@@ -162,4 +159,53 @@ kemia.controller.plugins.BondEdit.prototype.addBondToAtom = function(atom) {
 			this.editorObject.setModels(this.editorObject.getModels());
 		}
 	}
-}
+};
+
+kemia.controller.plugins.BondEdit.prototype.drag = function(e, bond) {
+
+	var d = new goog.fx.Dragger(this.editorObject.getOriginalElement());
+	d._prevX = e.clientX;
+	d._prevY = e.clientY;
+	d._startX = e.clientX;
+	d._startY = e.clientY;
+
+	d.bond = bond;
+	d.editor = this.editorObject;
+	d.addEventListener(goog.fx.Dragger.EventType.DRAG, function(e) {
+
+		// var g_trans = d.group.getTransform();
+			// var newX = e.clientX - d._prevX + g_trans.getTranslateX();
+			// var newY = e.clientY - d._prevY + g_trans.getTranslateY();
+			// d.group.setTransformation(newX, newY, 0, 0, 0);
+
+			d._prevX = e.clientX;
+			d._prevY = e.clientY;
+
+		});
+	d
+			.addEventListener(
+					goog.fx.Dragger.EventType.END,
+					function(e) {
+						var trans = new goog.graphics.AffineTransform.getTranslateInstance(
+								e.clientX - d._startX, e.clientY - d._startY);
+
+						var coords = d.editor.reactionRenderer.transform
+								.createInverse()
+								.transformCoords(
+										[
+												new goog.math.Coordinate(
+														e.clientX, e.clientY),
+												new goog.math.Coordinate(
+														d._startX, d._startY) ]);
+						var diff = goog.math.Coordinate.difference(coords[0],
+								coords[1]);
+
+						bond.source.coord = goog.math.Coordinate.sum(
+								bond.source.coord, diff);
+						bond.target.coord = goog.math.Coordinate.sum(
+								bond.target.coord, diff);
+						d.editor.setModels(d.editor.getModels());
+						d.dispose();
+					});
+	d.startDrag(e);
+};
