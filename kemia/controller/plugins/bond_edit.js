@@ -87,19 +87,51 @@ kemia.controller.plugins.BondEdit.prototype.handleMouseDown = function(e) {
 	// if (this.isActive) {
 	this.editorObject.dispatchBeforeChange();
 	var target = this.editorObject.findTarget(e);
+
 	if (target instanceof kemia.model.Atom) {
 		this.addBondToAtom(target);
+		this.editorObject.setModels(this.editorObject.getModels());
 	}
 	if (target instanceof kemia.model.Bond) {
 		if (this.bond_type) {
 			this.replaceBond(target);
+			this.editorObject.setModels(this.editorObject.getModels());
 		} else {
 			this.drag(e, target);
 		}
 	}
+	if (target == undefined && this.bond_type) {
+		this.createMolecule(kemia.controller.ReactionEditor.getMouseCoords(e));
+		this.editorObject.setModels(this.editorObject.getModels());
+	}
 	this.editorObject.dispatchChange();
 	// }
 
+};
+
+kemia.controller.plugins.BondEdit.prototype.createMolecule = function(pos) {
+	var coord = this.editorObject.reactionRenderer.transform.createInverse()
+			.transformCoords( [ pos ])[0];
+	var atom = new kemia.model.Atom("C", coord.x, coord.y);
+	var molecule = new kemia.model.Molecule();
+	molecule.addAtom(atom);
+	this.addBondToAtom(atom);
+	var reaction;
+	if (this.editorObject.getModels().length > 0) {
+		reaction = this.editorObject.getModels()[0];
+		if (reaction.arrows.length > 0) {
+			var arrow_pos = reaction.arrows[0];
+			if (arrow_pos.x > coord.x) {
+				// left of arrow, so reactant
+				reaction.addReactant(molecule);
+			} else {
+				// right of arrow so product
+				reaction.addProduct(molecule);
+			}
+		}
+		// no arrow
+		reaction.addReactant(molecule);
+	}
 };
 
 kemia.controller.plugins.BondEdit.prototype.replaceBond = function(bond) {
@@ -116,7 +148,6 @@ kemia.controller.plugins.BondEdit.prototype.replaceBond = function(bond) {
 	var molecule = bond.molecule;
 	molecule.removeBond(bond);
 	molecule.addBond(new_bond);
-	this.editorObject.setModels(this.editorObject.getModels());
 };
 
 kemia.controller.plugins.BondEdit.prototype.addBondToAtom = function(atom) {
@@ -147,16 +178,15 @@ kemia.controller.plugins.BondEdit.prototype.addBondToAtom = function(atom) {
 
 			new_angle = Math.PI + (sum_angles / angles.length);
 		}
-		if (new_angle) {
+		if (new_angle != undefined) {
 			var new_atom = new kemia.model.Atom("C", atom.coord.x
 					+ Math.cos(new_angle) * 1.25, atom.coord.y
 					+ Math.sin(new_angle) * 1.25);
 			var new_bond = new kemia.model.Bond(atom, new_atom,
 					this.bond_type.order, this.bond_type.stereo);
 			var molecule = atom.molecule;
-			molecule.addBond(new_bond);
 			molecule.addAtom(new_atom);
-			this.editorObject.setModels(this.editorObject.getModels());
+			molecule.addBond(new_bond);
 		}
 	}
 };
@@ -178,8 +208,7 @@ kemia.controller.plugins.BondEdit.prototype.drag = function(e, bond) {
 								e.clientX - d._prevX, e.clientY - d._prevY);
 
 						var coords = d.editor.reactionRenderer.transform
-								.createInverse()
-								.transformCoords(
+								.createInverse().transformCoords(
 										[
 												new goog.math.Coordinate(
 														e.clientX, e.clientY),
