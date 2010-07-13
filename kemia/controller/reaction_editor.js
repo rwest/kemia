@@ -272,7 +272,7 @@ kemia.controller.ReactionEditor.prototype.findTarget = function(e) {
 	var trans = this.reactionRenderer.moleculeRenderer.transform
 			.createInverse();
 
-	var pos = this.getMouseCoords(e)
+	var pos = kemia.controller.ReactionEditor.getMouseCoords(e)
 
 	var target = trans.transformCoords( [ pos ])[0];
 	return this.neighborList.getNearest( {
@@ -281,7 +281,7 @@ kemia.controller.ReactionEditor.prototype.findTarget = function(e) {
 	});
 }
 
-kemia.controller.ReactionEditor.prototype.getMouseCoords = function(e) {
+kemia.controller.ReactionEditor.getMouseCoords = function(e) {
 	var elem = e.currentTarget;
 	var posx = e.clientX + document.body.scrollLeft
 			+ document.documentElement.scrollLeft;
@@ -302,7 +302,7 @@ kemia.controller.ReactionEditor.prototype.findTargetList = function(e) {
 	var trans = this.reactionRenderer.moleculeRenderer.transform
 	.createInverse();
 
-var pos = this.getMouseCoords(e)
+	var pos = kemia.controller.ReactionEditor.getMouseCoords(e)
 
 var target = trans.transformCoords( [ pos ])[0];
 return this.neighborList.getNearestList( {
