@@ -19,7 +19,6 @@ kemia.model.Reaction = function() {
 	this.conditionsText = "";
 };
 
-
 // TODO add docs
 kemia.model.Reaction.prototype.addReactant = function(mol) {
 	this.reactants.push(mol);
@@ -29,11 +28,20 @@ kemia.model.Reaction.prototype.addProduct = function(mol) {
 	this.products.push(mol);
 	mol.reaction = this;
 };
-kemia.model.Reaction.prototype.removeMolecule = function(mol){
-	if(goog.array.contains(this.reactants, mol)){
+
+kemia.model.Reaction.prototype.isReactant = function(mol) {
+	return goog.array.contains(this.reactants, mol);
+}
+
+kemia.model.Reaction.prototype.isProduct = function(mol) {
+	return goog.array.contains(this.products, mol);
+}
+
+kemia.model.Reaction.prototype.removeMolecule = function(mol) {
+	if (goog.array.contains(this.reactants, mol)) {
 		goog.array.remove(this.reactants, mol);
 		mol.reaction = undefined;
-	}else if(goog.array.contains(this.products, mol)){
+	} else if (goog.array.contains(this.products, mol)) {
 		goog.array.remove(this.products, mol);
 		mol.reaction = undefined;
 	}
@@ -154,7 +162,7 @@ kemia.model.Reaction.prototype.removeOverlap = function() {
  * @return {kemia.model.Molecule}
  */
 kemia.model.Reaction.prototype.translateMolecule = function(molecule, coord) {
-	
+
 	goog.array.forEach(molecule.atoms, function(a) {
 		a.coord = goog.math.Coordinate.sum(a.coord, coord);
 	});
@@ -165,17 +173,20 @@ kemia.model.Reaction.prototype.translateMolecule = function(molecule, coord) {
 /**
  * rotate molecule coordinates
  * 
- * @param {kemia.model.Molecule} molecule, the molecule to rotate
- * @param {goog.math.Coordinate} center, coordinates of center of rotation
+ * @param {kemia.model.Molecule}
+ *            molecule, the molecule to rotate
+ * @param {goog.math.Coordinate}
+ *            center, coordinates of center of rotation
  * 
  * @return {kemia.model.Molecule}
  */
-kemia.model.Reaction.prototype.rotateMolecule = function(molecule, degrees, center) {
-	
-	var trans = kemia.graphics.AffineTransform.getRotateInstance(goog.math.toRadians(degrees), center.x, center.y);
+kemia.model.Reaction.prototype.rotateMolecule = function(molecule, degrees,
+		center) {
+
+	var trans = kemia.graphics.AffineTransform.getRotateInstance(goog.math
+			.toRadians(degrees), center.x, center.y);
 	goog.array.forEach(molecule.atoms, function(a) {
-		a.coord = trans.transformCoords([a.coord])[0];
+		a.coord = trans.transformCoords( [ a.coord ])[0];
 	});
 	return molecule;
 }
-

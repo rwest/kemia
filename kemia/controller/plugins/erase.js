@@ -19,8 +19,7 @@ goog.inherits(kemia.controller.plugins.Erase, kemia.controller.Plugin);
 kemia.controller.plugins.Erase.COMMAND = 'erase';
 
 /** @inheritDoc */
-kemia.controller.plugins.Erase.prototype.isSupportedCommand = function(
-		command) {
+kemia.controller.plugins.Erase.prototype.isSupportedCommand = function(command) {
 	return command == kemia.controller.plugins.Erase.COMMAND;
 };
 
@@ -62,10 +61,10 @@ kemia.controller.plugins.Erase.prototype.handleMouseDown = function(e) {
 		if (target instanceof kemia.model.Bond) {
 			this.eraseBond(target);
 		}
-		if(target instanceof kemia.model.Molecule){
+		if (target instanceof kemia.model.Molecule) {
 			this.eraseMolecule(target);
 		}
-		if (target instanceof goog.math.Coordinate){
+		if (target instanceof goog.math.Coordinate) {
 			this.eraseArrowOrPlus(target);
 		}
 		this.editorObject.dispatchChange();
@@ -85,11 +84,25 @@ kemia.controller.plugins.Erase.prototype.eraseAtom = function(atom) {
 kemia.controller.plugins.Erase.prototype.eraseBond = function(bond) {
 	var molecule = bond.molecule;
 	molecule.removeBond(bond);
+	var fragments = molecule.getFragments();
+
+	var reaction = molecule.reaction;
+	if (reaction.isReactant(molecule)) {
+		goog.array.forEach(fragments, function(mol) {
+			reaction.addReactant(mol);
+		});
+	} else if (reaction.isProduct(molecule)) {
+		goog.array.forEach(fragments, function(mol) {
+			reaction.addProduct(mol);
+		});
+	}
+	reaction.removeMolecule(molecule);
+
 	this.editorObject.setModels(this.editorObject.getModels());
 
 };
 
-kemia.controller.plugins.Erase.prototype.eraseMolecule = function(molecule){
+kemia.controller.plugins.Erase.prototype.eraseMolecule = function(molecule) {
 	var reaction = molecule.reaction;
 	reaction.removeMolecule(molecule);
 	this.editorObject.setModels(this.editorObject.getModels());
