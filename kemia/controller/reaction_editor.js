@@ -64,7 +64,6 @@ kemia.controller.ReactionEditor = function(element, opt_config) {
 	this.isModified_ = false;
 	this.isEverModified_ = false;
 
-
 	/**
 	 * @type {goog.events.EventHandler}
 	 * @protected
@@ -83,12 +82,11 @@ kemia.controller.ReactionEditor = function(element, opt_config) {
 
 	// currently selected model objects
 	this.selected = [];
-	
+
 	this.neighborList = [];
 
 };
 goog.inherits(kemia.controller.ReactionEditor, goog.events.EventTarget);
-
 
 /**
  * Sets the active editor id.
@@ -140,16 +138,18 @@ kemia.controller.ReactionEditor.prototype.setModels = function(models) {
 				model.generatePlusCoords(model.reactants);
 				model.generatePlusCoords(model.products);
 			}
-			if (model.arrows.length == 0 && model.reactants.length>0 && model.products.length>0) {
+			if (model.arrows.length == 0 && model.reactants.length > 0
+					&& model.products.length > 0) {
 				model.generateArrowCoords(model.reactants, model.products);
 			}
-			return goog.array.concat(model.reactants, model.products, model.pluses, model.arrows);
+			return goog.array.concat(model.reactants, model.products,
+					model.pluses, model.arrows);
 		} else {
 			return [ model ];
 		}
 	}));
-	
-	if(objects.length>0){
+
+	if (objects.length > 0) {
 		this.neighborList = new kemia.model.NeighborList(objects, 1, .5);
 	}
 	this.render();
@@ -181,10 +181,8 @@ kemia.controller.ReactionEditor.prototype.getModels = function() {
  */
 kemia.controller.ReactionEditor.prototype.dispatchBeforeChange = function() {
 
-	this
-			.dispatchEvent(kemia.controller.ReactionEditor.EventType.BEFORECHANGE);
+	this.dispatchEvent(kemia.controller.ReactionEditor.EventType.BEFORECHANGE);
 };
-
 
 /**
  * Calls all the plugins of the given operation, in sequence, with the given
@@ -222,10 +220,9 @@ kemia.controller.ReactionEditor.prototype.invokeShortCircuitingOp_ = function(
 	return false;
 };
 
-
 /**
  * Handle a change in the Editor. Marks the editor as modified, dispatches the
- * change event on the editable field 
+ * change event on the editable field
  */
 kemia.controller.ReactionEditor.prototype.handleChange = function() {
 	this.isModified_ = true;
@@ -272,27 +269,46 @@ kemia.controller.ReactionEditor.prototype.handleKeyUp_ = function(e) {
 };
 
 kemia.controller.ReactionEditor.prototype.findTarget = function(e) {
-	var trans = this.reactionRenderer.moleculeRenderer.transform.createInverse();
-	var elem = e.currentTarget;
+	var trans = this.reactionRenderer.moleculeRenderer.transform
+			.createInverse();
 
-	var posx = e.clientX  + document.body.scrollLeft + document.documentElement.scrollLeft;
-	var posy = e.clientY  + document.body.scrollTop + document.documentElement.scrollTop;
-	
-	posx -=elem.offsetLeft;
-	posy -= elem.offsetTop;
+	var pos = this.getMouseCoords(e)
 
-    while (elem = elem.offsetParent) {
-        posx -= elem.offsetLeft;
-        posy -= elem.offsetTop;
-}
-	var target = trans.transformCoords( [ new goog.math.Coordinate(posx,
-			posy) ])[0];
-	var nearest = this.neighborList.getNearest( {
+	var target = trans.transformCoords( [ pos ])[0];
+	return this.neighborList.getNearest( {
 		x : target.x,
 		y : target.y
 	});
+}
 
-	return nearest;
+kemia.controller.ReactionEditor.prototype.getMouseCoords = function(e) {
+	var elem = e.currentTarget;
+	var posx = e.clientX + document.body.scrollLeft
+			+ document.documentElement.scrollLeft;
+	var posy = e.clientY + document.body.scrollTop
+			+ document.documentElement.scrollTop;
+
+	posx -= elem.offsetLeft;
+	posy -= elem.offsetTop;
+
+	while (elem = elem.offsetParent) {
+		posx -= elem.offsetLeft;
+		posy -= elem.offsetTop;
+	}
+	return new goog.math.Coordinate(posx, posy);
+}
+
+kemia.controller.ReactionEditor.prototype.findTargetList = function(e) {
+	var trans = this.reactionRenderer.moleculeRenderer.transform
+	.createInverse();
+
+var pos = this.getMouseCoords(e)
+
+var target = trans.transformCoords( [ pos ])[0];
+return this.neighborList.getNearestList( {
+x : target.x,
+y : target.y
+});
 }
 
 kemia.controller.ReactionEditor.prototype.handleMouseOver_ = function(e) {
@@ -315,6 +331,9 @@ kemia.controller.ReactionEditor.prototype.handleMouseDown_ = function(e) {
 	this.invokeShortCircuitingOp_(kemia.controller.Plugin.Op.MOUSEDOWN, e);
 };
 
+kemia.controller.ReactionEditor.prototype.handleMouseUp_ = function(e) {
+	this.invokeShortCircuitingOp_(kemia.controller.Plugin.Op.MOUSEUP, e);
+}
 
 /**
  * Gets the value of this command.
@@ -350,8 +369,7 @@ kemia.controller.ReactionEditor.prototype.queryCommandValueInternal_ = function(
  *         designMode is off or the editor is otherwise uneditable, and there
  *         are no activeOnUneditable plugins for the command.
  */
-kemia.controller.ReactionEditor.prototype.queryCommandValue = function(
-		commands) {
+kemia.controller.ReactionEditor.prototype.queryCommandValue = function(commands) {
 	var isEditable = this.isLoaded();
 	if (goog.isString(commands)) {
 		return this.queryCommandValueInternal_(commands, isEditable);
@@ -365,8 +383,6 @@ kemia.controller.ReactionEditor.prototype.queryCommandValue = function(
 	}
 };
 
-
-
 /**
  * Dispatches the appropriate set of change events.
  * 
@@ -375,7 +391,6 @@ kemia.controller.ReactionEditor.prototype.dispatchChange = function() {
 	this.handleChange();
 
 };
-
 
 /**
  * Dispatches a command value change event.
@@ -586,11 +601,9 @@ kemia.controller.ReactionEditor.prototype.disposeInternal = function() {
  * 
  * @param {string}
  *            classId classId of the plugin.
- * @return {kemia.controller.Plugin} Registered plugin with the given
- *         classId.
+ * @return {kemia.controller.Plugin} Registered plugin with the given classId.
  */
-kemia.controller.ReactionEditor.prototype.getPluginByClassId = function(
-		classId) {
+kemia.controller.ReactionEditor.prototype.getPluginByClassId = function(classId) {
 	return this.plugins_[classId];
 };
 
@@ -680,7 +693,6 @@ kemia.controller.ReactionEditor.prototype.handleEditorLoad = function() {
 	}
 };
 
-
 /**
  * Signal that the editor is loaded and ready to use. Change events now are in
  * effect.
@@ -723,17 +735,14 @@ kemia.controller.ReactionEditor.prototype.addListener = function(type,
  */
 kemia.controller.ReactionEditor.prototype.setupChangeListeners_ = function() {
 
-//	this.addListener(goog.events.EventType.KEYDOWN, this.handleKeyDown_);
-//	this.addListener(goog.events.EventType.KEYPRESS, this.handleKeyPress_);
-//	this.addListener(goog.events.EventType.KEYUP, this.handleKeyUp_);
+	// this.addListener(goog.events.EventType.KEYDOWN, this.handleKeyDown_);
+	// this.addListener(goog.events.EventType.KEYPRESS, this.handleKeyPress_);
+	// this.addListener(goog.events.EventType.KEYUP, this.handleKeyUp_);
 	this.addListener(goog.events.EventType.MOUSEDOWN, this.handleMouseDown_);
-//	this.addListener(goog.events.EventType.MOUSEOVER, this.handleMouseOver_);
-//	this.addListener(goog.events.EventType.MOUSEOUT, this.handleMouseOut_);
 	this.addListener(goog.events.EventType.MOUSEMOVE, this.handleMouseMove_);
+	this.addListener(goog.events.EventType.MOUSEUP, this.handleMouseUp_);
 
 };
-
-
 
 /**
  * Installs styles if needed. Only writes styles when they can't be written

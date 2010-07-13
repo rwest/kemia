@@ -92,6 +92,12 @@ kemia.model.Bond.prototype.clone = function() {
 			this.stereo, this.aromatic, this.molecule);
 }
 
+kemia.model.Bond.prototype.deepClone = function(){
+	return new kemia.model.Bond(this.source.clone(), this.target.clone(), this.order,
+			this.stereo, this.aromatic, this.molecule);
+	
+}
+
 /**
  * enum for bond order
  * 

@@ -90,6 +90,15 @@ kemia.model.Atom.prototype.getNeighbors = function() {
     return nbrs;
 };
 
+/**
+ * clones this atom
+ * 
+ * @return {kemia.model.Atom}
+ */
+kemia.model.Atom.prototype.clone = function() {
+	return new kemia.model.Atom(this.symbol, this.coord.x, this.coord.y, this.charge, this.aromatic, this.isotope);
+}
+
 	
 
 /**
