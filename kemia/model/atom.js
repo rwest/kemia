@@ -56,6 +56,12 @@ kemia.model.Atom=function(symbol, x, y, opt_charge, opt_aromatic, opt_isotope)
     this.aromatic = goog.isDef(opt_aromatic) ? opt_aromatic : false;
 
     this.hybridization=null;
+
+    /** 
+     * Array with property flags (true/false) 
+     */
+    this.flags = new Array(kemia.model.Flags.MAX_FLAG_INDEX+1);
+
 };
 
 kemia.model.Atom.prototype.countBonds = function() {
@@ -109,6 +115,14 @@ kemia.model.Atom.Hybridizations = {
         SP3D5  :9      // tricapped trigonal prism
 };
 
+/**
+ * Set a flag to be true or false
+ * @param {Object} flag_type <kemia.model.Flags> 
+ * @param {Object} flag_value true or false
+ */
+kemia.model.Atom.prototype.setFlag = function(flag_type, flag_value){
+    this.flags[flag_type] = flag_value
+}
 
 
 

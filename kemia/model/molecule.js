@@ -252,3 +252,18 @@ kemia.model.Molecule.prototype.getRings = function(){
     }
     return this.sssr;
 }
+
+
+/**
+ *  Returns all bonds connected to the given atom.
+ *
+ */
+kemia.model.Molecule.prototype.getConnectedBondsList = function(atom){
+	bondsList = new Array();
+	bondCount = this.bonds.length;
+	for (i = 0; i < bondCount; i++) {
+		if (this.bonds[i].source == atom || this.bonds[i].target == atom) 
+			bondsList.push(this.bonds[i]);
+	}
+	return bondsList;
+}
