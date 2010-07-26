@@ -13,44 +13,38 @@ goog.provide('kemia.ring.RingPartitioner');
 goog.require('goog.array');
 
 /**
- * Class to partition an array of rings into connected arrays of rings
+ * partitions array of rings into connected lists
  * 
- * @constructor
  * @param {Array.
- *            <kemia.ring.Ring>} rings, the array of rings to partition
- */
-kemia.ring.RingPartitioner = function(rings) {
-	/**
-	 * @type{Array.<Array.<kemia.ring.Ring>>}
-	 */
-	this._connected = [];
-	/**
-	 * @type{Array.<kemia.ring.Ring>}
-	 */
-	this._search = rings;
-
-}
-
-/**
- * partitions rings
- * 
+ *            <kemia.ring.Ring>} rings list of rings to group into connected
+ *            arrays
  * @return {Array.<Array.<kemia.ring.Ring>>} array of arrays of Rings
  */
-kemia.ring.RingPartitioner.prototype.getPartitionedRings = function() {
-
-	goog.array.forEach(this._search, function(ring) {
-		var connections = goog.array.find(this._connected, function(rings) {
-			return goog.array.contains(rings, ring);
-		}, this);
-		if (connections == null) {
-			connections = [ ring ];
-			this._connected.push(connections);
-			goog.array.remove(this._search, ring);
+kemia.ring.RingPartitioner.getPartitionedRings = function(rings) {
+	var partitions = [];
+	var search = rings;
+	goog.array.forEach(rings, function(ring) {
+		if (!goog.array.contains(goog.array.flatten(partitions), ring)) {
+			var connections = goog.array.find(partitions, function(rings) {
+				return goog.array.contains(rings, ring);
+			});
+			if (connections == null) {
+				connections = [ ring ];// start a new group of rings
+			search = goog.array.filter(search, function(r) {
+				return r !== ring;
+			});
 		}
-		goog.array.concat(connections, kemia.ring.RingPartitioner.directConnectedRings(ring, this._search));
-
-	}, this);
-	return this._connected;
+		var connected = kemia.ring.RingPartitioner.directConnectedRings(ring,
+				search);
+		connections = goog.array.concat(connections, connected);
+		search = goog.array.filter(search, function(r) {
+			goog.array.contains(connected, r);
+		});
+		partitions.push(connections);
+	}
+	;
+}	);
+	return partitions;
 };
 
 /**

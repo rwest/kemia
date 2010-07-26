@@ -81,7 +81,7 @@ kemia.layout.Vector2D.prototype.unitEquals = function() {
 *
 *****/
 kemia.layout.Vector2D.prototype.add = function(that) {
-    return new Vector2D(this.x + that.x, this.y + that.y);
+    return new kemia.layout.Vector2D(this.x + that.x, this.y + that.y);
 };
 
 

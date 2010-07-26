@@ -2,6 +2,7 @@ goog.require('goog.testing.jsunit');
 goog.require('kemia.model.Molecule');
 goog.require('kemia.model.Bond');
 goog.require('kemia.layout.CoordinateGenerator');
+goog.require('kemia.ring.RingPartitioner');
 
 function testSingleAtom_00() {
 	mol = new kemia.model.Molecule;

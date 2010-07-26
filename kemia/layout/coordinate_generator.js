@@ -12,6 +12,8 @@ goog.require('kemia.layout.Vector2D');
 goog.require('kemia.layout.AtomPlacer');
 goog.require('kemia.layout.RingPlacer');
 goog.require('kemia.model.Flags');
+goog.require('kemia.ring.RingPartitioner');
+goog.require('kemia.layout.RingPlacer');
 
 /**
  * Generates 2D coordinates for a molecule for which only connectivity is known
@@ -21,9 +23,8 @@ goog.require('kemia.model.Flags');
  * 
  * @author: markr@ebi.ac.uk
  */
-kemia.layout.CoordinateGenerator = function(){
-	this.bondLength = 1.25;
-}
+kemia.layout.CoordinateGenerator.BOND_LENGTH = 1.25;
+
 
 kemia.layout.CoordinateGenerator.generate = function(molecule){
 
@@ -69,15 +70,15 @@ kemia.layout.CoordinateGenerator.generate = function(molecule){
     	});
     	
     	// partition sssr into connected sets of rings
-    	var ringsets = new kemia.ring.RingPartitioner(sssr).getPartitionedRings();
+    	var ringsets = new kemia.ring.RingPartitioner.getPartitionedRings(sssr);
     	goog.array.sort(ringsets, function(a,b){
     		return goog.array.defaultCompare(a.length, b.length);
     	});
-    	var largest_ringset = ringsets.peek(ringsets);
+    	var largest_ringset = goog.array.peek(ringsets);
     	// place largest ringset
     	this.layoutRingSet(firstBondVector, largest_ringset);
     	// place substituents on largest ringset
-    	kemia.layout.RingPlacer.placeRingSubstituents(largest_ringset, this.bondLength);
+    	kemia.layout.RingPlacer.placeRingSubstituents(largest_ringset, kemia.layout.CoordinateGenerator.BOND_LENGTH);
     }
     else {
 		/*
@@ -89,7 +90,7 @@ kemia.layout.CoordinateGenerator.generate = function(molecule){
 		longestChain.getAtom(0).coord= new goog.math.Coordinate(0,0);
 		longestChain.getAtom(0).flags[kemia.model.Flags.ISPLACED]=true;
         angle = Math.PI *(-30/180);
-		kemia.layout.AtomPlacer.placeLinearChain(longestChain, firstBondVector, this.bondLength);
+		kemia.layout.AtomPlacer.placeLinearChain(longestChain, firstBondVector, kemia.layout.CoordinateGenerator.BOND_LENGTH);
 	 }
 
 	/* Do the layout of the rest of the molecule */
@@ -101,7 +102,7 @@ kemia.layout.CoordinateGenerator.generate = function(molecule){
 		 * do layout for all aliphatic parts of the molecule which are connected
 		 * to the parts which have already been laid out.
 		 */
-	    this.handleAliphatics(molecule,nrOfEdges, this.bondLength);
+	    this.handleAliphatics(molecule,nrOfEdges, kemia.layout.CoordinateGenerator.BOND_LENGTH);
 	    /*
 		 * do layout for the next ring aliphatic parts of the molecule which are
 		 * connected to the parts which have already been laid out.
@@ -133,7 +134,7 @@ kemia.layout.CoordinateGenerator.generate = function(molecule){
  * @param {Array.
  *            <kemia.ring.Ring>} ringset The connected RingSet to be layed out
  */
-kemia.layout.CoordinateGenerator.prototype.layoutRingSet=function(bondVector, ringset){
+kemia.layout.CoordinateGenerator.layoutRingSet=function(bondVector, ringset){
 	
 	// TODO apply templates to layout pre-fab rings
 	
@@ -153,18 +154,18 @@ kemia.layout.CoordinateGenerator.prototype.layoutRingSet=function(bondVector, ri
 		goog.array.defaultCompare(complexity(a), complexity(b));
 	});
 	
-	var most_complex_ring = ringset.peek();
+	var most_complex_ring = goog.array.peek(ringset);
 
-	var shared_fragment = {atoms:this.placeFirstBond( most_complex_ring.bonds[0], firstBondVector),
+	var shared_fragment = {atoms:this.placeFirstBond( most_complex_ring.bonds[0], bondVector),
 			bonds: [most_complex_ring.bonds[0]]};
-	var shared_fragment_sum = goog.array.reduce(sharedAtoms.atoms, function(r,atom){
+	var shared_fragment_sum = goog.array.reduce(shared_fragment.atoms, function(r,atom){
 		return goog.math.Coordinate.sum(r,atom.coord);}, 
 		new goog.math.Coordinate(0,0));
-	var shared_fragment_center = new kemia.layout.Vector2D(sharedAtomsSum.x/sharedAtoms.length, sharedAtomsSum.y/sharedAtoms.length);
-	ringCenterVector = kemia.layout.RingPlacer.getRingCenterOfFirstRing(most_complex_ring, firstBondVector, this.bondLength);
-	ringPlacer.placeRing(most_complex_ring, shared_fragment, shared_fragment_center, ringCenterVector, this.bondLength);
+	var shared_fragment_center = new kemia.layout.Vector2D(shared_fragment_sum.x/shared_fragment.atoms.length, shared_fragment_sum.y/shared_fragment.atoms.length);
+	var ringCenterVector = kemia.layout.RingPlacer.getRingCenterOfFirstRing(most_complex_ring, bondVector, kemia.layout.CoordinateGenerator.BOND_LENGTH);
+	kemia.layout.RingPlacer.placeRing(most_complex_ring, shared_fragment, shared_fragment_center, ringCenterVector, kemia.layout.CoordinateGenerator.BOND_LENGTH);
 
-	kemia.ring.RingPlacer.placeConnectedRings(ringset, ring, this.bondLength);
+	kemia.layout.RingPlacer.placeConnectedRings(ringset, most_complex_ring, kemia.layout.CoordinateGenerator.BOND_LENGTH);
 }
 
 
@@ -180,7 +181,7 @@ kemia.layout.CoordinateGenerator.prototype.layoutRingSet=function(bondVector, ri
  */
 kemia.layout.CoordinateGenerator.placeFirstBond=function(bond, vector){
 	vector.normalize();
-	vector.scale(this.bondLength);
+	vector.scale(kemia.layout.CoordinateGenerator.BOND_LENGTH);
 	bond.source.coord = new goog.math.Coordinate(0,0);
 	bond.source.setFlag(kemia.model.Flags.ISPLACED, true);
 	bond.target.coord = new goog.math.Coordinate(vector.x, vector.y);

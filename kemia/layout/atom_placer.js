@@ -4,12 +4,12 @@ goog.require('goog.testing.jsunit');
 goog.require('kemia.layout.Vector2D');
 
 /**
-*  Javascript version of CDK's AtomPlacer class.
-*  Methods for generating coordinates for atoms in various situations. 
-*  @author: markr@ebi.ac.uk
-*/
+ * Javascript version of CDK's AtomPlacer class. Methods for generating
+ * coordinates for atoms in various situations.
+ * 
+ * @author: markr@ebi.ac.uk
+ */
 
-kemia.layout.AtomPlacer = function(){}
 kemia.layout.AtomPlacer.getInitialLongestChain = function(molecule){
 
     var connectionMatrix = kemia.layout.ConnectionMatrix.getMatrix(molecule);
@@ -33,17 +33,17 @@ kemia.layout.AtomPlacer.getInitialLongestChain = function(molecule){
             }
         }
     }
-    //kemia.layout.ConnectionMatrix.display(apsp);
+    // kemia.layout.ConnectionMatrix.display(apsp);
     
     var startAtom = molecule.getAtom(bestStartAtom);
     path = this.getLongestUnplacedChain(molecule, startAtom);
 	
 	/* DEBUG PATH */
-	//var debugPath="";
-	//for(a=0; a<path.countAtoms(); a++) {
-	//	debugPath+=path.getAtom(a).symbol;
-	//}
-    //alert("longest path is >> "+debugPath);
+	// var debugPath="";
+	// for(a=0; a<path.countAtoms(); a++) {
+	// debugPath+=path.getAtom(a).symbol;
+	// }
+    // alert("longest path is >> "+debugPath);
     /* DEBUG PATH */
 
     return path;
@@ -85,15 +85,15 @@ kemia.layout.AtomPlacer.computeFloydAPSP = function(costMatrix){
             }
         }
     }
-    //kemia.layout.ConnectionMatrix.display(distMatrix);
+    // kemia.layout.ConnectionMatrix.display(distMatrix);
     return distMatrix;
 }
 
 /**
- *  Search a molecule for the longest unplaced, aliphatic chain in it. If an
- *  aliphatic chain encounters an unplaced ring atom, the ring atom is also
- *  appended to allow for it to be laid out. This gives us an array for
- *  attaching the unplaced ring later.
+ * Search a molecule for the longest unplaced, aliphatic chain in it. If an
+ * aliphatic chain encounters an unplaced ring atom, the ring atom is also
+ * appended to allow for it to be laid out. This gives us an array for attaching
+ * the unplaced ring later.
  */
 kemia.layout.AtomPlacer.getLongestUnplacedChain = function(molecule, startAtom){
 
@@ -132,7 +132,7 @@ kemia.layout.AtomPlacer.getLongestUnplacedChain = function(molecule, startAtom){
 }
 
 /**
- *  Sums up the degrees of atoms in a molecule
+ * Sums up the degrees of atoms in a molecule
  */
 kemia.layout.AtomPlacer.getDegreeSum = function(molecule, superMolecule, superBondCount){
     var degreeSum = 0;
@@ -144,7 +144,7 @@ kemia.layout.AtomPlacer.getDegreeSum = function(molecule, superMolecule, superBo
 }
 
 /**
- *  Returns the number of Bonds for a given Atom.
+ * Returns the number of Bonds for a given Atom.
  */
 kemia.layout.AtomPlacer.getConnectedBondsCount = function(atom, molecule, bondCount){
 	var connBondCount = 0;
@@ -157,13 +157,13 @@ kemia.layout.AtomPlacer.getConnectedBondsCount = function(atom, molecule, bondCo
 
 
 /**
-*  Performs a breadthFirstSearch in an molecule starting with a
-*  particular sphere, which usually consists of one start atom, and searches
-*  for the longest aliphatic chain which is yet unplaced. If the search
-*  encounters an unplaced ring atom, it is also appended to the chain so that
-*  this last bond of the chain can also be laid out. This gives us the
-*  orientation for the attachment of the ring system. 
-*/
+ * Performs a breadthFirstSearch in an molecule starting with a particular
+ * sphere, which usually consists of one start atom, and searches for the
+ * longest aliphatic chain which is yet unplaced. If the search encounters an
+ * unplaced ring atom, it is also appended to the chain so that this last bond
+ * of the chain can also be laid out. This gives us the orientation for the
+ * attachment of the ring system.
+ */
 kemia.layout.AtomPlacer.breadthFirstSearch = function(mol, sphere, paths, bondCount){
 	newSphere = new Array();
 	sphere_len = sphere.length;
@@ -210,8 +210,8 @@ kemia.layout.AtomPlacer.copyPath = function(path){
 
 
 /**
- * Places the atoms in a linear chain.
- * Not included: CIS/TRANS logic from CDK class (could do look for double bond instead)
+ * Places the atoms in a linear chain. Not included: CIS/TRANS logic from CDK
+ * class (could do look for double bond instead)
  */
 
 kemia.layout.AtomPlacer.placeLinearChain = function(chain, initialBondVector, bondLength){
@@ -272,11 +272,11 @@ kemia.layout.AtomPlacer.getNextBondVector = function(atom, previousAtom, distanc
 	angle = this.getAngle(previousAtom.coord.x - atom.coord.x, previousAtom.coord.y - atom.coord.y);
     addAngle = Math.PI *(120/180)
 
-    //Omitted from CDK port:
-    //if(!trans)
+    // Omitted from CDK port:
+    // if(!trans)
     // addAngle=Math.toRadians(60);
 
-    //TODO if (shouldBeLinear(atom, molecule)) addAngle = Math.toRadians(180);
+    // TODO if (shouldBeLinear(atom, molecule)) addAngle = Math.toRadians(180);
 
 	angle += addAngle;
 	vec1 =  new kemia.layout.Vector2D(Math.cos(angle), Math.sin(angle));
@@ -305,9 +305,9 @@ kemia.layout.AtomPlacer.allPlaced = function(molecule, atCount){
 }
 
 /**
- *  Distribute the bonded atoms (neighbours) of an atom such that they fill the
- *  remaining space around an atom in a geometrically nice way.
-*/
+ * Distribute the bonded atoms (neighbours) of an atom such that they fill the
+ * remaining space around an atom in a geometrically nice way.
+ */
 kemia.layout.AtomPlacer.distributePartners = function(atom, placedNeighbours, sharedAtomsCenter, unplacedNeighbours, bondLength){
 
 	var occupiedAngle = 0;
@@ -316,7 +316,7 @@ kemia.layout.AtomPlacer.distributePartners = function(atom, placedNeighbours, sh
 	var radius = 0.0;
 	var remainingAngle = 0.0;
 	
-	//Calculate the direction away from the already placed partners of atom
+	// Calculate the direction away from the already placed partners of atom
 	sharedAtomsCenterVector = new kemia.layout.Vector2D(sharedAtomsCenter.x,sharedAtomsCenter.y);
 	newDirection = new kemia.layout.Vector2D(atom.coord.x, atom.coord.y);
 	
@@ -324,16 +324,16 @@ kemia.layout.AtomPlacer.distributePartners = function(atom, placedNeighbours, sh
 	occupiedDirection.sub(newDirection);
 	atomsToDraw = new Array();
 
-    var placedNeighboursCountAtoms =placedNeighbours.countAtoms(); 
-    var unPlacedNeighboursCountAtoms = unplacedNeighbours.countAtoms(); 
+    var placedNeighboursCountAtoms =placedNeighbours.length;
+    var unPlacedNeighboursCountAtoms = unplacedNeighbours.length; 
 
 	if (placedNeighboursCountAtoms == 1)
 	{
 	    for (f1=0; f1<unPlacedNeighboursCountAtoms; f1++) {
-	        atomsToDraw.push(unplacedNeighbours.getAtom(f1));
+	        atomsToDraw.push(unplacedNeighbours[f1]);
 	    }
 	    addAngle = Math.PI * 2 / (unPlacedNeighboursCountAtoms + placedNeighboursCountAtoms);
-	    placedAtom = placedNeighbours.getAtom(0);
+	    placedAtom = placedNeighbours[0];
 	    xDiff = placedAtom.coord.x - atom.coord.x;
 	    yDiff = placedAtom.coord.y - atom.coord.y;
 	
@@ -351,7 +351,8 @@ kemia.layout.AtomPlacer.distributePartners = function(atom, placedNeighbours, sh
 		return;
 	}
     var sortedAtoms = new Array();
-	//if the least hindered side of the atom is clearly defined (bondLength / 10 is an arbitrary value that seemed reasonable) */
+	// if the least hindered side of the atom is clearly defined (bondLength /
+	// 10 is an arbitrary value that seemed reasonable) */
 	sharedAtomsCenterVector.sub(newDirection);
 
 	newDirection = sharedAtomsCenterVector;
@@ -363,9 +364,10 @@ kemia.layout.AtomPlacer.distributePartners = function(atom, placedNeighbours, sh
 	distanceMeasure.x += newDirection.x;
     distanceMeasure.y += newDirection.y;
 	
-	 //get the two sharedAtom partners with the smallest distance to the new center
+	 // get the two sharedAtom partners with the smallest distance to the new
+		// center
     for (f1=0; f1<placedNeighboursCountAtoms; f1++) {
-        sortedAtoms.push(placedNeighbours.getAtom(f1));
+        sortedAtoms.push(placedNeighbours[f1]);
     }
     this.sortBy2DDistance(sortedAtoms, distanceMeasure);
 	closestPoint1 = new kemia.layout.Vector2D(sortedAtoms[0].coord.x,sortedAtoms[0].coord.y)
@@ -399,7 +401,7 @@ kemia.layout.AtomPlacer.distributePartners = function(atom, placedNeighbours, sh
 	addAngle = remainingAngle / (unPlacedNeighboursCountAtoms + 1);
     
 	for (fff=0; fff < unPlacedNeighboursCountAtoms; fff++){
-	    atomsToDraw.push(unplacedNeighbours.getAtom(fff));
+	    atomsToDraw.push(unplacedNeighbours[fff]);
 	}
 	radius = bondLength;
 	startAngle = this.getAngle(startAtom.coord.x - atom.coord.x, startAtom.coord.y - atom.coord.y);
@@ -409,10 +411,10 @@ kemia.layout.AtomPlacer.distributePartners = function(atom, placedNeighbours, sh
 
 
 /**
-*  Sorts an array of atoms such that the 2D distances of the atom locations
-*  from a given point are smallest for the first atoms in the vector
-*
-*/
+ * Sorts an array of atoms such that the 2D distances of the atom locations from
+ * a given point are smallest for the first atoms in the vector
+ * 
+ */
 kemia.layout.AtomPlacer.sortBy2DDistance = function(atoms, point){
 
 	var doneSomething;
@@ -433,13 +435,13 @@ kemia.layout.AtomPlacer.sortBy2DDistance = function(atoms, point){
 }
 
  /**
- *  Populates the corners of a polygon with atoms. Used to place atoms in a
- *  geometrically regular way around a ring center or another atom. If this is
- *  used to place the bonding partner of an atom (and not to draw a ring) we
- *  want to place the atoms such that those with highest "weight" are placed
- *  farmost away from the rest of the molecules. The "weight" mentioned here is
- *  calculated by a modified morgan number algorithm.
- */
+	 * Populates the corners of a polygon with atoms. Used to place atoms in a
+	 * geometrically regular way around a ring center or another atom. If this
+	 * is used to place the bonding partner of an atom (and not to draw a ring)
+	 * we want to place the atoms such that those with highest "weight" are
+	 * placed farmost away from the rest of the molecules. The "weight"
+	 * mentioned here is calculated by a modified morgan number algorithm.
+	 */
 kemia.layout.AtomPlacer.populatePolygonCorners = function(atomsToDraw, rotationCenter, startAngle, addAngle, radius){
     points = new Array();
     angle = startAngle;
@@ -458,5 +460,34 @@ kemia.layout.AtomPlacer.populatePolygonCorners = function(atomsToDraw, rotationC
 	    connectAtom.coord = points[ad];
 		connectAtom.flags[kemia.model.Flags.ISPLACED]=true;
 	}
+};
+
+/**
+ * Partition the bonding partners of a given atom into placed and not placed.
+ * 
+ * @param atom
+ *            {kemia.model.Atom} The atom whose bonding partners are to be
+ *            partitioned
+ * @param unplacedPartners
+ *            An array for the unplaced bonding partners to go in
+ * @param placedPartners
+ *            An array vector for the placed bonding partners to go in
+ */
+kemia.layout.AtomPlacer.partitionPartners=function(atom, unplacedPartners, placedPartners){
+	goog.array.forEach(atom.bonds.getValues(), function(bond){
+		var other_atom = bond.otherAtom(atom);
+		if (other_atom.flags[kemia.model.Flags.ISPLACED]){
+			placedPartners.push(other_atom);
+		}else{
+			unplacedPartners.push(other_atom);
+		}
+	});
+};
+	
+kemia.layout.AtomPlacer.markNotPlaced = function(atoms){
+	goog.array.forEach(atoms, function(atom){
+		atom.setFlag(kemia.model.Flags.ISPLACED,false);
+	});
+	
 }
 
