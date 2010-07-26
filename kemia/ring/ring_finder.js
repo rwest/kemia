@@ -23,11 +23,13 @@ goog.require('kemia.ring.Ring');
     kemia.ring.RingFinder = {};
 
     /**
-     * The Hanser Ring Finder produces a ring as just a series of atoms.
-     * Here we complete this information with the bonds and the ring center,
-     * creating a ring object.
-     * @param {Object} atoms
-     */
+	 * The Hanser Ring Finder produces a ring as just a series of atoms. Here we
+	 * complete this information with the bonds and the ring center, creating a
+	 * ring object.
+	 * 
+	 * @param {Object}
+	 *            atoms
+	 */
     function createRing(atomIndexes, molecule) {
         // Translate atom indexes to atom objects.
         var atoms = [];
@@ -54,8 +56,8 @@ goog.require('kemia.ring.Ring');
     }
 
     /**
-     * Check if a candidate ring is already in the SSSR ring set.
-     */
+	 * Check if a candidate ring is already in the SSSR ring set.
+	 */
     function isCandidateInSet(C, Csssr, valences, ringCount) {
         for (var i = 0, li = Csssr.length; i < li; i++) {
             var sssr = Csssr[i];
@@ -99,8 +101,8 @@ goog.require('kemia.ring.Ring');
 
 
     /**
-     * Verify if a ring set is the SSSR ring set.
-     */
+	 * Verify if a ring set is the SSSR ring set.
+	 */
     function verifySSSR(sssr, nsssr, molecule) {
         // The final SSSR set
         var Csssr = [];
@@ -125,71 +127,52 @@ goog.require('kemia.ring.Ring');
     }
 
     /**
-     * Make a copy of the molecule. This is needed since we modify the molecule
-     * to increase ring perception performance.
-     */
+	 * Make a copy of the molecule. This is needed since we modify the molecule
+	 * to increase ring perception performance.
+	 */
     /*
-    function copyMolecule(molecule) {
-        var moleculeCopy = new kemia.model.Molecule();
-        for (var i = 0, li = molecule.countAtoms(); i < li; i++) {
-            var atomCopy = new kemia.model.Atom();
-            atomCopy.index = i;
-            moleculeCopy.addAtom(atomCopy)
-        }
-        for (i = 0, li = molecule.countBonds(); i < li; i++) {
-            var bond = molecule.getBond(i);
-            var sourceIndex = bond.source.index;
-            var targetIndex = bond.target.index;
-            var sourceCopy = moleculeCopy.getAtom(sourceIndex);
-            var targetCopy = moleculeCopy.getAtom(targetIndex);
-            var bondCopy = new kemia.model.Bond(sourceCopy, targetCopy);
-            bondCopy.index = i;
-            moleculeCopy.addBond(bondCopy);
-        }
-        return moleculeCopy;
-    }
-    */
+	 * function copyMolecule(molecule) { var moleculeCopy = new
+	 * kemia.model.Molecule(); for (var i = 0, li = molecule.countAtoms(); i <
+	 * li; i++) { var atomCopy = new kemia.model.Atom(); atomCopy.index = i;
+	 * moleculeCopy.addAtom(atomCopy) } for (i = 0, li = molecule.countBonds();
+	 * i < li; i++) { var bond = molecule.getBond(i); var sourceIndex =
+	 * bond.source.index; var targetIndex = bond.target.index; var sourceCopy =
+	 * moleculeCopy.getAtom(sourceIndex); var targetCopy =
+	 * moleculeCopy.getAtom(targetIndex); var bondCopy = new
+	 * kemia.model.Bond(sourceCopy, targetCopy); bondCopy.index = i;
+	 * moleculeCopy.addBond(bondCopy); } return moleculeCopy; }
+	 */
 
     /**
-     * Reduce the size of a molecule by progressively removing atoms with a
-     * connectivity of 1. These terminal atoms can never be in a ring. The
-     * aim of this function is to reduce the number of molecules considered
-     * during ring perception to speed up the process.
-     */
+	 * Reduce the size of a molecule by progressively removing atoms with a
+	 * connectivity of 1. These terminal atoms can never be in a ring. The aim
+	 * of this function is to reduce the number of molecules considered during
+	 * ring perception to speed up the process.
+	 */
     /*
-    function reduceMolecule(molecule) {
-        var atomCount = molecule.countAtoms();
-        var lastAtomCount = atomCount + 1;
-        var start = 0;
-        while (lastAtomCount != atomCount) {
-            lastAtomCount = atomCount;
-
-            for (var i = start; i < atomCount; i++) {
-                var atom = molecule.getAtom(i);
-                if (atom.countBonds() < 2) {
-                    molecule.removeAtom(atom);
-                    atomCount--;
-                    start = i;
-                    break;
-                }
-            }
-
-        }
-    }
-    */
+	 * function reduceMolecule(molecule) { var atomCount =
+	 * molecule.countAtoms(); var lastAtomCount = atomCount + 1; var start = 0;
+	 * while (lastAtomCount != atomCount) { lastAtomCount = atomCount;
+	 * 
+	 * for (var i = start; i < atomCount; i++) { var atom = molecule.getAtom(i);
+	 * if (atom.countBonds() < 2) { molecule.removeAtom(atom); atomCount--;
+	 * start = i; break; } }
+	 *  } }
+	 */
 
     /**
-     * Detect ring membership of atoms and set the isInCycle property. Ring membership
-     * of atoms can be computed in O(n) time by creating a spanning tree. For this,
-     * a breath-first iteration is performed on the atoms and the tree is
-     * constructed. During construction visited atoms and bonds are stored in
-     * arrays. If a bond isn't visited yet but the atom it connects to is, the
-     * bond is a ring-closure. When a closure bond is found, a backtracking loop
-     * assigns the isInCycle property for all atoms in the cycle. The end of the
-     * cycle is where the atoms come back together. For even rings, there is
-     * always a single last (depth) atom. For odd rings, the closure bond
-     * connects two atoms of the same depth. This function is has an O(n) runtime.
-     */
+	 * Detect ring membership of atoms and set the isInCycle property. Ring
+	 * membership of atoms can be computed in O(n) time by creating a spanning
+	 * tree. For this, a breath-first iteration is performed on the atoms and
+	 * the tree is constructed. During construction visited atoms and bonds are
+	 * stored in arrays. If a bond isn't visited yet but the atom it connects to
+	 * is, the bond is a ring-closure. When a closure bond is found, a
+	 * backtracking loop assigns the isInCycle property for all atoms in the
+	 * cycle. The end of the cycle is where the atoms come back together. For
+	 * even rings, there is always a single last (depth) atom. For odd rings,
+	 * the closure bond connects two atoms of the same depth. This function is
+	 * has an O(n) runtime.
+	 */
     function detectRingAtoms(molecule) {
         var n = molecule.countAtoms();
         if (!n) {
@@ -203,7 +186,7 @@ goog.require('kemia.ring.Ring');
         var startAtom = molecule.atoms[0];
         startAtom.depth = 0;
         queue.push(startAtom);
-        //visitedAtoms.push(0);
+        // visitedAtoms.push(0);
         visitedAtoms[0] = true;
 
         while (true) {
@@ -218,7 +201,7 @@ goog.require('kemia.ring.Ring');
                 var bond = bonds[i];
                 var bondIndex = bond.index;
                 // skip the path we're comming from
-                //if (goog.array.contains(visitedBonds, bondIndex)) {
+                // if (goog.array.contains(visitedBonds, bondIndex)) {
                 if (visitedBonds[bondIndex]) {
                     continue;
                 }
@@ -283,23 +266,19 @@ goog.require('kemia.ring.Ring');
             }
         }
         /*
-        debug('before: ' + molecule.countAtoms());
-        var after = 0;
-        for (var i = 0, li = molecule.countAtoms(); i < li; i++) {
-            if (molecule.atoms[i].isInCycle) {
-                after++;
-            }
-        }
-        debug('after: ' + after);
-        */
+		 * debug('before: ' + molecule.countAtoms()); var after = 0; for (var i =
+		 * 0, li = molecule.countAtoms(); i < li; i++) { if
+		 * (molecule.atoms[i].isInCycle) { after++; } } debug('after: ' +
+		 * after);
+		 */
     }
 
     /**
-     * Create ring systems. These are molecules containing only ring atoms.
-     * Each disconnected ring system in the original molecule will result in
-     * a single ring system molecule. Ring perception is done on each ring
-     * system individually for optimal performance.
-     */
+	 * Create ring systems. These are molecules containing only ring atoms. Each
+	 * disconnected ring system in the original molecule will result in a single
+	 * ring system molecule. Ring perception is done on each ring system
+	 * individually for optimal performance.
+	 */
     function createRingSystems(molecule) {
 
         var rings = [];
@@ -358,7 +337,8 @@ goog.require('kemia.ring.Ring');
                         continue;
                     }
 
-                    // if the bond is not visited yet but the neighbor is, the bond
+                    // if the bond is not visited yet but the neighbor is, the
+					// bond
                     // is a ring closure or chord
                     if (visitedAtoms[neighborIndex]) {
                         // create the ring closure bond
@@ -403,11 +383,13 @@ goog.require('kemia.ring.Ring');
                 sssr = verifySSSR(hanser, nsssr, ringSystem);
                 // Check the size of the first SSSR
                 if (sssr.length < nsssr) {
-                    // Hanser rings don't contain the SSSR, do a full SSSR search
+                    // Hanser rings don't contain the SSSR, do a full SSSR
+					// search
                     sssr = kemia.ring.SSSR.findRings(ringSystem);
                 }
             } else {
-                // Hanser rings don't contain the SSSR, do a full SSSR search (there
+                // Hanser rings don't contain the SSSR, do a full SSSR search
+				// (there
                 // are not enough candidates so we skip the candidateSearch.
                 sssr = kemia.ring.SSSR.findRings(ringSystem);
             }
@@ -452,5 +434,8 @@ goog.require('kemia.ring.Ring');
         // process the ring systems
         return createRingSystems(molecule);
     }
+  
+    
+    	
 
 }());

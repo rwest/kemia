@@ -1,6 +1,7 @@
 //Licence and copyright
 goog.provide('kemia.model.Atom');
 goog.provide('kemia.model.Atom.Hybridizations');
+goog.require('kemia.model.Flags');
 goog.require("kemia.resource.Covalence");
 goog.require('goog.structs.Set');
 goog.require('goog.math.Coordinate');
