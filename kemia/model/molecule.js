@@ -266,4 +266,11 @@ kemia.model.Molecule.prototype.getConnectedBondsList = function(atom){
 			bondsList.push(this.bonds[i]);
 	}
 	return bondsList;
-}
+};
+
+kemia.model.Molecule.prototype.toString = function(){
+	return goog.array.map(this.atoms, function(atom){
+		return atom.symbol + atom.index + atom.coord.toString();
+	});
+
+};

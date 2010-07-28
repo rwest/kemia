@@ -2,6 +2,7 @@ goog.provide('kemia.layout.AtomPlacer');
 goog.require('kemia.layout.ConnectionMatrix');
 goog.require('goog.testing.jsunit');
 goog.require('kemia.layout.Vector2D');
+goog.require('goog.math');
 
 /**
  * Javascript version of CDK's AtomPlacer class. Methods for generating
@@ -324,16 +325,16 @@ kemia.layout.AtomPlacer.distributePartners = function(atom, placedNeighbours, sh
 	occupiedDirection.sub(newDirection);
 	atomsToDraw = new Array();
 
-    var placedNeighboursCountAtoms =placedNeighbours.length;
-    var unPlacedNeighboursCountAtoms = unplacedNeighbours.length; 
+    var placedNeighboursCountAtoms =placedNeighbours.countAtoms(); 
+    var unPlacedNeighboursCountAtoms = unplacedNeighbours.countAtoms(); 
 
 	if (placedNeighboursCountAtoms == 1)
 	{
 	    for (f1=0; f1<unPlacedNeighboursCountAtoms; f1++) {
-	        atomsToDraw.push(unplacedNeighbours[f1]);
+	        atomsToDraw.push(unplacedNeighbours.getAtom(f1));
 	    }
 	    addAngle = Math.PI * 2 / (unPlacedNeighboursCountAtoms + placedNeighboursCountAtoms);
-	    placedAtom = placedNeighbours[0];
+	    placedAtom = placedNeighbours.getAtom(0);
 	    xDiff = placedAtom.coord.x - atom.coord.x;
 	    yDiff = placedAtom.coord.y - atom.coord.y;
 	
@@ -367,7 +368,7 @@ kemia.layout.AtomPlacer.distributePartners = function(atom, placedNeighbours, sh
 	 // get the two sharedAtom partners with the smallest distance to the new
 		// center
     for (f1=0; f1<placedNeighboursCountAtoms; f1++) {
-        sortedAtoms.push(placedNeighbours[f1]);
+        sortedAtoms.push(placedNeighbours.getAtom(f1));
     }
     this.sortBy2DDistance(sortedAtoms, distanceMeasure);
 	closestPoint1 = new kemia.layout.Vector2D(sortedAtoms[0].coord.x,sortedAtoms[0].coord.y)
@@ -401,7 +402,7 @@ kemia.layout.AtomPlacer.distributePartners = function(atom, placedNeighbours, sh
 	addAngle = remainingAngle / (unPlacedNeighboursCountAtoms + 1);
     
 	for (fff=0; fff < unPlacedNeighboursCountAtoms; fff++){
-	    atomsToDraw.push(unplacedNeighbours[fff]);
+	    atomsToDraw.push(unplacedNeighbours.getAtom(fff));
 	}
 	radius = bondLength;
 	startAngle = this.getAngle(startAtom.coord.x - atom.coord.x, startAtom.coord.y - atom.coord.y);
@@ -443,12 +444,14 @@ kemia.layout.AtomPlacer.sortBy2DDistance = function(atoms, point){
 	 * mentioned here is calculated by a modified morgan number algorithm.
 	 */
 kemia.layout.AtomPlacer.populatePolygonCorners = function(atomsToDraw, rotationCenter, startAngle, addAngle, radius){
-    points = new Array();
+ 
+	points = new Array();
     angle = startAngle;
 	for (ad=0,ads=atomsToDraw.length; ad < ads; ad++) {
 	    angle = angle + addAngle;
 	    if (angle >= 2.0 * Math.PI)
 	        angle -= 2.0 * Math.PI;
+
 	    x = Math.cos(angle) * radius;
 	    y = Math.sin(angle) * radius;
 	    newX = x + rotationCenter.x;
@@ -477,9 +480,9 @@ kemia.layout.AtomPlacer.partitionPartners=function(atom, unplacedPartners, place
 	goog.array.forEach(atom.bonds.getValues(), function(bond){
 		var other_atom = bond.otherAtom(atom);
 		if (other_atom.flags[kemia.model.Flags.ISPLACED]){
-			placedPartners.push(other_atom);
+			placedPartners.addAtom(other_atom);
 		}else{
-			unplacedPartners.push(other_atom);
+			unplacedPartners.addAtom(other_atom);
 		}
 	});
 };
@@ -487,7 +490,12 @@ kemia.layout.AtomPlacer.partitionPartners=function(atom, unplacedPartners, place
 kemia.layout.AtomPlacer.markNotPlaced = function(atoms){
 	goog.array.forEach(atoms, function(atom){
 		atom.setFlag(kemia.model.Flags.ISPLACED,false);
-	});
-	
-}
+	});	
+};	
+
+kemia.layout.AtomPlacer.markPlaced = function(atoms){
+	goog.array.forEach(atoms, function(atom){
+		atom.setFlag(kemia.model.Flags.ISPLACED,true);
+	});	
+};
 

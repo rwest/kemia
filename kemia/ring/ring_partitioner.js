@@ -61,7 +61,11 @@ kemia.ring.RingPartitioner.directConnectedRings = function(ring, rings) {
 	result = [];
 	goog.array.forEach(rings, function(r) {
 		var isConnected = goog.array.some(r.atoms, function(atom) {
-			return goog.array.contains(ring.atoms, atom);
+			if (r === ring) {
+				return false;
+			} else {
+				return goog.array.contains(ring.atoms, atom);
+			}
 		});
 		if (isConnected) {
 			result.push(r);
