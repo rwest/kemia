@@ -32,6 +32,7 @@
 	goog.require('kemia.controller.plugins.Erase');
 	goog.require('kemia.controller.plugins.MoleculeEdit');
     goog.require('kemia.io.mdl');
+    goog.require('kemia.io.smiles');
 	goog.require('goog.debug.Console');
 
 </script>
@@ -46,8 +47,10 @@ function initPage(){
 
 	var toolbar = kemia.controller.DefaultToolbar.makeDefaultToolbar(goog.dom.getElement('reactionEditorToolbar'));  
 	var model = kemia.io.json.readReaction(reactionDrawing); 
+	
 	model.reagentsText = "NaOH";
 	model.conditionsText = "90" + String.fromCharCode(186) +"C";
+	
 	var editor = new kemia.controller.ReactionEditor(goog.dom.getElement('reactionEditorContainer'));
 	editor.registerPlugin(new kemia.controller.plugins.ClearEditor());
 	editor.registerPlugin(new kemia.controller.plugins.Zoom());
@@ -79,6 +82,7 @@ function initPage(){
     select1.addItem(new goog.ui.MenuItem('10', 10));
     select1.addItem(new goog.ui.MenuItem('11 (not too large any more!)', 11));
     select1.addItem(new goog.ui.MenuItem('12', 12));
+    
     
     select1.setSelectedIndex(0);
     select1.render(goog.dom.getElement('selectMolecule'));

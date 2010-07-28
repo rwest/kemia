@@ -1,4 +1,4 @@
-templates = [
+var templates = [
   {"name":"benzene",
     "atoms":[
       {"symbol":"C","coord": {"x":2.5981,"y":0.75,"z":0},"charge":0},

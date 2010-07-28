@@ -1,0 +1,91 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>kemia.view.MoleculeRenderer</title>
+<script src="../../third-party/closure/closure/goog/base.js"></script>
+<script src="../deps.js"></script>
+<script src="smiles.js"></script>
+
+<link rel="stylesheet"
+    href="../../third-party/closure/closure/goog/demos/css/demo.css">
+    <link rel="stylesheet"
+    href="../../third-party/closure/closure/goog/css/menus.css" />
+<link rel="stylesheet"
+    href="../../third-party/closure/closure/goog/css/menubutton.css">
+
+<script>
+    goog.require('kemia.controller.ReactionEditor');
+    goog.require('goog.events.EventType');
+    goog.require('goog.dom');
+    goog.require('goog.debug.Console');
+    goog.require('kemia.layout.CoordinateGenerator');
+    goog.require('goog.ui.Select');
+    goog.require('kemia.io.smiles');
+</script>
+
+
+<script>
+function draw(){
+    //uncomment next two lines to debug to console
+    //var c = new goog.debug.Console(); 
+    //c.setCapturing(true); 
+
+    var mol_renderer = new kemia.controller.ReactionEditor(goog.dom.getElement('container'),{background : {color : 'white'}});
+    var select1 = new goog.ui.Select();
+    select1.addItem(new goog.ui.MenuItem('hexaethylene glycol monophosphate', 'OCCOCCOCCOCCOCCOCCOP(O)(O)=O'));
+    select1.addItem(new goog.ui.MenuItem('Glutathione disulfide','N[C@@H](CCC(=O)N[C@@H](CSSC[C@H](NC(=O)CC[C@H](N)C(O)=O)C(=O)NCC(O)=O)C(=O)NCC(O)=O)C(O)=O'));     
+    select1.addItem(new goog.ui.MenuItem('Coenzyme B','C[C@@H](OP(O)(O)=O)[C@H](NC(=O)CCCCCCS)C(O)=O'));
+    select1.addItem(new goog.ui.MenuItem('Hexa-L-lysine monohydrobromide','[H+].[Br-].NCCCC[C@H](N)C(=O)N[C@@H](CCCCN)C(=O)N[C@@H](CCCCN)C(=O)N[C@@H](CCCCN)C(=O)N[C@@H](CCCCN)C(=O)N[C@@H](CCCCN)C(O)=O'));
+    select1.addItem(new goog.ui.MenuItem('O-phospho-L-threonine','C[C@@H](OP(O)(O)=O)[C@H](N)C(O)=O'));
+    select1.addItem(new goog.ui.MenuItem('Hexacos-2-enoic acid','[H]C(CCCCCCCCCCCCCCCCCCCCCCC)=C([H])C(O)=O'));
+    select1.addItem(new goog.ui.MenuItem('Nitroglycerin','O=N(=O)OCC(CON(=O)=O)ON(=O)=O'));
+    select1.addItem(new goog.ui.MenuItem('TetraAquaDiCyanoIron','[H][O]([H])[Fe](C#N)(C#N)([O]([H])[H])([O]([H])[H])[O]([H])[H]'));
+    select1.addItem(new goog.ui.MenuItem('benzene', 'c1ccccc1'));
+    select1.addItem(new goog.ui.MenuItem('todo.. Cerulenin','[H][C@]1(O[C@]1([H])C(=O)CC\C=C\C\C=C\C)C(N)=O'));
+    select1.addItem(new goog.ui.MenuItem('todo.. Nitrososulfamethoxazole','Cc1cc(NS(=O)(=O)c2ccc(cc2)N=O)no1'));
+	       
+    //select1.addItem(new goog.ui.MenuItem('Sulfur hexafluoride', 'FS(F)(F)(F)(F)F'));
+
+    select1.setSelectedIndex(0);
+    select1.render(goog.dom.getElement('selectMolecule'));
+
+    
+        goog.events.listen(select1, goog.ui.Component.EventType.ACTION,
+        function(e) {
+          var timer = goog.now();
+          var select = e.target;
+          var smiles = select.getValue();
+          var mol=kemia.io.smiles.parse(smiles);
+          var mol2=kemia.layout.CoordinateGenerator.generate(mol);
+          mol_renderer.setModels([mol2]);
+          goog.dom.setTextContent(goog.dom.getElement('perf'), (goog.now() - timer) + 'ms');
+        });
+        
+        }
+    
+
+</script>
+</head>
+
+<body onload="draw()">
+
+<h1>SMILES Rendering</h1>
+<fieldset>
+<legend>Demo:</legend> 
+<br>
+<label id="selectMolecule">Select a chemical to render the SMILES for: </label>
+<br>
+
+<br>
+<div id="container" style="width: 600px; height: 600px"></div>
+<br>
+</fieldset>
+<br> 
+  <div id="perf"></div> 
+
+
+<div id="container" style="width: 4000px; height: 1800px">
+
+</body>
+</html>
