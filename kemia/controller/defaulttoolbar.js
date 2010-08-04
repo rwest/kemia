@@ -17,6 +17,7 @@ goog.require('kemia.controller.plugins.AtomEdit');
 goog.require('kemia.controller.plugins.UndoRedo');
 goog.require('kemia.controller.plugins.ArrowPlusEdit');
 goog.require('kemia.controller.plugins.MoleculeEdit');
+goog.require('kemia.controller.TemplateMenuButtonRenderer');
 
 
 
@@ -59,18 +60,31 @@ kemia.controller.DefaultToolbar.makeDefaultToolbar = function(elem) {
     atom_select.setMenu(atom_menu);
     buttons.push(atom_select);
     
-    
     var bond_select = kemia.controller.ToolbarFactory.makeSelectButton(kemia.controller.plugins.BondEdit.COMMAND, 'select Bond Type', 'Bond');
     var bond_menu = new goog.ui.Menu();
-    
     goog.array.forEach(kemia.controller.plugins.BondEdit.BOND_TYPES, function(entry){
     	bond_menu.addItem(new goog.ui.Option(entry.caption, entry));
     });
-
     bond_select.setMenu(bond_menu);
     buttons.push(bond_select);	
+    
+   var renderer =  kemia.controller.TemplateMenuButtonRenderer.getInstance();
+//   var renderer = undefined;
+    var template_select = kemia.controller.ToolbarFactory.makeSelectButton(kemia.controller.plugins.MoleculeEdit.COMMAND, 'select Template', 'Template', undefined,  renderer);
+
+    var template_menu = new goog.ui.Menu();
+    goog.array.forEach(kemia.controller.plugins.MoleculeEdit.TEMPLATES, function(template){
+ //   	var div = goog.dom.createDom(goog.dom.TagName.DIV,{style:"width:80px;height:40px"});
+//    	var editor = new kemia.controller.ReactionEditor(div);
+//    	editor.setModels([ kemia.io.json.readMolecule(template)]);
+    	template_menu.addItem(new goog.ui.Option(template.name, template));
+    });
+    template_select.setMenu(template_menu);
+    buttons.push(template_select);
+    
     buttons.push(kemia.controller.ToolbarFactory.makeToggleButton(kemia.controller.plugins.ArrowPlusEdit.COMMAND.EDIT_ARROW, 'arrow', 'arrow'));
     buttons.push(kemia.controller.ToolbarFactory.makeToggleButton(kemia.controller.plugins.ArrowPlusEdit.COMMAND.EDIT_PLUS, 'plus', 'plus'));
+//    buttons.push(kemia.controller.ToolbarFactory.makeButton(kemia.controller.plugins.Smiles.COMMAND, 'SMILES', 'paste SMILES'));
     return kemia.controller.DefaultToolbar.makeToolbar(buttons, elem);
 
 };

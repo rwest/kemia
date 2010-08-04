@@ -74,7 +74,7 @@ kemia.controller.plugins.AtomEdit.prototype.handleMouseUp = function(e) {
 	var target = targets.length > 0 ? targets[0] : undefined;
 	if (this.dragSource && target instanceof kemia.model.Atom) {
 		this.editorObject.dispatchBeforeChange();
-		this.mergeMolecules(this.dragSource, target);
+		kemia.controller.plugins.AtomEdit.mergeMolecules(this.dragSource, target);
 		this.dragSource = undefined;
 		this.editorObject.setModels(this.editorObject.getModels());
 		this.editorObject.dispatchChange();
@@ -88,7 +88,7 @@ kemia.controller.plugins.AtomEdit.prototype.handleMouseUp = function(e) {
  * 
  * @return{kemia.model.Molecule} resulting merged molecule
  */
-kemia.controller.plugins.AtomEdit.prototype.mergeMolecules = function(
+kemia.controller.plugins.AtomEdit.mergeMolecules = function(
 		source_atom, target_atom) {
 	// replace target atom with source atom
 

@@ -82,6 +82,10 @@ kemia.controller.plugins.BondEdit.BOND_TYPES = [ {
 kemia.controller.plugins.BondEdit.prototype.logger = goog.debug.Logger
 		.getLogger('kemia.controller.plugins.BondEdit');
 
+kemia.controller.plugins.BondEdit.prototype.handleDoubleClick = function(e) {
+	this.logger.info('handleDoubleClick');
+}
+
 kemia.controller.plugins.BondEdit.prototype.handleMouseDown = function(e) {
 
 	// if (this.isActive) {
@@ -97,7 +101,15 @@ kemia.controller.plugins.BondEdit.prototype.handleMouseDown = function(e) {
 			this.replaceBond(target);
 			this.editorObject.setModels(this.editorObject.getModels());
 		} else {
-			this.drag(e, target);
+			if (target._last_click) {
+				if ((goog.now() - target._last_click) < 1000) {
+					this.toggleBondType(target);
+					this.editorObject.setModels(this.editorObject.getModels());
+				} else {
+					this.drag(e, target);
+				}
+			}
+			target._last_click = goog.now();
 		}
 	}
 	if (target == undefined && this.bond_type) {
@@ -131,6 +143,21 @@ kemia.controller.plugins.BondEdit.prototype.createMolecule = function(pos) {
 		}
 		// no arrow
 		reaction.addReactant(molecule);
+	}
+};
+
+kemia.controller.plugins.BondEdit.prototype.toggleBondType = function(bond) {
+	if (bond.stereo == kemia.model.Bond.STEREO.NOT_STEREO) {
+		var order = kemia.model.Bond.ORDER.SINGLE;
+		if (bond.order == kemia.model.Bond.ORDER.SINGLE) {
+			order = kemia.model.Bond.ORDER.DOUBLE;
+		} else if (bond.order == kemia.model.Bond.ORDER.DOUBLE) {
+			order = kemia.model.Bond.ORDER.TRIPLE;
+		}
+		var new_bond = new kemia.model.Bond(bond.target, bond.source, order, bond.stereo);
+		var molecule = bond.molecule;
+		molecule.removeBond(bond);
+		molecule.addBond(new_bond);
 	}
 };
 

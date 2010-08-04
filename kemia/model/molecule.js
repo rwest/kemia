@@ -32,20 +32,20 @@ kemia.model.Molecule = function(opt_name) {
 	 * @type {string}
 	 */
 	this.name = opt_name ? opt_name : "";
-	
+
 	/**
 	 * SSSR calculated for this molecule
 	 */
-	this.sssr=[];
-	this.mustRecalcSSSR=true;
+	this.sssr = [];
+	this.mustRecalcSSSR = true;
 
-        /**
+	/**
 	 * Keep track of fragments, this avoids the need to ever compute it which is
 	 * potentially time consuming. This array stores the fragment index for each
 	 * atom.
-         */
-        this.fragments = [];
-        this.fragmentCount = 0;
+	 */
+	this.fragments = [];
+	this.fragmentCount = 0;
 
 };
 
@@ -57,27 +57,27 @@ kemia.model.Molecule = function(opt_name) {
  */
 
 kemia.model.Molecule.prototype.addBond = function(bond) {
-        var sourceIndex = this.indexOfAtom(bond.source);
-        var targetIndex = this.indexOfAtom(bond.target);
-        // check if the bond connects two previously unconnected fragments
-        if (this.fragments[sourceIndex] != this.fragments[targetIndex]) {
-            var before, after;
-            if (this.fragments[sourceIndex] < this.fragments[targetIndex]) {
-                before = this.fragments[sourceIndex];
-                after = this.fragments[targetIndex];
-            } else {
-                after = this.fragments[sourceIndex];
-                before = this.fragments[targetIndex];
-            }
+	var sourceIndex = this.indexOfAtom(bond.source);
+	var targetIndex = this.indexOfAtom(bond.target);
+	// check if the bond connects two previously unconnected fragments
+	if (this.fragments[sourceIndex] != this.fragments[targetIndex]) {
+		var before, after;
+		if (this.fragments[sourceIndex] < this.fragments[targetIndex]) {
+			before = this.fragments[sourceIndex];
+			after = this.fragments[targetIndex];
+		} else {
+			after = this.fragments[sourceIndex];
+			before = this.fragments[targetIndex];
+		}
 
-            this.fragmentCount--;
+		this.fragmentCount--;
 
-            for (var i = 0, li = this.atoms.length; i < li; i++) {
-                if (this.fragments[i] == before) {
-                    this.fragments[i] = after;
-                }
-            }
-        }
+		for ( var i = 0, li = this.atoms.length; i < li; i++) {
+			if (this.fragments[i] == before) {
+				this.fragments[i] = after;
+			}
+		}
+	}
 	this.bonds.push(bond);
 	bond.source.bonds.add(bond);
 	bond.target.bonds.add(bond);
@@ -118,14 +118,14 @@ kemia.model.Molecule.prototype.getBond = function(id) {
  * @return{kemia.model.Bond}
  */
 kemia.model.Molecule.prototype.findBond = function(atom1, atom2) {
-    var bonds = atom1.bonds.getValues();
-    for (var i = 0, li = bonds.length; i < li; i++) {
-        var bond = bonds[i];
-        if (bond.otherAtom(atom1) == atom2) {
-            return bond;
-        }
-    }
-    return null;
+	var bonds = atom1.bonds.getValues();
+	for ( var i = 0, li = bonds.length; i < li; i++) {
+		var bond = bonds[i];
+		if (bond.otherAtom(atom1) == atom2) {
+			return bond;
+		}
+	}
+	return null;
 };
 
 /**
@@ -191,14 +191,14 @@ kemia.model.Molecule.prototype.removeBond = function(bondOrId) {
 	}
 	bond.source.bonds.remove(bond);
 	bond.target.bonds.remove(bond);
-	if(bond.source.bonds.length==0){
+	if (bond.source.bonds.length == 0) {
 		goog.array.remove(this.atoms, bond.source);
 		bond.source.molecule = undefined;
 	}
-	if(bond.target.bonds.length==0){
+	if (bond.target.bonds.length == 0) {
 		goog.array.remove(this.atoms, bond.target);
 		bond.target.molecule = undefined;
-	
+
 	}
 	goog.array.remove(this.bonds, bond);
 	bond.molecule = undefined;
@@ -229,10 +229,10 @@ kemia.model.Molecule.prototype.countBonds = function() {
  *            atom The atom to add.
  */
 kemia.model.Molecule.prototype.addAtom = function(atom) {
-        var index = this.atoms.length;
-        // a new atom is always a new fragment
-        this.fragmentCount++;
-        this.fragments[index] = this.fragmentCount;
+	var index = this.atoms.length;
+	// a new atom is always a new fragment
+	this.fragmentCount++;
+	this.fragments[index] = this.fragmentCount;
 	this.atoms.push(atom);
 	atom.molecule = this;
 };
@@ -242,13 +242,13 @@ kemia.model.Molecule.prototype.addAtom = function(atom) {
  * 
  * @return{Array.<kemia.ring.Ring>}
  */
-kemia.model.Molecule.prototype.getRings = function(){
+kemia.model.Molecule.prototype.getRings = function() {
 
-    if (this.mustRecalcSSSR) {
-        this.mustRecalcSSSR = false;
-        this.sssr = kemia.ring.RingFinder.findRings(this);
-    }
-    return this.sssr;
+	if (this.mustRecalcSSSR) {
+		this.mustRecalcSSSR = false;
+		this.sssr = kemia.ring.RingFinder.findRings(this);
+	}
+	return this.sssr;
 };
 
 /**
@@ -276,7 +276,7 @@ kemia.model.Molecule.prototype.getFragments = function() {
 	var mol = this.clone();
 	if (mol.fragmentCount == 1) {
 		return [ mol ];
-}
+	}
 	var fragments = new goog.structs.Map();
 	goog.array.forEach(mol.atoms, function(atom) {
 		var frag = mol.fragments[mol.indexOfAtom(atom)];
@@ -293,24 +293,49 @@ kemia.model.Molecule.prototype.getFragments = function() {
 
 };
 
-
 /**
- *  Returns all bonds connected to the given atom.
- *
+ * Returns all bonds connected to the given atom.
+ * 
  */
-kemia.model.Molecule.prototype.getConnectedBondsList = function(atom){
+kemia.model.Molecule.prototype.getConnectedBondsList = function(atom) {
 	bondsList = new Array();
 	bondCount = this.bonds.length;
 	for (i = 0; i < bondCount; i++) {
-		if (this.bonds[i].source == atom || this.bonds[i].target == atom) 
+		if (this.bonds[i].source == atom || this.bonds[i].target == atom)
 			bondsList.push(this.bonds[i]);
 	}
 	return bondsList;
 };
 
-kemia.model.Molecule.prototype.toString = function(){
-	return goog.array.map(this.atoms, function(atom){
+/**
+ * string representation of molecule
+ * 
+ * @return {string}
+ */
+kemia.model.Molecule.prototype.toString = function() {
+	return goog.array.map(this.atoms, function(atom) {
 		return atom.symbol + atom.index + atom.coord.toString();
 	});
-
 };
+/**
+ * returns center coordinates of molecule's atoms
+ * 
+ * @return {goog.math.Coordinate}
+ */
+kemia.model.Molecule.prototype.getCenter = function() {
+	var box = this.getBoundingBox();
+	return new goog.math.Coordinate((box.left + box.right) / 2,
+			(box.top + box.bottom) / 2);
+};
+
+/**
+ * returns bounding box of molecule's atoms
+ * 
+ * @return {goog.math.Box}
+ */
+kemia.model.Molecule.prototype.getBoundingBox = function() {
+	return goog.math.Box.boundingBox.apply(null, goog.array.map(this.atoms,
+			function(a) {
+				return a.coord;
+			}));
+}

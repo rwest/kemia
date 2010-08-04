@@ -16,6 +16,7 @@ goog.require('goog.ui.ToolbarMenuButton');
 goog.require('goog.ui.ToolbarRenderer');
 goog.require('goog.ui.ToolbarSelect');
 goog.require('goog.userAgent');
+goog.require('goog.ui.LabelInput');
 
 goog.exportSymbol('kemia.controller.ToolbarFactory.makeButton', kemia.controller.ToolbarFactory.makeButton);
 

@@ -31,6 +31,7 @@
 	goog.require('kemia.controller.plugins.ArrowPlusEdit');
 	goog.require('kemia.controller.plugins.Erase');
 	goog.require('kemia.controller.plugins.MoleculeEdit');
+	goog.require('kemia.controller.plugins.Smiles');
     goog.require('kemia.io.mdl');
     goog.require('kemia.io.smiles');
 	goog.require('goog.debug.Console');
@@ -61,6 +62,7 @@ function initPage(){
 	editor.registerPlugin(new kemia.controller.plugins.BondEdit());
 	editor.registerPlugin(new kemia.controller.plugins.ArrowPlusEdit());
 	editor.registerPlugin(new kemia.controller.plugins.MoleculeEdit());
+	editor.registerPlugin(new kemia.controller.plugins.Smiles());
 	
     var toolbarController = new kemia.controller.ToolbarController(editor, toolbar);
 	editor.setModels([model]);
@@ -93,6 +95,7 @@ function initPage(){
           var select = e.target;
           var idx = select.getValue();
           var molfile=sdfs[idx];
+          alert(sdf);
           var mol=kemia.io.mdl.readMolfile(molfile);
 	      mol_renderer.setModels([mol]);
 	      goog.dom.setTextContent(goog.dom.getElement('perf'), (goog.now() - timer) + 'ms');

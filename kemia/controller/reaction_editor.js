@@ -333,7 +333,15 @@ kemia.controller.ReactionEditor.prototype.handleMouseDown_ = function(e) {
 
 kemia.controller.ReactionEditor.prototype.handleMouseUp_ = function(e) {
 	this.invokeShortCircuitingOp_(kemia.controller.Plugin.Op.MOUSEUP, e);
-}
+};
+
+kemia.controller.ReactionEditor.prototype.handleDblclick_ =  function(e) {
+	this.invokeShortCircuitingOp_(kemia.controller.Plugin.Op.DBLCLICK, e);
+};
+
+kemia.controller.ReactionEditor.prototype.handlePaste_ = function(e) {
+	this.invokeShortCircuitingOp_(kemia.controller.Plugin.Op.PASTE, e);
+};
 
 /**
  * Gets the value of this command.
@@ -741,6 +749,8 @@ kemia.controller.ReactionEditor.prototype.setupChangeListeners_ = function() {
 	this.addListener(goog.events.EventType.MOUSEDOWN, this.handleMouseDown_);
 	this.addListener(goog.events.EventType.MOUSEMOVE, this.handleMouseMove_);
 	this.addListener(goog.events.EventType.MOUSEUP, this.handleMouseUp_);
+	this.addListener(goog.events.EventType.DBLCLICK, this.handleDblclick_);
+	this.addListener('paste', this.handlePaste_);
 
 };
 

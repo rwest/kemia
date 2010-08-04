@@ -275,9 +275,10 @@ kemia.controller.ToolbarController.prototype.updateToolbarFromState = function(
  */
 kemia.controller.ToolbarController.prototype.handleAction = function(e) {
 	var command = this.getCommand(e.target.getId());
+	var value = e.target.getValue();
 	var checked;
 	if (e.target.isChecked) {
 		checked = e.target.isChecked();
 	} 
-	this.editor_.execCommand(command, e.target.getValue(), checked);
+	this.editor_.execCommand(command, value, checked, e);
 };

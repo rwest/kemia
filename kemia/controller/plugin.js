@@ -170,7 +170,9 @@ kemia.controller.Plugin.Op = {
 	ARROW_MOUSEDOWN: 21,
 	PLUS_MOUSEOVER: 22,
 	PLUS_MOUSEOUT: 23,
-	PLUS_MOUSEDOWN: 24
+	PLUS_MOUSEDOWN: 24,
+	PASTE: 25,
+	DBLCLICK: 26
 };
 
 /**
@@ -208,7 +210,9 @@ kemia.controller.Plugin.OPCODE = goog.object.transpose(goog.reflect.object(
 			handleArrowMouseDown : kemia.controller.Plugin.Op.ARROW_MOUSEDOWN,
 			handlePlusMouseOver : kemia.controller.Plugin.Op.PLUS_MOUSEOVER,
 			handlePlusMouseOut: kemia.controller.Plugin.Op.PLUS_MOUSEOUT,
-			handlePlusMouseDown: kemia.controller.Plugin.Op.PLUS_MOUSEDOWN
+			handlePlusMouseDown: kemia.controller.Plugin.Op.PLUS_MOUSEDOWN,
+			handlePaste: kemia.controller.Plugin.Op.PASTE,
+			handleDoubleClick: kemia.controller.Plugin.Op.DBLCLICK
 		}));
 
 /**
