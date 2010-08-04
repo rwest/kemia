@@ -68,15 +68,12 @@ kemia.controller.DefaultToolbar.makeDefaultToolbar = function(elem) {
     bond_select.setMenu(bond_menu);
     buttons.push(bond_select);	
     
-   var renderer =  kemia.controller.TemplateMenuButtonRenderer.getInstance();
-//   var renderer = undefined;
+//   var renderer =  kemia.controller.TemplateMenuButtonRenderer.getInstance();
+   var renderer = undefined;
     var template_select = kemia.controller.ToolbarFactory.makeSelectButton(kemia.controller.plugins.MoleculeEdit.COMMAND, 'select Template', 'Template', undefined,  renderer);
 
     var template_menu = new goog.ui.Menu();
     goog.array.forEach(kemia.controller.plugins.MoleculeEdit.TEMPLATES, function(template){
- //   	var div = goog.dom.createDom(goog.dom.TagName.DIV,{style:"width:80px;height:40px"});
-//    	var editor = new kemia.controller.ReactionEditor(div);
-//    	editor.setModels([ kemia.io.json.readMolecule(template)]);
     	template_menu.addItem(new goog.ui.Option(template.name, template));
     });
     template_select.setMenu(template_menu);

@@ -95,7 +95,7 @@ function initPage(){
           var select = e.target;
           var idx = select.getValue();
           var molfile=sdfs[idx];
-          alert(sdf);
+          //alert(sdf);
           var mol=kemia.io.mdl.readMolfile(molfile);
 	      mol_renderer.setModels([mol]);
 	      goog.dom.setTextContent(goog.dom.getElement('perf'), (goog.now() - timer) + 'ms');
