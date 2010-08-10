@@ -38,12 +38,12 @@ kemia.controller.DefaultToolbar.makeDefaultToolbar = function(elem) {
 	
 	var buttons = []; 
 	buttons.push(kemia.controller.ToolbarFactory.makeButton( 
-    	kemia.controller.plugins.ClearEditor.COMMAND, 'Clear Editor', 'Clear')); 
-    buttons.push(kemia.controller.ToolbarFactory.makeButton(kemia.controller.plugins.Zoom.COMMAND.ZOOM_IN, 'zoom in', '+'));
-    buttons.push(kemia.controller.ToolbarFactory.makeButton(kemia.controller.plugins.Zoom.COMMAND.ZOOM_OUT, 'zoom out', '-'));
-    buttons.push(kemia.controller.ToolbarFactory.makeButton(kemia.controller.plugins.UndoRedo.COMMAND.UNDO, 'undo', 'undo'));
-    buttons.push(kemia.controller.ToolbarFactory.makeButton(kemia.controller.plugins.UndoRedo.COMMAND.REDO, 'redo', 'redo'));
-    buttons.push(kemia.controller.ToolbarFactory.makeToggleButton(kemia.controller.plugins.Erase.COMMAND, 'erase', 'erase'));
+    	kemia.controller.plugins.ClearEditor.COMMAND, 'Clear Editor', '', goog.getCssName('tr-icon') + ' ' + goog.getCssName('tr-clear'))); 
+    buttons.push(kemia.controller.ToolbarFactory.makeButton(kemia.controller.plugins.Zoom.COMMAND.ZOOM_IN, 'zoom in', '', goog.getCssName('tr-icon') + ' ' + goog.getCssName('tr-zoom-in')));
+    buttons.push(kemia.controller.ToolbarFactory.makeButton(kemia.controller.plugins.Zoom.COMMAND.ZOOM_OUT, 'zoom out', '', goog.getCssName('tr-icon') + ' ' + goog.getCssName('tr-zoom-out')));
+    buttons.push(kemia.controller.ToolbarFactory.makeButton(kemia.controller.plugins.UndoRedo.COMMAND.UNDO, 'undo', '', goog.getCssName('tr-icon') + ' ' + goog.getCssName('tr-undo')));
+    buttons.push(kemia.controller.ToolbarFactory.makeButton(kemia.controller.plugins.UndoRedo.COMMAND.REDO, 'redo', '', goog.getCssName('tr-icon') + ' ' + goog.getCssName('tr-redo')));
+    buttons.push(kemia.controller.ToolbarFactory.makeToggleButton(kemia.controller.plugins.Erase.COMMAND, 'erase', '', goog.getCssName('tr-icon') + ' ' + goog.getCssName('tr-erase')));
   
     var atom_select = kemia.controller.ToolbarFactory.makeSelectButton(kemia.controller.plugins.AtomEdit.COMMAND, 'select Symbol', 'Symbol');
     var atom_menu = new goog.ui.Menu();
@@ -79,8 +79,8 @@ kemia.controller.DefaultToolbar.makeDefaultToolbar = function(elem) {
     template_select.setMenu(template_menu);
     buttons.push(template_select);
     
-    buttons.push(kemia.controller.ToolbarFactory.makeToggleButton(kemia.controller.plugins.ArrowPlusEdit.COMMAND.EDIT_ARROW, 'arrow', 'arrow'));
-    buttons.push(kemia.controller.ToolbarFactory.makeToggleButton(kemia.controller.plugins.ArrowPlusEdit.COMMAND.EDIT_PLUS, 'plus', 'plus'));
+    buttons.push(kemia.controller.ToolbarFactory.makeToggleButton(kemia.controller.plugins.ArrowPlusEdit.COMMAND.EDIT_ARROW, 'arrow', '', goog.getCssName('tr-icon') + ' ' + goog.getCssName('tr-arrow')));
+    buttons.push(kemia.controller.ToolbarFactory.makeToggleButton(kemia.controller.plugins.ArrowPlusEdit.COMMAND.EDIT_PLUS, 'plus', '', goog.getCssName('tr-icon') + ' ' + goog.getCssName('tr-plus')));
 //    buttons.push(kemia.controller.ToolbarFactory.makeButton(kemia.controller.plugins.Smiles.COMMAND, 'SMILES', 'paste SMILES'));
     return kemia.controller.DefaultToolbar.makeToolbar(buttons, elem);
 

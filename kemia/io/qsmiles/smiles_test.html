@@ -7,10 +7,11 @@
 <script src="../../deps.js"></script>
 <script>
 	goog.require('goog.testing.jsunit');
-
+	goog.require('kemia.io.mdl');
 </script>
 <script src="smiles.js"></script>
 <script src="smiles_test_mols.js"></script>
+<script src="CID_6540681.js"></script>
 <script><!--
  	var rxn;
  	var mol;
@@ -34,6 +35,17 @@
 		}
 
 	}
+	
+	function testCid6540681(){
+		var smiles = "CC1C(C(C(C(O1)OCC2C(C(C(C(O2)OC3=C([O+]=C4C=C(C=C(C4=C3)OC5C(C(C(C(O5)CO)O)O)O)O)C6=CC(=C(C(=C6)OC)O)O)O)O)O)O)O)OC(=O)C=CC7=CC=C(C=C7)O";
+        var mol1=kemia.io.smiles.parse(smiles);
+        var rings1 = kemia.ring.RingFinder.findRings(mol1);
+        var mol2 = kemia.io.mdl.readMolfile(cid_6540681);
+        var rings2 = kemia.ring.RingFinder.findRings(mol2);
+        assertEquals('should have same number of rings', rings1.length, rings2.length);
+        assertEquals('should have same number of atoms', mol1.atoms.length, mol2.atoms.length);
+        assertEquals('should have same number of bonds', mol1.bonds.length, mol2.bonds.length);
+    }
 --></script>
 </head>
 <body>

@@ -22,5 +22,7 @@ var _allTests = [ "kemia/algorithm/symmetry/symmetry_test.html",
 		  "kemia/model/model_test.html", 
 		  "kemia/ring/hanser_test.html",
 		  "kemia/ring/sssr_test.html",
+		  "kemia/ring/ring_finder_test.html", 
+		  "kemia/ring/ring_partitioner_test.html", 
 		  "kemia/controller/plugin_test.html",  
 		  "kemia/controller/reaction_editor_test.html"];
