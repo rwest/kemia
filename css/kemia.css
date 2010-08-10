@@ -347,7 +347,7 @@ See the COPYING file for details.
 /* State: resting. */
 .goog-menu-button {
   /* Client apps may override the URL at which they serve the image. */
-  background: #ddd url(https://ssl.gstatic.com/editor/button-bg.png) repeat-x top left;
+  background: #ddd url(../images/button-bg.png) repeat-x top left;
   border: 0;
   color: #000;
   cursor: pointer;
@@ -472,8 +472,7 @@ See the COPYING file for details.
 .goog-menu-button-dropdown {
   width: 7px;
   /* Client apps may override the URL at which they serve the sprite. */
-  background: url(https://ssl.gstatic.com/editor/editortoolbar.png) no-repeat -388px 0; */
-  /* background: url(../images/kemia_toolbar.png) no-repeat -736px 0; */
+  background: url(https://ssl.gstatic.com/editor/editortoolbar.png) no-repeat -388px 0;
   vertical-align: top;
 }
 /*
@@ -828,16 +827,17 @@ See the COPYING file for details.
 
 /* Menu button caption style. */
 .goog-toolbar-menu-button-caption {
-  padding: 0 4px 0 0;
-  vertical-align: middle;
+  padding: 0 2px 0 0;
+  vertical-align: top;
 }
 
 /* Dropdown style. */
 .goog-toolbar-menu-button-dropdown {
   width: 7px;
   /* Client apps may override the URL at which they serve the sprite. */
-  background: url(https://ssl.gstatic.com/editor/editortoolbar.png) no-repeat -388px 0;
-  vertical-align: middle;
+ /* background: url(https://ssl.gstatic.com/editor/editortoolbar.png) no-repeat -388px; */
+  vertical-align: top;
+
 }
 
 
@@ -872,6 +872,8 @@ See the COPYING file for details.
 }
 
 .goog-toolbar-select .goog-toolbar-menu-button-inner-box {
+  width: 30px;
+  height: 30px;
   border-width: 0 1px;
   border-style: solid;
   padding: 3px;
@@ -925,7 +927,7 @@ See the COPYING file for details.
 
 /* Erase */
 .tr-erase {
-	background-position: -352px;
+	background-position: -32px;
 }
 
 /* Plus */
@@ -938,6 +940,20 @@ See the COPYING file for details.
 	background-position: -128px;
 }
 
+/* Symbol */
+.tr-symbol {
+	background-position: -737px;
+}
+
+/* Bond */
+.tr-bond {
+	background-position: -768px;
+}
+
+/* Template */
+.tr-template {
+	background-position: -192px;
+}
 
 
 

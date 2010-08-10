@@ -52,7 +52,7 @@ function initPage(){
 	model.reagentsText = "NaOH";
 	model.conditionsText = "90" + String.fromCharCode(186) +"C";
 	
-	var editor = new kemia.controller.ReactionEditor(goog.dom.getElement('reactionEditorContainer'));
+	var editor = new kemia.controller.ReactionEditor(goog.dom.getElement('reactionEditorContainer'),{background : {color : 'white'}});
 	editor.registerPlugin(new kemia.controller.plugins.ClearEditor());
 	editor.registerPlugin(new kemia.controller.plugins.Zoom());
 	editor.registerPlugin(new kemia.controller.plugins.UndoRedo());
@@ -109,30 +109,30 @@ goog.events.listen(window, goog.events.EventType.LOAD, initPage);
 </head>
 
 <body>
-<h1>Reaction Editing</h1>
+
 <fieldset>
-<legend>Demo:</legend>
+<legend><h1>Reaction Editor</h1></legend>
 <table style="width: 100%">
 	<tr>
 		<td>
-		<div id="reactionEditorToolbar"></div>
+		
 		</td>
 	</tr>
 	<tr>
 		<td>
+		<div id="reactionEditorToolbar"></div>
 		<div
 			style="width: 1000px; height: 400px; overflow: auto; padding: 5px">
-		<div id="reactionEditorContainer" style="width: 1000px; height: 400px"></div>
-		</div>
+		<div id="reactionEditorContainer" style="width: 1000px; height: 400px">
 		</td>
 	</tr>
 
 </table>
 
 </fieldset>
-<h1>Molecule Rendering</h1>
+
 <fieldset>
-<legend>Demo:</legend> 
+<legend><h1>Molecule Rendering</h1></legend> 
 <br>
 <label id="selectMolecule">Select a molecule to render: </label>
 <br>
