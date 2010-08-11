@@ -19,8 +19,6 @@ goog.require('kemia.controller.plugins.ArrowPlusEdit');
 goog.require('kemia.controller.plugins.MoleculeEdit');
 goog.require('kemia.controller.TemplateMenuButtonRenderer');
 
-
-
 /**
  * Creates a {@link goog.ui.Toolbar} containing a default set of editor toolbar
  * buttons, and renders it into the given parent element.
@@ -35,54 +33,116 @@ goog.require('kemia.controller.TemplateMenuButtonRenderer');
  * @see kemia.controller.DefaultToolbar.DEFAULT_BUTTONS
  */
 kemia.controller.DefaultToolbar.makeDefaultToolbar = function(elem) {
-	
-	var buttons = []; 
-	buttons.push(kemia.controller.ToolbarFactory.makeButton( 
-    	kemia.controller.plugins.ClearEditor.COMMAND, 'Erase All', '', goog.getCssName('tr-icon') + ' ' + goog.getCssName('tr-clear'))); 
-    buttons.push(kemia.controller.ToolbarFactory.makeButton(kemia.controller.plugins.Zoom.COMMAND.ZOOM_IN, 'Zoom In', '', goog.getCssName('tr-icon') + ' ' + goog.getCssName('tr-zoom-in')));
-    buttons.push(kemia.controller.ToolbarFactory.makeButton(kemia.controller.plugins.Zoom.COMMAND.ZOOM_OUT, 'Zoom Out', '', goog.getCssName('tr-icon') + ' ' + goog.getCssName('tr-zoom-out')));
-    buttons.push(kemia.controller.ToolbarFactory.makeButton(kemia.controller.plugins.UndoRedo.COMMAND.UNDO, 'Undo', '', goog.getCssName('tr-icon') + ' ' + goog.getCssName('tr-undo')));
-    buttons.push(kemia.controller.ToolbarFactory.makeButton(kemia.controller.plugins.UndoRedo.COMMAND.REDO, 'Redo', '', goog.getCssName('tr-icon') + ' ' + goog.getCssName('tr-redo')));
-    buttons.push(kemia.controller.ToolbarFactory.makeToggleButton(kemia.controller.plugins.Erase.COMMAND, 'Erase', '', goog.getCssName('tr-icon') + ' ' + goog.getCssName('tr-erase')));
-  
-    var atom_select = kemia.controller.ToolbarFactory.makeSelectButton(kemia.controller.plugins.AtomEdit.COMMAND, 'Atomic Symbol', '', goog.getCssName('tr-icon') + ' ' + goog.getCssName('tr-symbol'));
-    var atom_menu = new goog.ui.Menu();
-    atom_menu.addItem(new goog.ui.Option(goog.dom.createDom(goog.dom.TagName.DIV,{style:"color:black"},'C')));
-    atom_menu.addItem(new goog.ui.Option(goog.dom.createDom(goog.dom.TagName.DIV,{style:"color:blue"},'N')));
-    atom_menu.addItem(new goog.ui.Option(goog.dom.createDom(goog.dom.TagName.DIV,{style:"color:red"},'O')));
-    atom_menu.addItem(new goog.ui.Option(goog.dom.createDom(goog.dom.TagName.DIV,{style:"color:yellow"},'S')));
-    atom_menu.addItem(new goog.ui.Option(goog.dom.createDom(goog.dom.TagName.DIV,{style:"color:orange"},'P')));
-    atom_menu.addItem(new goog.ui.Option(goog.dom.createDom(goog.dom.TagName.DIV,{style:"color:green"},'F')));
-    atom_menu.addItem(new goog.ui.Option(goog.dom.createDom(goog.dom.TagName.DIV,{style:"color:green"},'Cl')));
-    atom_menu.addItem(new goog.ui.Option(goog.dom.createDom(goog.dom.TagName.DIV,{style:"color:DarkRed"},'Br')));
-    
-   // atom_menu.addItem(new goog.ui.Option('...'));//TTD periodic table
-    atom_select.setMenu(atom_menu);
-    buttons.push(atom_select);
-    
-    var bond_select = kemia.controller.ToolbarFactory.makeSelectButton(kemia.controller.plugins.BondEdit.COMMAND, 'Bond Type', '', goog.getCssName('tr-icon') + ' ' + goog.getCssName('tr-bond') );
-    var bond_menu = new goog.ui.Menu();
-    goog.array.forEach(kemia.controller.plugins.BondEdit.BOND_TYPES, function(entry){
-    	bond_menu.addItem(new goog.ui.Option(entry.caption, entry));
-    });
-    bond_select.setMenu(bond_menu);
-    buttons.push(bond_select);	
-    
-//   var renderer =  kemia.controller.TemplateMenuButtonRenderer.getInstance();
-   var renderer = undefined;
-    var template_select = kemia.controller.ToolbarFactory.makeSelectButton(kemia.controller.plugins.MoleculeEdit.COMMAND, 'Template', '', goog.getCssName('tr-icon') + ' ' + goog.getCssName('tr-template'),  renderer);
 
-    var template_menu = new goog.ui.Menu();
-    goog.array.forEach(kemia.controller.plugins.MoleculeEdit.TEMPLATES, function(template){
-    	template_menu.addItem(new goog.ui.Option(template.name, template));
-    });
-    template_select.setMenu(template_menu);
-    buttons.push(template_select);
-    
-    buttons.push(kemia.controller.ToolbarFactory.makeToggleButton(kemia.controller.plugins.ArrowPlusEdit.COMMAND.EDIT_PLUS, 'Plus', '', goog.getCssName('tr-icon') + ' ' + goog.getCssName('tr-plus')));
-    buttons.push(kemia.controller.ToolbarFactory.makeToggleButton(kemia.controller.plugins.ArrowPlusEdit.COMMAND.EDIT_ARROW, 'Arrow', '', goog.getCssName('tr-icon') + ' ' + goog.getCssName('tr-arrow')));
-//    buttons.push(kemia.controller.ToolbarFactory.makeButton(kemia.controller.plugins.Smiles.COMMAND, 'SMILES', 'paste SMILES'));
-    return kemia.controller.DefaultToolbar.makeToolbar(buttons, elem);
+	var buttons = [];
+	buttons.push(kemia.controller.ToolbarFactory.makeButton(
+			kemia.controller.plugins.ClearEditor.COMMAND, 'Erase All', '', goog
+					.getCssName('tr-icon')
+					+ ' ' + goog.getCssName('tr-clear')));
+	buttons.push(kemia.controller.ToolbarFactory.makeButton(
+			kemia.controller.plugins.Zoom.COMMAND.ZOOM_IN, 'Zoom In', '', goog
+					.getCssName('tr-icon')
+					+ ' ' + goog.getCssName('tr-zoom-in')));
+	buttons.push(kemia.controller.ToolbarFactory.makeButton(
+			kemia.controller.plugins.Zoom.COMMAND.ZOOM_OUT, 'Zoom Out', '',
+			goog.getCssName('tr-icon') + ' ' + goog.getCssName('tr-zoom-out')));
+	var undo = kemia.controller.ToolbarFactory.makeButton(
+			kemia.controller.plugins.UndoRedo.COMMAND.UNDO, 'Undo', '', goog
+					.getCssName('tr-icon')
+					+ ' ' + goog.getCssName('tr-undo'));
+	undo.queryable = true;
+	buttons.push(undo);
+	var redo = kemia.controller.ToolbarFactory.makeButton(
+			kemia.controller.plugins.UndoRedo.COMMAND.REDO, 'Redo', '', goog
+					.getCssName('tr-icon')
+					+ ' ' + goog.getCssName('tr-redo'));
+	redo.queryable = true;
+	buttons.push(redo);
+	buttons.push(kemia.controller.ToolbarFactory.makeToggleButton(
+			kemia.controller.plugins.Erase.COMMAND, 'Erase', '', goog
+					.getCssName('tr-icon')
+					+ ' ' + goog.getCssName('tr-erase')));
+
+	var atom_select = kemia.controller.ToolbarFactory.makeSelectButton(
+			kemia.controller.plugins.AtomEdit.COMMAND, 'Atomic Symbol', '',
+			goog.getCssName('tr-icon') + ' ' + goog.getCssName('tr-symbol'));
+	var atom_menu = new goog.ui.Menu();
+	atom_menu.addItem(new goog.ui.Option(goog.dom.createDom(
+			goog.dom.TagName.DIV, {
+				style : "color:black"
+			}, 'C')));
+	atom_menu.addItem(new goog.ui.Option(goog.dom.createDom(
+			goog.dom.TagName.DIV, {
+				style : "color:blue"
+			}, 'N')));
+	atom_menu.addItem(new goog.ui.Option(goog.dom.createDom(
+			goog.dom.TagName.DIV, {
+				style : "color:red"
+			}, 'O')));
+	atom_menu.addItem(new goog.ui.Option(goog.dom.createDom(
+			goog.dom.TagName.DIV, {
+				style : "color:yellow"
+			}, 'S')));
+	atom_menu.addItem(new goog.ui.Option(goog.dom.createDom(
+			goog.dom.TagName.DIV, {
+				style : "color:orange"
+			}, 'P')));
+	atom_menu.addItem(new goog.ui.Option(goog.dom.createDom(
+			goog.dom.TagName.DIV, {
+				style : "color:green"
+			}, 'F')));
+	atom_menu.addItem(new goog.ui.Option(goog.dom.createDom(
+			goog.dom.TagName.DIV, {
+				style : "color:green"
+			}, 'Cl')));
+	atom_menu.addItem(new goog.ui.Option(goog.dom.createDom(
+			goog.dom.TagName.DIV, {
+				style : "color:DarkRed"
+			}, 'Br')));
+
+	// atom_menu.addItem(new goog.ui.Option('...'));//TTD periodic table
+	atom_select.setMenu(atom_menu);
+	buttons.push(atom_select);
+
+	var bond_select = kemia.controller.ToolbarFactory.makeSelectButton(
+			kemia.controller.plugins.BondEdit.COMMAND, 'Bond Type', '', goog
+					.getCssName('tr-icon')
+					+ ' ' + goog.getCssName('tr-bond'));
+	var bond_menu = new goog.ui.Menu();
+	goog.array.forEach(kemia.controller.plugins.BondEdit.BOND_TYPES, function(
+			entry) {
+		bond_menu.addItem(new goog.ui.Option(entry.caption, entry));
+	});
+	bond_select.setMenu(bond_menu);
+	buttons.push(bond_select);
+
+	// var renderer = kemia.controller.TemplateMenuButtonRenderer.getInstance();
+	var renderer = undefined;
+	var template_select = kemia.controller.ToolbarFactory.makeSelectButton(
+			kemia.controller.plugins.MoleculeEdit.COMMAND, 'Template', '', goog
+					.getCssName('tr-icon')
+					+ ' ' + goog.getCssName('tr-template'), renderer);
+
+	var template_menu = new goog.ui.Menu();
+	goog.array.forEach(kemia.controller.plugins.MoleculeEdit.TEMPLATES,
+			function(template) {
+				template_menu.addItem(new goog.ui.Option(template.name,
+						template));
+			});
+	template_select.setMenu(template_menu);
+	buttons.push(template_select);
+
+	buttons.push(kemia.controller.ToolbarFactory.makeToggleButton(
+			kemia.controller.plugins.ArrowPlusEdit.COMMAND.EDIT_PLUS, 'Plus',
+			'', goog.getCssName('tr-icon') + ' ' + goog.getCssName('tr-plus')));
+	buttons
+			.push(kemia.controller.ToolbarFactory.makeToggleButton(
+					kemia.controller.plugins.ArrowPlusEdit.COMMAND.EDIT_ARROW,
+					'Arrow', '', goog.getCssName('tr-icon') + ' '
+							+ goog.getCssName('tr-arrow')));
+	// buttons.push(kemia.controller.ToolbarFactory.makeButton(kemia.controller.plugins.Smiles.COMMAND,
+	// 'SMILES', 'paste SMILES'));
+	return kemia.controller.DefaultToolbar.makeToolbar(buttons, elem);
 
 };
 
@@ -93,7 +153,8 @@ kemia.controller.DefaultToolbar.makeDefaultToolbar = function(elem) {
  * built-in button) or a subclass of {@link goog.ui.Control} (to create a custom
  * control).
  * 
- * @param {!Array.<string|goog.ui.Control>} items Toolbar items; each must be a
+ * @param {!Array.
+ *            <string|goog.ui.Control>} items Toolbar items; each must be a
  *            {@link goog.editor.Command} or a {@link goog.ui.Control}.
  * @param {!Element}
  *            elem Toolbar parent element.
@@ -109,8 +170,8 @@ kemia.controller.DefaultToolbar.makeToolbar = function(items, elem) {
 
 	for ( var i = 0, button; button = items[i]; i++) {
 		if (goog.isString(button)) {
-			button = kemia.controller.DefaultToolbar
-					.makeBuiltInToolbarButton(button, domHelper);
+			button = kemia.controller.DefaultToolbar.makeBuiltInToolbarButton(
+					button, domHelper);
 		}
 		if (button) {
 			controls.push(button);
@@ -201,8 +262,8 @@ kemia.controller.DefaultToolbar.DEFAULT_BUTTONS_RTL = [];
  */
 kemia.controller.DefaultToolbar.rtlButtonFactory_ = function(id, tooltip,
 		caption, opt_classNames, opt_renderer, opt_domHelper) {
-	var button = kemia.controller.ToolbarFactory.makeToggleButton(id,
-			tooltip, caption, opt_classNames, opt_renderer, opt_domHelper);
+	var button = kemia.controller.ToolbarFactory.makeToggleButton(id, tooltip,
+			caption, opt_classNames, opt_renderer, opt_domHelper);
 	button.updateFromValue = function(value) {
 		// Enable/disable right-to-left text editing mode in the toolbar.
 		var isRtl = !!value;
@@ -240,8 +301,8 @@ kemia.controller.DefaultToolbar.rtlButtonFactory_ = function(id, tooltip,
  * @return {!goog.ui.Button} A toolbar button.
  * @private
  */
-kemia.controller.DefaultToolbar.undoRedoButtonFactory_ = function(id,
-		tooltip, caption, opt_classNames, opt_renderer, opt_domHelper) {
+kemia.controller.DefaultToolbar.undoRedoButtonFactory_ = function(id, tooltip,
+		caption, opt_classNames, opt_renderer, opt_domHelper) {
 	var button = kemia.controller.ToolbarFactory.makeButton(id, tooltip,
 			caption, opt_classNames, opt_renderer, opt_domHelper);
 	button.updateFromValue = function(value) {
@@ -275,11 +336,10 @@ kemia.controller.DefaultToolbar.undoRedoButtonFactory_ = function(id,
  */
 kemia.controller.DefaultToolbar.fontFaceFactory_ = function(id, tooltip,
 		caption, opt_classNames, opt_renderer, opt_domHelper) {
-	var button = kemia.controller.ToolbarFactory.makeSelectButton(id,
-			tooltip, caption, opt_classNames, opt_renderer, opt_domHelper);
+	var button = kemia.controller.ToolbarFactory.makeSelectButton(id, tooltip,
+			caption, opt_classNames, opt_renderer, opt_domHelper);
 	kemia.controller.DefaultToolbar.addDefaultFonts(button);
-	button
-			.setDefaultCaption(kemia.controller.DefaultToolbar.MSG_FONT_NORMAL);
+	button.setDefaultCaption(kemia.controller.DefaultToolbar.MSG_FONT_NORMAL);
 	// Font options don't have keyboard accelerators.
 	goog.dom.classes.add(button.getMenu().getContentElement(), goog
 			.getCssName('goog-menu-noaccel'));
@@ -331,8 +391,8 @@ kemia.controller.DefaultToolbar.fontFaceFactory_ = function(id, tooltip,
  */
 kemia.controller.DefaultToolbar.fontSizeFactory_ = function(id, tooltip,
 		caption, opt_classNames, opt_renderer, opt_domHelper) {
-	var button = kemia.controller.ToolbarFactory.makeSelectButton(id,
-			tooltip, caption, opt_classNames, opt_renderer, opt_domHelper);
+	var button = kemia.controller.ToolbarFactory.makeSelectButton(id, tooltip,
+			caption, opt_classNames, opt_renderer, opt_domHelper);
 	kemia.controller.DefaultToolbar.addDefaultFontSizes(button);
 	button
 			.setDefaultCaption(kemia.controller.DefaultToolbar.MSG_FONT_SIZE_NORMAL);
@@ -369,8 +429,7 @@ kemia.controller.DefaultToolbar.fontSizeFactory_ = function(id, tooltip,
  *            value Color value to update to.
  * @private
  */
-kemia.controller.DefaultToolbar.colorUpdateFromValue_ = function(button,
-		value) {
+kemia.controller.DefaultToolbar.colorUpdateFromValue_ = function(button, value) {
 	/** @preserveTry */
 	try {
 		if (goog.userAgent.IE) {
@@ -447,8 +506,8 @@ kemia.controller.DefaultToolbar.fontColorFactory_ = function(id, tooltip,
  * @return {!goog.ui.Button} A toolbar button.
  * @private
  */
-kemia.controller.DefaultToolbar.backgroundColorFactory_ = function(id,
-		tooltip, caption, opt_classNames, opt_renderer, opt_domHelper) {
+kemia.controller.DefaultToolbar.backgroundColorFactory_ = function(id, tooltip,
+		caption, opt_classNames, opt_renderer, opt_domHelper) {
 	var button = kemia.controller.ToolbarFactory.makeColorMenuButton(id,
 			tooltip, caption, opt_classNames, opt_renderer, opt_domHelper);
 	// Initialize default background color.
@@ -483,11 +542,10 @@ kemia.controller.DefaultToolbar.backgroundColorFactory_ = function(id,
  */
 kemia.controller.DefaultToolbar.formatBlockFactory_ = function(id, tooltip,
 		caption, opt_classNames, opt_renderer, opt_domHelper) {
-	var button = kemia.controller.ToolbarFactory.makeSelectButton(id,
-			tooltip, caption, opt_classNames, opt_renderer, opt_domHelper);
+	var button = kemia.controller.ToolbarFactory.makeSelectButton(id, tooltip,
+			caption, opt_classNames, opt_renderer, opt_domHelper);
 	kemia.controller.DefaultToolbar.addDefaultFormatOptions(button);
-	button
-			.setDefaultCaption(kemia.controller.DefaultToolbar.MSG_FORMAT_NORMAL);
+	button.setDefaultCaption(kemia.controller.DefaultToolbar.MSG_FORMAT_NORMAL);
 	// Format options don't have keyboard accelerators.
 	goog.dom.classes.add(button.getMenu().getContentElement(), goog
 			.getCssName('goog-menu-noaccel'));
@@ -506,8 +564,7 @@ kemia.controller.DefaultToolbar.formatBlockFactory_ = function(id, tooltip,
 // Messages used for tooltips and captions.
 
 /** @desc Format menu tooltip. */
-kemia.controller.DefaultToolbar.MSG_FORMAT_BLOCK_TITLE = goog
-		.getMsg('Format');
+kemia.controller.DefaultToolbar.MSG_FORMAT_BLOCK_TITLE = goog.getMsg('Format');
 
 /** @desc Format menu caption. */
 kemia.controller.DefaultToolbar.MSG_FORMAT_BLOCK_CAPTION = goog
@@ -523,8 +580,7 @@ kemia.controller.DefaultToolbar.MSG_REDO_TITLE = goog.getMsg('Redo');
 kemia.controller.DefaultToolbar.MSG_FONT_FACE_TITLE = goog.getMsg('Font');
 
 /** @desc Font size menu tooltip. */
-kemia.controller.DefaultToolbar.MSG_FONT_SIZE_TITLE = goog
-		.getMsg('Font size');
+kemia.controller.DefaultToolbar.MSG_FONT_SIZE_TITLE = goog.getMsg('Font size');
 
 /** @desc Text foreground color menu tooltip. */
 kemia.controller.DefaultToolbar.MSG_FONT_COLOR_TITLE = goog
@@ -537,8 +593,7 @@ kemia.controller.DefaultToolbar.MSG_BOLD_TITLE = goog.getMsg('Bold');
 kemia.controller.DefaultToolbar.MSG_ITALIC_TITLE = goog.getMsg('Italic');
 
 /** @desc Underline button tooltip. */
-kemia.controller.DefaultToolbar.MSG_UNDERLINE_TITLE = goog
-		.getMsg('Underline');
+kemia.controller.DefaultToolbar.MSG_UNDERLINE_TITLE = goog.getMsg('Underline');
 
 /** @desc Text background color menu tooltip. */
 kemia.controller.DefaultToolbar.MSG_BACKGROUND_COLOR_TITLE = goog
@@ -584,8 +639,7 @@ kemia.controller.DefaultToolbar.MSG_REMOVE_FORMAT_TITLE = goog
 		.getMsg('Remove formatting');
 
 /** @desc Insert image button tooltip. */
-kemia.controller.DefaultToolbar.MSG_IMAGE_TITLE = goog
-		.getMsg('Insert image');
+kemia.controller.DefaultToolbar.MSG_IMAGE_TITLE = goog.getMsg('Insert image');
 
 /** @desc Strike through button tooltip. */
 kemia.controller.DefaultToolbar.MSG_STRIKE_THROUGH_TITLE = goog

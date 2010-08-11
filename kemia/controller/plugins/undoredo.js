@@ -62,7 +62,6 @@ kemia.controller.plugins.UndoRedo.prototype.getKeyboardShortcuts = function() {
 	return kemia.controller.plugins.UndoRedo.SHORTCUTS;
 }
 
-
 kemia.controller.plugins.UndoRedo.prototype.handleKeyboardShortcut = function(e) {
 	var id = e.identifier;
 	var shortcut = goog.array.find(kemia.controller.plugins.UndoRedo.SHORTCUTS,
@@ -128,7 +127,6 @@ kemia.controller.plugins.UndoRedo.prototype.clearHistory = function() {
  */
 kemia.controller.plugins.UndoRedo.prototype.handleBeforeChange_ = function(e) {
 
-
 	var editorObj = /** @type {kemia.controller.ReactionEditor} */
 	(e.target);
 
@@ -145,9 +143,9 @@ kemia.controller.plugins.UndoRedo.prototype.handleBeforeChange_ = function(e) {
  */
 kemia.controller.plugins.UndoRedo.prototype.updateCurrentState_ = function(
 		editorObj) {
-//	this.logger.info("updateCurrentState_");
-//	this.logger.info("    undoStack_.length " + this.undoStack_.length);
-//	this.logger.info("    redoStack_.length " + this.redoStack_.length);
+	// this.logger.info("updateCurrentState_");
+	// this.logger.info(" undoStack_.length " + this.undoStack_.length);
+	// this.logger.info(" redoStack_.length " + this.redoStack_.length);
 
 	var content = editorObj.getModels();
 	var serialized = "[]";
@@ -155,20 +153,20 @@ kemia.controller.plugins.UndoRedo.prototype.updateCurrentState_ = function(
 		// serialize to json object
 		serialized = goog.json.serialize(goog.array.map(editorObj.getModels(),
 				kemia.io.json.reactionToJson));
-		//this.logger.info(serialized);
+		// this.logger.info(serialized);
 	}
 
 	var currentState = this.currentState_;
 
-	if (currentState!=serialized) {
+	if (currentState != serialized) {
 
 		this.addState(currentState);
 	}
 
 	this.currentState_ = serialized;
 
-//	this.logger.info("    undoStack_.length " + this.undoStack_.length);
-//	this.logger.info("    redoStack_.length " + this.redoStack_.length);
+	// this.logger.info(" undoStack_.length " + this.undoStack_.length);
+	// this.logger.info(" redoStack_.length " + this.redoStack_.length);
 };
 
 /**
@@ -256,8 +254,8 @@ kemia.controller.plugins.UndoRedo.prototype.hasRedoState = function() {
  *            toStack Stack to move the state to.
  * @private
  */
-kemia.controller.plugins.UndoRedo.prototype.shiftState_ = function(
-		fromStack, toStack) {
+kemia.controller.plugins.UndoRedo.prototype.shiftState_ = function(fromStack,
+		toStack) {
 	this.logger.info("shiftState");
 
 	this.logger.info("    fromStack.length " + fromStack.length);
@@ -267,8 +265,8 @@ kemia.controller.plugins.UndoRedo.prototype.shiftState_ = function(
 
 		// Push the current state into the to-stack.
 		toStack.push(state);
-		this.editorObject.setModels(goog.array.map(goog.json.unsafeParse(state),
-				kemia.io.json.readReaction));
+		this.editorObject.setModels(goog.array.map(
+				goog.json.unsafeParse(state), kemia.io.json.readReaction));
 
 		// If either stack transitioned between 0 and 1 in size then the ability
 		// to do an undo or redo has changed and we must dispatch a state
@@ -286,14 +284,11 @@ kemia.controller.plugins.UndoRedo.prototype.enable = function(editorObject) {
 	kemia.controller.plugins.UndoRedo.superClass_.enable.call(this,
 			editorObject);
 
-
 	this.eventHandler = new goog.events.EventHandler(this);
 
-		this.eventHandler.listen(editorObject,
-				kemia.controller.ReactionEditor.EventType.BEFORECHANGE,
-				this.handleBeforeChange_);
-
-
+	this.eventHandler.listen(editorObject,
+			kemia.controller.ReactionEditor.EventType.BEFORECHANGE,
+			this.handleBeforeChange_);
 
 	// We want to capture the initial state of a Trogedit field before any
 	// editing has happened. This is necessary so that we can undo the first
@@ -367,3 +362,14 @@ kemia.controller.plugins.UndoRedo.EventType = {
  */
 kemia.controller.plugins.UndoRedo.prototype.logger = goog.debug.Logger
 		.getLogger('kemia.controller.plugins.UndoRedo');
+
+/** @inheritDoc */
+kemia.controller.plugins.UndoRedo.prototype.queryCommandValue = function(command) {
+	var state = null;
+	if (command == kemia.controller.plugins.UndoRedo.COMMAND.UNDO) {
+		state = this.hasUndoState();
+	} else if (command == goog.editor.plugins.UndoRedo.COMMAND.REDO) {
+		state = this.hasRedoState();
+	}
+	return state;
+};

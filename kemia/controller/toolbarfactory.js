@@ -21,196 +21,196 @@ goog.require('goog.ui.LabelInput');
 goog.exportSymbol('kemia.controller.ToolbarFactory.makeButton', kemia.controller.ToolbarFactory.makeButton);
 
 
-/**
- * Takes a font spec (e.g. "Arial, Helvetica, sans-serif") and returns the
- * primary font name, normalized to lowercase (e.g. "arial").
- * 
- * @param {string}
- *            fontSpec Font specification.
- * @return {string} The primary font name, in lowercase.
- */
-kemia.controller.ToolbarFactory.getPrimaryFont = function(fontSpec) {
-	var i = fontSpec.indexOf(',');
-	var fontName = (i != -1 ? fontSpec.substring(0, i) : fontSpec)
-			.toLowerCase();
-	// Strip leading/trailing quotes from the font name (bug 1050118).
-	return goog.string.stripQuotes(fontName, '"\'');
-};
+///**
+// * Takes a font spec (e.g. "Arial, Helvetica, sans-serif") and returns the
+// * primary font name, normalized to lowercase (e.g. "arial").
+// * 
+// * @param {string}
+// *            fontSpec Font specification.
+// * @return {string} The primary font name, in lowercase.
+// */
+//kemia.controller.ToolbarFactory.getPrimaryFont = function(fontSpec) {
+//	var i = fontSpec.indexOf(',');
+//	var fontName = (i != -1 ? fontSpec.substring(0, i) : fontSpec)
+//			.toLowerCase();
+//	// Strip leading/trailing quotes from the font name (bug 1050118).
+//	return goog.string.stripQuotes(fontName, '"\'');
+//};
 
-/**
- * Bulk-adds fonts to the given font menu button. The argument must be an array
- * of font descriptor objects, each of which must have the following attributes:
- * <ul>
- * <li>{@code caption} - Caption to show in the font menu (e.g. 'Tahoma')
- * <li>{@code value} - Value for the corresponding 'font-family' CSS style
- * (e.g. 'Tahoma, Arial, sans-serif')
- * </ul>
- * 
- * @param {!goog.ui.Select}
- *            button Font menu button.
- * @param {!Array.<{caption: string, value: string}>} fonts Array of font
- *            descriptors.
- */
-kemia.controller.ToolbarFactory.addFonts = function(button, fonts) {
-	goog.array.forEach(fonts, function(font) {
-		kemia.controller.ToolbarFactory.addFont(button, font.caption,
-				font.value);
-	});
-};
+///**
+// * Bulk-adds fonts to the given font menu button. The argument must be an array
+// * of font descriptor objects, each of which must have the following attributes:
+// * <ul>
+// * <li>{@code caption} - Caption to show in the font menu (e.g. 'Tahoma')
+// * <li>{@code value} - Value for the corresponding 'font-family' CSS style
+// * (e.g. 'Tahoma, Arial, sans-serif')
+// * </ul>
+// * 
+// * @param {!goog.ui.Select}
+// *            button Font menu button.
+// * @param {!Array.<{caption: string, value: string}>} fonts Array of font
+// *            descriptors.
+// */
+//kemia.controller.ToolbarFactory.addFonts = function(button, fonts) {
+//	goog.array.forEach(fonts, function(font) {
+//		kemia.controller.ToolbarFactory.addFont(button, font.caption,
+//				font.value);
+//	});
+//};
 
-/**
- * Adds a menu item to the given font menu button. The first font listed in the
- * {@code value} argument is considered the font ID, so adding two items whose
- * CSS style starts with the same font may lead to unpredictable results.
- * 
- * @param {!goog.ui.Select}
- *            button Font menu button.
- * @param {string}
- *            caption Caption to show for the font menu.
- * @param {string}
- *            value Value for the corresponding 'font-family' CSS style.
- */
-kemia.controller.ToolbarFactory.addFont = function(button, caption, value) {
-	// The font ID is the first font listed in the CSS style, normalized to
-	// lowercase.
-	var id = kemia.controller.ToolbarFactory.getPrimaryFont(value);
+///**
+// * Adds a menu item to the given font menu button. The first font listed in the
+// * {@code value} argument is considered the font ID, so adding two items whose
+// * CSS style starts with the same font may lead to unpredictable results.
+// * 
+// * @param {!goog.ui.Select}
+// *            button Font menu button.
+// * @param {string}
+// *            caption Caption to show for the font menu.
+// * @param {string}
+// *            value Value for the corresponding 'font-family' CSS style.
+// */
+//kemia.controller.ToolbarFactory.addFont = function(button, caption, value) {
+//	// The font ID is the first font listed in the CSS style, normalized to
+//	// lowercase.
+//	var id = kemia.controller.ToolbarFactory.getPrimaryFont(value);
+//
+//	// Construct the option, and add it to the button.
+//	var option = new goog.ui.Option(caption, value, button.dom_);
+//	option.setId(id);
+//	button.addItem(option);
+//
+//	// Captions are shown in their own font.
+//	option.getContentElement().style.fontFamily = value;
+//};
 
-	// Construct the option, and add it to the button.
-	var option = new goog.ui.Option(caption, value, button.dom_);
-	option.setId(id);
-	button.addItem(option);
+///**
+// * Bulk-adds font sizes to the given font size menu button. The argument must be
+// * an array of font size descriptor objects, each of which must have the
+// * following attributes:
+// * <ul>
+// * <li>{@code caption} - Caption to show in the font size menu (e.g. 'Huge')
+// * <li>{@code value} - Value for the corresponding HTML font size (e.g. 6)
+// * </ul>
+// * 
+// * @param {!goog.ui.Select}
+// *            button Font size menu button.
+// * @param {!Array.<{caption: string, value:number}>} sizes Array of font size
+// *            descriptors.
+// */
+//kemia.controller.ToolbarFactory.addFontSizes = function(button, sizes) {
+//	goog.array.forEach(sizes, function(size) {
+//		kemia.controller.ToolbarFactory.addFontSize(button, size.caption,
+//				size.value);
+//	});
+//};
 
-	// Captions are shown in their own font.
-	option.getContentElement().style.fontFamily = value;
-};
+///**
+// * Adds a menu item to the given font size menu button. The {@code value}
+// * argument must be a legacy HTML font size in the 0-7 range.
+// * 
+// * @param {!goog.ui.Select}
+// *            button Font size menu button.
+// * @param {string}
+// *            caption Caption to show in the font size menu.
+// * @param {number}
+// *            value Value for the corresponding HTML font size.
+// */
+//kemia.controller.ToolbarFactory.addFontSize = function(button, caption,
+//		value) {
+//	// Construct the option, and add it to the button.
+//	var option = new goog.ui.Option(caption, value, button.dom_);
+//	option.setId(caption);
+//	button.addItem(option);
+//
+//	// Adjust the font size of the menu item and the height of the checkbox
+//	// element after they've been rendered by addItem(). Captions are shown in
+//	// the corresponding font size, and lining up the checkbox is tricky.
+//	var content = option.getContentElement();
+//	content.style.fontSize = kemia.controller.ToolbarFactory
+//			.getPxFromLegacySize(value) + 'px';
+//	content.firstChild.style.height = '1.1em';
+//};
 
-/**
- * Bulk-adds font sizes to the given font size menu button. The argument must be
- * an array of font size descriptor objects, each of which must have the
- * following attributes:
- * <ul>
- * <li>{@code caption} - Caption to show in the font size menu (e.g. 'Huge')
- * <li>{@code value} - Value for the corresponding HTML font size (e.g. 6)
- * </ul>
- * 
- * @param {!goog.ui.Select}
- *            button Font size menu button.
- * @param {!Array.<{caption: string, value:number}>} sizes Array of font size
- *            descriptors.
- */
-kemia.controller.ToolbarFactory.addFontSizes = function(button, sizes) {
-	goog.array.forEach(sizes, function(size) {
-		kemia.controller.ToolbarFactory.addFontSize(button, size.caption,
-				size.value);
-	});
-};
-
-/**
- * Adds a menu item to the given font size menu button. The {@code value}
- * argument must be a legacy HTML font size in the 0-7 range.
- * 
- * @param {!goog.ui.Select}
- *            button Font size menu button.
- * @param {string}
- *            caption Caption to show in the font size menu.
- * @param {number}
- *            value Value for the corresponding HTML font size.
- */
-kemia.controller.ToolbarFactory.addFontSize = function(button, caption,
-		value) {
-	// Construct the option, and add it to the button.
-	var option = new goog.ui.Option(caption, value, button.dom_);
-	option.setId(caption);
-	button.addItem(option);
-
-	// Adjust the font size of the menu item and the height of the checkbox
-	// element after they've been rendered by addItem(). Captions are shown in
-	// the corresponding font size, and lining up the checkbox is tricky.
-	var content = option.getContentElement();
-	content.style.fontSize = kemia.controller.ToolbarFactory
-			.getPxFromLegacySize(value) + 'px';
-	content.firstChild.style.height = '1.1em';
-};
-
-/**
- * Converts a legacy font size specification into an equivalent pixel size. For
- * example, {@code &lt;font size="6"&gt;} is {@code font-size: 32px;}, etc.
- * 
- * @param {number}
- *            fontSize Legacy font size spec in the 0-7 range.
- * @return {number} Equivalent pixel size.
- */
-kemia.controller.ToolbarFactory.getPxFromLegacySize = function(fontSize) {
-	return kemia.controller.ToolbarFactory.LEGACY_SIZE_TO_PX_MAP_[fontSize] || 10;
-};
-
-/**
- * Converts a pixel font size specification into an equivalent legacy size. For
- * example, {@code font-size: 32px;} is {@code &lt;font size="6"&gt;}, etc. If
- * the given pixel size doesn't exactly match one of the legacy sizes, -1 is
- * returned.
- * 
- * @param {number}
- *            px Pixel font size.
- * @return {number} Equivalent legacy size spec in the 0-7 range, or -1 if none
- *         exists.
- */
-kemia.controller.ToolbarFactory.getLegacySizeFromPx = function(px) {
-	// Use lastIndexOf to get the largest legacy size matching the pixel size
-	// (most notably returning 1 instead of 0 for 10px).
-	return goog.array.lastIndexOf(
-			kemia.controller.ToolbarFactory.LEGACY_SIZE_TO_PX_MAP_, px);
-};
-
-/**
- * Map of legacy font sizes (0-7) to equivalent pixel sizes.
- * 
- * @type {Array.<number>}
- * @private
- */
-kemia.controller.ToolbarFactory.LEGACY_SIZE_TO_PX_MAP_ = [ 10, 10, 13, 16,
-		18, 24, 32, 48 ];
-
-/**
- * Bulk-adds format options to the given "Format block" menu button. The
- * argument must be an array of format option descriptor objects, each of which
- * must have the following attributes:
- * <ul>
- * <li>{@code caption} - Caption to show in the menu (e.g. 'Minor heading')
- * <li>{@code command} - Corresponding {@link goog.dom.TagName} (e.g. 'H4')
- * </ul>
- * 
- * @param {!goog.ui.Select}
- *            button "Format block" menu button.
- * @param {!Array.<{caption: string, command: string}>} formats Array of format
- *            option descriptors.
- */
-kemia.controller.ToolbarFactory.addFormatOptions = function(button, formats) {
-	goog.array.forEach(formats, function(format) {
-		kemia.controller.ToolbarFactory.addFormatOption(button,
-				format.caption, format.command);
-	});
-};
-
-/**
- * Adds a menu item to the given "Format block" menu button.
- * 
- * @param {!goog.ui.Select}
- *            button "Format block" menu button.
- * @param {string}
- *            caption Caption to show in the menu.
- * @param {goog.dom.TagName}
- *            tag Corresponding block format tag.
- */
-kemia.controller.ToolbarFactory.addFormatOption = function(button, caption,
-		tag) {
-	// Construct the option, and add it to the button.
-	// TODO: Create boring but functional menu item for now...
-	var option = new goog.ui.Option(button.dom_.createDom(goog.dom.TagName.DIV,
-			null, caption), tag, button.dom_);
-	option.setId(tag);
-	button.addItem(option);
-};
+///**
+// * Converts a legacy font size specification into an equivalent pixel size. For
+// * example, {@code &lt;font size="6"&gt;} is {@code font-size: 32px;}, etc.
+// * 
+// * @param {number}
+// *            fontSize Legacy font size spec in the 0-7 range.
+// * @return {number} Equivalent pixel size.
+// */
+//kemia.controller.ToolbarFactory.getPxFromLegacySize = function(fontSize) {
+//	return kemia.controller.ToolbarFactory.LEGACY_SIZE_TO_PX_MAP_[fontSize] || 10;
+//};
+//
+///**
+// * Converts a pixel font size specification into an equivalent legacy size. For
+// * example, {@code font-size: 32px;} is {@code &lt;font size="6"&gt;}, etc. If
+// * the given pixel size doesn't exactly match one of the legacy sizes, -1 is
+// * returned.
+// * 
+// * @param {number}
+// *            px Pixel font size.
+// * @return {number} Equivalent legacy size spec in the 0-7 range, or -1 if none
+// *         exists.
+// */
+//kemia.controller.ToolbarFactory.getLegacySizeFromPx = function(px) {
+//	// Use lastIndexOf to get the largest legacy size matching the pixel size
+//	// (most notably returning 1 instead of 0 for 10px).
+//	return goog.array.lastIndexOf(
+//			kemia.controller.ToolbarFactory.LEGACY_SIZE_TO_PX_MAP_, px);
+//};
+//
+///**
+// * Map of legacy font sizes (0-7) to equivalent pixel sizes.
+// * 
+// * @type {Array.<number>}
+// * @private
+// */
+//kemia.controller.ToolbarFactory.LEGACY_SIZE_TO_PX_MAP_ = [ 10, 10, 13, 16,
+//		18, 24, 32, 48 ];
+//
+///**
+// * Bulk-adds format options to the given "Format block" menu button. The
+// * argument must be an array of format option descriptor objects, each of which
+// * must have the following attributes:
+// * <ul>
+// * <li>{@code caption} - Caption to show in the menu (e.g. 'Minor heading')
+// * <li>{@code command} - Corresponding {@link goog.dom.TagName} (e.g. 'H4')
+// * </ul>
+// * 
+// * @param {!goog.ui.Select}
+// *            button "Format block" menu button.
+// * @param {!Array.<{caption: string, command: string}>} formats Array of format
+// *            option descriptors.
+// */
+//kemia.controller.ToolbarFactory.addFormatOptions = function(button, formats) {
+//	goog.array.forEach(formats, function(format) {
+//		kemia.controller.ToolbarFactory.addFormatOption(button,
+//				format.caption, format.command);
+//	});
+//};
+//
+///**
+// * Adds a menu item to the given "Format block" menu button.
+// * 
+// * @param {!goog.ui.Select}
+// *            button "Format block" menu button.
+// * @param {string}
+// *            caption Caption to show in the menu.
+// * @param {goog.dom.TagName}
+// *            tag Corresponding block format tag.
+// */
+//kemia.controller.ToolbarFactory.addFormatOption = function(button, caption,
+//		tag) {
+//	// Construct the option, and add it to the button.
+//	// TODO: Create boring but functional menu item for now...
+//	var option = new goog.ui.Option(button.dom_.createDom(goog.dom.TagName.DIV,
+//			null, caption), tag, button.dom_);
+//	option.setId(tag);
+//	button.addItem(option);
+//};
 
 /**
  * Creates a {@link goog.ui.Toolbar} containing the specified set of toolbar

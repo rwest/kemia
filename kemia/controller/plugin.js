@@ -256,6 +256,7 @@ kemia.controller.Plugin.prototype.execCommand = function(command, var_args) {
 		if (!silent) {
 
 			this.editorObject.dispatchChange();
+			this.editorObject.dispatchCommandValueChange();
 
 		}
 	}

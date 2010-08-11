@@ -435,7 +435,6 @@ kemia.controller.ReactionEditor.prototype.queryCommandValue = function(commands)
  */
 kemia.controller.ReactionEditor.prototype.dispatchChange = function() {
 	this.handleChange();
-
 };
 
 /**
