@@ -626,6 +626,7 @@ goog.addDependency("../../../../kemia/io/json.js", ['kemia.io.json'], ['kemia.mo
 goog.addDependency("../../../../kemia/io/json_test_mol.js", [], []);
 goog.addDependency("../../../../kemia/io/json_test_rxn.js", [], []);
 goog.addDependency("../../../../kemia/io/mdl.js", ['kemia.io.mdl'], ['goog.i18n.DateTimeFormat', 'goog.string', 'kemia.model.Reaction', 'kemia.model.Molecule', 'kemia.model.Bond', 'kemia.model.Atom']);
+goog.addDependency("../../../../kemia/io/qsmiles/CID_6540681.js", [], []);
 goog.addDependency("../../../../kemia/io/qsmiles/smiles.js", ['kemia.io.smiles'], ['kemia.model.Molecule', 'kemia.model.Atom', 'kemia.model.Bond', 'kemia.model.Reaction']);
 goog.addDependency("../../../../kemia/io/qsmiles/smiles_test_mols.js", [], []);
 goog.addDependency("../../../../kemia/io/smiles/smilesParser.js", ['kemia.io.smiles.SmilesParser'], ['goog.array', 'kemia.model.Atom', 'kemia.model.Atom.Hybridizations', 'kemia.model.PseudoAtom', 'kemia.model.Molecule', 'kemia.model.Bond', 'kemia.util.BondUtil', 'kemia.util.BondUtil.Orders']);
