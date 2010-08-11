@@ -27,6 +27,27 @@ kemia.controller.plugins.AtomEdit.prototype.isSupportedCommand = function(
 kemia.controller.plugins.AtomEdit.prototype.getTrogClassId = goog.functions
 		.constant(kemia.controller.plugins.AtomEdit.COMMAND);
 
+kemia.controller.plugins.AtomEdit.SHORTCUTS = [ {
+	id : 'C',
+	key : 'c'
+}, {
+	id : 'N',
+	key : 'n'
+}, {
+	id : 'S',
+	key : 's'
+}, {
+	id : 'P',
+	key : 'p'
+}, {
+	id : 'O',
+	key : 'o'
+} ];
+
+kemia.controller.plugins.AtomEdit.prototype.getKeyboardShortcuts = function() {
+	return kemia.controller.plugins.AtomEdit.SHORTCUTS;
+}
+
 /**
  * sets atom symbol.
  * 
@@ -48,6 +69,19 @@ kemia.controller.plugins.AtomEdit.prototype.execCommandInternal = function(
 kemia.controller.plugins.AtomEdit.prototype.logger = goog.debug.Logger
 		.getLogger('kemia.controller.plugins.AtomEdit');
 
+kemia.controller.plugins.AtomEdit.prototype.handleKeyboardShortcut = function(e) {
+	var id = e.identifier;
+	var shortcut = goog.array.find(kemia.controller.plugins.AtomEdit.SHORTCUTS,
+			function(obj) {
+				return obj.id == e.identifier
+			});
+	if (shortcut) {
+		this.logger.info('handleKeyboardShortcut ' + e.identifier);
+		this.symbol = shortcut.id;
+		return true;
+	}
+}
+
 kemia.controller.plugins.AtomEdit.prototype.handleMouseDown = function(e) {
 	var target = this.editorObject.findTarget(e);
 	if (target instanceof kemia.model.Atom) {
@@ -61,6 +95,7 @@ kemia.controller.plugins.AtomEdit.prototype.handleMouseDown = function(e) {
 
 		this.editorObject.setModels(this.editorObject.getModels());
 		this.editorObject.dispatchChange();
+		return true;
 	}
 };
 
@@ -74,10 +109,12 @@ kemia.controller.plugins.AtomEdit.prototype.handleMouseUp = function(e) {
 	var target = targets.length > 0 ? targets[0] : undefined;
 	if (this.dragSource && target instanceof kemia.model.Atom) {
 		this.editorObject.dispatchBeforeChange();
-		kemia.controller.plugins.AtomEdit.mergeMolecules(this.dragSource, target);
+		kemia.controller.plugins.AtomEdit.mergeMolecules(this.dragSource,
+				target);
 		this.dragSource = undefined;
 		this.editorObject.setModels(this.editorObject.getModels());
 		this.editorObject.dispatchChange();
+		return true;
 	}
 }
 /**
@@ -88,8 +125,8 @@ kemia.controller.plugins.AtomEdit.prototype.handleMouseUp = function(e) {
  * 
  * @return{kemia.model.Molecule} resulting merged molecule
  */
-kemia.controller.plugins.AtomEdit.mergeMolecules = function(
-		source_atom, target_atom) {
+kemia.controller.plugins.AtomEdit.mergeMolecules = function(source_atom,
+		target_atom) {
 	// replace target atom with source atom
 
 	// clone and connect target atom bonds to source atom

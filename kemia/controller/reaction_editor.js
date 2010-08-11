@@ -11,6 +11,7 @@ goog.require('goog.editor.BrowserFeature');
 goog.require('goog.async.Delay');
 goog.require('kemia.controller.Plugin');
 goog.require('kemia.model.NeighborList');
+goog.require('goog.ui.KeyboardShortcutHandler');
 
 /**
  * A graphical editor for reactions
@@ -69,6 +70,7 @@ kemia.controller.ReactionEditor = function(element, opt_config) {
 	 * @protected
 	 */
 	this.eventRegister = new goog.events.EventHandler(this);
+	this.shortcutHandler = new goog.ui.KeyboardShortcutHandler(document);
 
 	// Wrappers around this editor, to be disposed when the editor is disposed.
 	this.wrappers_ = [];
@@ -230,43 +232,74 @@ kemia.controller.ReactionEditor.prototype.handleChange = function() {
 
 };
 
-/**
- * Handles keydown on the editor.
- * 
- * @param {goog.events.BrowserEvent}
- *            e The browser event.
- * @private
- */
-kemia.controller.ReactionEditor.prototype.handleKeyDown_ = function(e) {
+// /**
+// * Handles keydown on the editor.
+// *
+// * @param {goog.events.BrowserEvent}
+// * e The browser event.
+// * @private
+// */
+// kemia.controller.ReactionEditor.prototype.handleKeyDown_ = function(e) {
+// this.logger.info('handleKeyDown_');
+// if (!goog.editor.BrowserFeature.USE_MUTATION_EVENTS) {
+// if (!this.handleBeforeChangeKeyEvent_(e)) {
+// return;
+// }
+// }
+//
+// if (!this.invokeShortCircuitingOp_(kemia.controller.Plugin.Op.KEYDOWN, e)
+// && goog.editor.BrowserFeature.USES_KEYDOWN) {
+// this.handleKeyboardShortcut_(e);
+// }
+// };
+//
+// /**
+// * Handles keypress on the field.
+// *
+// * @param {goog.events.BrowserEvent}
+// * e The browser event.
+// * @private
+// */
+// kemia.controller.ReactionEditor.prototype.handleKeyPress_ = function(e) {
+// this.logger.info('handleKeyPress_');
+// if (goog.editor.BrowserFeature.USE_MUTATION_EVENTS) {
+// if (!this.handleBeforeChangeKeyEvent_(e)) {
+// return;
+// }
+// } else {
+// // In IE only keys that generate output trigger keypress
+// // In Mozilla charCode is set for keys generating content.
+// this.gotGeneratingKey_ = true;
+// this.dispatchBeforeChange();
+// }
+//
+// if (!this.invokeShortCircuitingOp_(goog.editor.Plugin.Op.KEYPRESS, e)
+// && !goog.editor.BrowserFeature.USES_KEYDOWN) {
+// this.handleKeyboardShortcut_(e);
+// }
+// };
 
-};
-
-/**
- * Handles keypress on the field.
- * 
- * @param {goog.events.BrowserEvent}
- *            e The browser event.
- * @private
- */
-kemia.controller.ReactionEditor.prototype.handleKeyPress_ = function(e) {
-	this.gotGeneratingKey_ = true;
-	this.dispatchBeforeChange();
-	this.handleKeyboardShortcut_(e);
-};
-
-/**
- * Handles keyup on the editor.
- * 
- * @param {goog.events.BrowserEvent}
- *            e The browser event.
- * @private
- */
-kemia.controller.ReactionEditor.prototype.handleKeyUp_ = function(e) {
-
-	this.invokeShortCircuitingOp_(kemia.controller.Plugin.Op.KEYUP, e);
-	this.selectionChangeTimer_.start();
-
-};
+// /**
+// * Handles keyup on the editor.
+// *
+// * @param {goog.events.BrowserEvent}
+// * e The browser event.
+// * @private
+// */
+// kemia.controller.ReactionEditor.prototype.handleKeyUp_ = function(e) {
+// this.logger.info('handleKeyUp_');
+// if (!goog.editor.BrowserFeature.USE_MUTATION_EVENTS
+// && (this.gotGeneratingKey_ || goog.editor.Field
+// .isSpecialGeneratingKey_(e))) {
+// // The special keys won't have set the gotGeneratingKey flag, so we
+// // check
+// // for them explicitly
+// this.handleChange();
+// }
+//
+// this.invokeShortCircuitingOp_(kemia.controller.Plugin.Op.KEYUP, e);
+//
+// };
 
 kemia.controller.ReactionEditor.prototype.findTarget = function(e) {
 	var trans = this.reactionRenderer.moleculeRenderer.transform
@@ -300,15 +333,15 @@ kemia.controller.ReactionEditor.getMouseCoords = function(e) {
 
 kemia.controller.ReactionEditor.prototype.findTargetList = function(e) {
 	var trans = this.reactionRenderer.moleculeRenderer.transform
-	.createInverse();
+			.createInverse();
 
 	var pos = kemia.controller.ReactionEditor.getMouseCoords(e)
 
-var target = trans.transformCoords( [ pos ])[0];
-return this.neighborList.getNearestList( {
-x : target.x,
-y : target.y
-});
+	var target = trans.transformCoords( [ pos ])[0];
+	return this.neighborList.getNearestList( {
+		x : target.x,
+		y : target.y
+	});
 }
 
 kemia.controller.ReactionEditor.prototype.handleMouseOver_ = function(e) {
@@ -328,6 +361,7 @@ kemia.controller.ReactionEditor.prototype.handleMouseUp_ = function(e) {
 }
 
 kemia.controller.ReactionEditor.prototype.handleMouseDown_ = function(e) {
+	// this.logger.info('handleMouseDown_');
 	this.invokeShortCircuitingOp_(kemia.controller.Plugin.Op.MOUSEDOWN, e);
 };
 
@@ -335,9 +369,13 @@ kemia.controller.ReactionEditor.prototype.handleMouseUp_ = function(e) {
 	this.invokeShortCircuitingOp_(kemia.controller.Plugin.Op.MOUSEUP, e);
 };
 
-kemia.controller.ReactionEditor.prototype.handleDblclick_ =  function(e) {
-	this.invokeShortCircuitingOp_(kemia.controller.Plugin.Op.DBLCLICK, e);
-};
+// kemia.controller.ReactionEditor.prototype.handleDblclick_ = function(e) {
+// this.invokeShortCircuitingOp_(kemia.controller.Plugin.Op.DBLCLICK, e);
+// };
+
+kemia.controller.ReactionEditor.prototype.handleKeyboardShortcut_ = function(e) {
+	this.invokeShortCircuitingOp_(kemia.controller.Plugin.Op.SHORTCUT, e);
+}
 
 kemia.controller.ReactionEditor.prototype.handlePaste_ = function(e) {
 	this.invokeShortCircuitingOp_(kemia.controller.Plugin.Op.PASTE, e);
@@ -732,6 +770,18 @@ kemia.controller.ReactionEditor.prototype.dispatchLoadEvent_ = function() {
 kemia.controller.ReactionEditor.prototype.addListener = function(type,
 		listener, opt_capture, opt_handler) {
 	var elem = this.getOriginalElement();
+	// Opera won't fire events on <body> in whitebox mode because we make
+	// <html> contentEditable to work around some visual issues.
+	// So, if the parent node is contentEditable, listen to events on it
+	// instead.
+	if (!goog.editor.BrowserFeature.FOCUSES_EDITABLE_BODY_ON_HTML_CLICK
+			&& elem.parentNode.contentEditable) {
+		elem = elem.parentNode;
+	}
+	// On Gecko, keyboard events only reliably fire on the document element.
+	if (elem && goog.editor.BrowserFeature.USE_DOCUMENT_FOR_KEY_EVENTS) {
+		elem = elem.ownerDocument;
+	}
 
 	this.eventRegister.listen(elem, type, listener, opt_capture, opt_handler);
 };
@@ -749,9 +799,26 @@ kemia.controller.ReactionEditor.prototype.setupChangeListeners_ = function() {
 	this.addListener(goog.events.EventType.MOUSEDOWN, this.handleMouseDown_);
 	this.addListener(goog.events.EventType.MOUSEMOVE, this.handleMouseMove_);
 	this.addListener(goog.events.EventType.MOUSEUP, this.handleMouseUp_);
-	this.addListener(goog.events.EventType.DBLCLICK, this.handleDblclick_);
+	// this.addListener(goog.events.EventType.DBLCLICK, this.handleDblclick_);
 	this.addListener('paste', this.handlePaste_);
 
+	goog.events.listen(this.shortcutHandler,
+			goog.ui.KeyboardShortcutHandler.EventType.SHORTCUT_TRIGGERED,
+			this.handleKeyboardShortcut_, undefined, this);
+
+};
+/*
+ * Registers a keyboard shortcut. @param {string} identifier Identifier for the
+ * task performed by the keyboard combination. Multiple shortcuts can be
+ * provided for the same task by specifying the same identifier. @param
+ * {...(number|string|Array.<number>)} var_args See below.
+ * 
+ * param {number} keyCode Numeric code for key param {number=} opt_modifiers
+ * Bitmap indicating required modifier keys.
+ * goog.ui.KeyboardShortcutHandler.Modifiers.SHIFT, CONTROL, ALT, or META.
+ */
+kemia.controller.ReactionEditor.prototype.registerShortcut = function(id, key) {
+	this.shortcutHandler.registerShortcut(id, key);
 };
 
 /**

@@ -38,7 +38,17 @@ kemia.controller.Plugin.prototype.activeOnUneditableEditor = goog.functions.FALS
  */
 kemia.controller.Plugin.prototype.registerEditorObject = function(editorObject) {
 	this.editorObject = editorObject;
+	goog.array.forEach(this.getKeyboardShortcuts(), function(shortcut) {
+		editorObject.registerShortcut(shortcut.id, shortcut.key);
+	});
 };
+
+/**
+ * override to return list of keyboard shortcuts
+ */
+kemia.controller.Plugin.prototype.getKeyboardShortcuts = function() {
+	return [];
+}
 
 /**
  * Enables this plugin for the specified, registered reaction editor object. A
@@ -154,30 +164,30 @@ kemia.controller.Plugin.Op = {
 	SHORTCUT : 5,
 	EXEC_COMMAND : 6,
 	QUERY_COMMAND : 7,
-	MOUSEDOWN: 8,
-	MOUSEUP: 9,
-	MOUSEOVER: 10, 
-	MOUSEOUT: 11,
-	MOUSEMOVE: 12,
+	MOUSEDOWN : 8,
+	MOUSEUP : 9,
+	MOUSEOVER : 10,
+	MOUSEOUT : 11,
+	MOUSEMOVE : 12,
 	ATOM_MOUSEOVER : 13,
 	ATOM_MOUSEOUT : 14,
 	ATOM_MOUSEDOWN : 15,
 	BOND_MOUSEOVER : 16,
 	BOND_MOUSEOUT : 17,
-	BOND_MOUSEDOWN: 18,
-	ARROW_MOUSEOVER: 19,
-	ARROW_MOUSEOUT: 20, 
-	ARROW_MOUSEDOWN: 21,
-	PLUS_MOUSEOVER: 22,
-	PLUS_MOUSEOUT: 23,
-	PLUS_MOUSEDOWN: 24,
-	PASTE: 25,
-	DBLCLICK: 26
+	BOND_MOUSEDOWN : 18,
+	ARROW_MOUSEOVER : 19,
+	ARROW_MOUSEOUT : 20,
+	ARROW_MOUSEDOWN : 21,
+	PLUS_MOUSEOVER : 22,
+	PLUS_MOUSEOUT : 23,
+	PLUS_MOUSEDOWN : 24,
+	PASTE : 25,
+	DBLCLICK : 26
 };
 
 /**
- * @return {boolean} If true, editor will not disable the command
- *     when the field becomes uneditable.
+ * @return {boolean} If true, editor will not disable the command when the field
+ *         becomes uneditable.
  */
 kemia.controller.Plugin.prototype.activeOnUneditableEditors = goog.functions.FALSE;
 
@@ -209,10 +219,10 @@ kemia.controller.Plugin.OPCODE = goog.object.transpose(goog.reflect.object(
 			handleArrowMouseOut : kemia.controller.Plugin.Op.ARROW_MOUSEOUT,
 			handleArrowMouseDown : kemia.controller.Plugin.Op.ARROW_MOUSEDOWN,
 			handlePlusMouseOver : kemia.controller.Plugin.Op.PLUS_MOUSEOVER,
-			handlePlusMouseOut: kemia.controller.Plugin.Op.PLUS_MOUSEOUT,
-			handlePlusMouseDown: kemia.controller.Plugin.Op.PLUS_MOUSEDOWN,
-			handlePaste: kemia.controller.Plugin.Op.PASTE,
-			handleDoubleClick: kemia.controller.Plugin.Op.DBLCLICK
+			handlePlusMouseOut : kemia.controller.Plugin.Op.PLUS_MOUSEOUT,
+			handlePlusMouseDown : kemia.controller.Plugin.Op.PLUS_MOUSEDOWN,
+			handlePaste : kemia.controller.Plugin.Op.PASTE,
+			handleDoubleClick : kemia.controller.Plugin.Op.DBLCLICK
 		}));
 
 /**
@@ -236,7 +246,6 @@ kemia.controller.Plugin.prototype.execCommand = function(command, var_args) {
 	var silent = this.isSilentCommand(command);
 	if (!silent) {
 
-
 		this.editorObject.dispatchBeforeChange();
 	}
 
@@ -247,8 +256,6 @@ kemia.controller.Plugin.prototype.execCommand = function(command, var_args) {
 		if (!silent) {
 
 			this.editorObject.dispatchChange();
-
-		
 
 		}
 	}
