@@ -53,6 +53,28 @@ kemia.controller.plugins.UndoRedo.COMMAND = {
 	REDO : 'redo'
 };
 
+kemia.controller.plugins.UndoRedo.SHORTCUTS = [ {
+	id : 'undo',
+	key : goog.events.KeyCodes.ESC
+} ];
+
+kemia.controller.plugins.UndoRedo.prototype.getKeyboardShortcuts = function() {
+	return kemia.controller.plugins.UndoRedo.SHORTCUTS;
+}
+
+
+kemia.controller.plugins.UndoRedo.prototype.handleKeyboardShortcut = function(e) {
+	var id = e.identifier;
+	var shortcut = goog.array.find(kemia.controller.plugins.UndoRedo.SHORTCUTS,
+			function(obj) {
+				return obj.id == e.identifier
+			});
+	if (shortcut.id == 'undo') {
+		this.undo();
+		return true;
+	}
+}
+
 /**
  * Inverse map of execCommand strings to
  * {@link kemia.controller.plugins.UndoRedo.COMMAND} constants. Used to
