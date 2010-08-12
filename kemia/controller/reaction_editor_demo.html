@@ -63,6 +63,7 @@ function initPage(){
 	editor.registerPlugin(new kemia.controller.plugins.ArrowPlusEdit());
 	editor.registerPlugin(new kemia.controller.plugins.MoleculeEdit());
 	editor.registerPlugin(new kemia.controller.plugins.Smiles());
+	editor.registerPlugin(new kemia.controller.plugins.Cleanup());
 	
     var toolbarController = new kemia.controller.ToolbarController(editor, toolbar);
 	editor.setModels([model]);
