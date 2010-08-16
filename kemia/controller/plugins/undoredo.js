@@ -310,7 +310,7 @@ kemia.controller.plugins.UndoRedo.prototype.disable = function(editorObject) {
 
 /** @inheritDoc */
 kemia.controller.plugins.UndoRedo.prototype.disposeInternal = function() {
-	goog.editor.plugins.UndoRedo.superClass_.disposeInternal.call(this);
+	kemia.controller.plugins.UndoRedo.superClass_.disposeInternal.call(this);
 	this.eventHandler.dispose();
 	this.editorObject = null;
 
@@ -368,7 +368,7 @@ kemia.controller.plugins.UndoRedo.prototype.queryCommandValue = function(command
 	var state = null;
 	if (command == kemia.controller.plugins.UndoRedo.COMMAND.UNDO) {
 		state = this.hasUndoState();
-	} else if (command == goog.editor.plugins.UndoRedo.COMMAND.REDO) {
+	} else if (command == kemia.controller.plugins.UndoRedo.COMMAND.REDO) {
 		state = this.hasRedoState();
 	}
 	return state;
