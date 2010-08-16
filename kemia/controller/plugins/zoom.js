@@ -46,6 +46,7 @@ kemia.controller.plugins.Zoom.prototype.isSupportedCommand = function(command) {
 /** @inheritDoc */
 kemia.controller.plugins.Zoom.prototype.execCommand = function(command,
     var_args) {
+	
 	var current = this.editorObject.getScaleFactor();
   if (command == kemia.controller.plugins.Zoom.COMMAND.ZOOM_IN) {
 	  this.editorObject.setScaleFactor(current*1.1);  

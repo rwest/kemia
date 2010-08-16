@@ -53,16 +53,16 @@ function initPage(){
 	model.conditionsText = "90" + String.fromCharCode(186) +"C";
 	
 	var editor = new kemia.controller.ReactionEditor(goog.dom.getElement('reactionEditorContainer'),{background : {color : 'white'}});
+	editor.registerPlugin(new kemia.controller.plugins.Highlight());
 	editor.registerPlugin(new kemia.controller.plugins.ClearEditor());
 	editor.registerPlugin(new kemia.controller.plugins.Zoom());
 	editor.registerPlugin(new kemia.controller.plugins.UndoRedo());
-	editor.registerPlugin(new kemia.controller.plugins.Highlight());
 	editor.registerPlugin(new kemia.controller.plugins.Erase());
 	editor.registerPlugin(new kemia.controller.plugins.AtomEdit());
 	editor.registerPlugin(new kemia.controller.plugins.BondEdit());
 	editor.registerPlugin(new kemia.controller.plugins.ArrowPlusEdit());
 	editor.registerPlugin(new kemia.controller.plugins.MoleculeEdit());
-	editor.registerPlugin(new kemia.controller.plugins.Smiles());
+	//editor.registerPlugin(new kemia.controller.plugins.Smiles());
 	editor.registerPlugin(new kemia.controller.plugins.Cleanup());
 	
     var toolbarController = new kemia.controller.ToolbarController(editor, toolbar);

@@ -49,6 +49,7 @@ kemia.view.Renderer.prototype.buildTransform = function(fromBox) {
 	var fromWidth = size.width;
 	size.scaleToFit(this.graphics.getSize());
 	var toWidth = size.width;
+
 	var scale = this.scale_factor * toWidth / fromWidth;
 	var top = Math.max(fromBox.top, fromBox.bottom);
 	var left = Math.min(fromBox.left, fromBox.right);	

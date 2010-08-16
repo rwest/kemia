@@ -128,6 +128,7 @@ kemia.controller.ReactionEditor.prototype.getScaleFactor = function() {
 }
 
 kemia.controller.ReactionEditor.prototype.setScaleFactor = function(scale) {
+	this.reactionRenderer.transform = undefined;  // to force new transform
 	this.reactionRenderer.scale_factor = scale;
 }
 
@@ -315,6 +316,7 @@ kemia.controller.ReactionEditor.prototype.findTarget = function(e) {
 }
 
 kemia.controller.ReactionEditor.getMouseCoords = function(e) {
+	kemia.controller.ReactionEditor.prototype.logger.info('getMouseCoords');
 	var elem = e.currentTarget;
 	var posx = e.clientX + document.body.scrollLeft
 			+ document.documentElement.scrollLeft;
