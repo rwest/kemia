@@ -30,18 +30,21 @@ kemia.controller.plugins.Cleanup.prototype.isSupportedCommand = function(
 /** @inheritDoc */
 kemia.controller.plugins.Cleanup.prototype.execCommand = function(command,
 		var_args) {
-	this.logger.info('execCommand');
+
 	var models = this.editorObject.getModels();
 	goog.array.forEach(models, function(model){
 		if (model instanceof kemia.model.Molecule){
-			kemia.layout.CoordinateGenerator.generate(model);
+			var molecule = model;
+			kemia.layout.CoordinateGenerator.generate(molecule);
 		} else if (model instanceof kemia.model.Reaction){
-			goog.array.forEach(model.reactants, function(molecule){
+			var reaction = model;
+			goog.array.forEach(reaction.reactants, function(molecule){
 				kemia.layout.CoordinateGenerator.generate(molecule);
 			});
-			goog.array.forEach(model.products, function(molecule){
+			goog.array.forEach(reaction.products, function(molecule){
 				kemia.layout.CoordinateGenerator.generate(molecule);
 			});
+			reaction.removeOverlap();
 		}
 	});
 
