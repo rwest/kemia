@@ -776,14 +776,14 @@ kemia.controller.ReactionEditor.prototype.addListener = function(type,
 	// <html> contentEditable to work around some visual issues.
 	// So, if the parent node is contentEditable, listen to events on it
 	// instead.
-	if (!goog.editor.BrowserFeature.FOCUSES_EDITABLE_BODY_ON_HTML_CLICK
-			&& elem.parentNode.contentEditable) {
-		elem = elem.parentNode;
-	}
+//	if (!goog.editor.BrowserFeature.FOCUSES_EDITABLE_BODY_ON_HTML_CLICK
+//			&& elem.parentNode.contentEditable) {
+//		elem = elem.parentNode;
+//	}
 	// On Gecko, keyboard events only reliably fire on the document element.
-	if (elem && goog.editor.BrowserFeature.USE_DOCUMENT_FOR_KEY_EVENTS) {
-		elem = elem.ownerDocument;
-	}
+//	if (elem && goog.editor.BrowserFeature.USE_DOCUMENT_FOR_KEY_EVENTS) {
+//		elem = elem.ownerDocument;
+//	}
 
 	this.eventRegister.listen(elem, type, listener, opt_capture, opt_handler);
 };
