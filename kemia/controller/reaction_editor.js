@@ -11,7 +11,7 @@ goog.require('goog.editor.BrowserFeature');
 goog.require('goog.async.Delay');
 goog.require('kemia.controller.Plugin');
 goog.require('kemia.model.NeighborList');
-goog.require('goog.ui.KeyboardShortcutHandler');
+//goog.require('goog.ui.KeyboardShortcutHandler');
 
 /**
  * A graphical editor for reactions
@@ -70,7 +70,7 @@ kemia.controller.ReactionEditor = function(element, opt_config) {
 	 * @protected
 	 */
 	this.eventRegister = new goog.events.EventHandler(this);
-	this.shortcutHandler = new goog.ui.KeyboardShortcutHandler(document);
+//	this.shortcutHandler = new goog.ui.KeyboardShortcutHandler(document);
 
 	// Wrappers around this editor, to be disposed when the editor is disposed.
 	this.wrappers_ = [];
@@ -307,8 +307,9 @@ kemia.controller.ReactionEditor.prototype.findTarget = function(e) {
 			.createInverse();
 
 	var pos = kemia.controller.ReactionEditor.getMouseCoords(e)
-
+	this.logger.info(pos.toString());
 	var target = trans.transformCoords( [ pos ])[0];
+//	this.logger.info(target.toString());
 	return this.neighborList.getNearest( {
 		x : target.x,
 		y : target.y
@@ -316,7 +317,7 @@ kemia.controller.ReactionEditor.prototype.findTarget = function(e) {
 }
 
 kemia.controller.ReactionEditor.getMouseCoords = function(e) {
-	kemia.controller.ReactionEditor.prototype.logger.info('getMouseCoords');
+	//kemia.controller.ReactionEditor.prototype.logger.info('getMouseCoords');
 	var elem = e.currentTarget;
 	var posx = e.clientX + document.body.scrollLeft
 			+ document.documentElement.scrollLeft;
@@ -803,9 +804,9 @@ kemia.controller.ReactionEditor.prototype.setupChangeListeners_ = function() {
 	// this.addListener(goog.events.EventType.DBLCLICK, this.handleDblclick_);
 	this.addListener('paste', this.handlePaste_);
 
-	goog.events.listen(this.shortcutHandler,
-			goog.ui.KeyboardShortcutHandler.EventType.SHORTCUT_TRIGGERED,
-			this.handleKeyboardShortcut_, undefined, this);
+//	goog.events.listen(this.shortcutHandler,
+//			goog.ui.KeyboardShortcutHandler.EventType.SHORTCUT_TRIGGERED,
+//			this.handleKeyboardShortcut_, undefined, this);
 
 };
 /*
@@ -819,7 +820,7 @@ kemia.controller.ReactionEditor.prototype.setupChangeListeners_ = function() {
  * goog.ui.KeyboardShortcutHandler.Modifiers.SHIFT, CONTROL, ALT, or META.
  */
 kemia.controller.ReactionEditor.prototype.registerShortcut = function(id, key) {
-	this.shortcutHandler.registerShortcut(id, key);
+//	this.shortcutHandler.registerShortcut(id, key);
 };
 
 /**
