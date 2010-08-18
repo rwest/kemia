@@ -53,8 +53,6 @@ kemia.controller.plugins.MoleculeEdit.prototype.execCommandInternal = function(
 			0));
 	var mol_bbox = molecule.getBoundingBox();
 	var mol_offset = new goog.math.Coordinate(mol_bbox.right, mol_bbox.top);
-	this.logger.info("mol_offset: " + mol_offset.toString());
-	this.logger.info("molecule.getCenter(): " + molecule.getCenter().toString());
 	var diff = goog.math.Coordinate.difference(origin, mol_offset);
 	// diff = goog.math.Coordinate.difference(diff, mol_offset);
 	if (this.editorObject.getModels().length > 0) {
