@@ -48,13 +48,14 @@ kemia.controller.plugins.MoleculeEdit.prototype.execCommandInternal = function(
 	this.template = arguments[1];
 	var e = arguments[3];
 	var molecule = kemia.io.json.readMolecule(this.template);
-	var mol_bbox = molecule.getBoundingBox();
-	var origin = this.editorObject.reactionRenderer.transform.createInverse()
-			.transformCoords( [ new goog.math.Coordinate(0, 0) ])[0];
-	var mol_offset = new goog.math.Coordinate(mol_bbox.right - mol_bbox.left,
-			mol_bbox.top - mol_bbox.bottom);
+	// var mol_bbox = molecule.getBoundingBox();
+	var origin = this.editorObject.getAtomicCoords(new goog.math.Coordinate(0,
+			0));
+
+	// var mol_offset = new goog.math.Coordinate(mol_bbox.right - mol_bbox.left,
+	// mol_bbox.top - mol_bbox.bottom);
 	var diff = goog.math.Coordinate.difference(origin, molecule.getCenter());
-	diff = goog.math.Coordinate.difference(diff, mol_offset);
+	// diff = goog.math.Coordinate.difference(diff, mol_offset);
 	if (this.editorObject.getModels().length > 0) {
 		var reaction = this.editorObject.getModels()[0];
 	} else {
@@ -66,10 +67,12 @@ kemia.controller.plugins.MoleculeEdit.prototype.execCommandInternal = function(
 	var mol_center = molecule.getCenter();
 	var center = this.editorObject.reactionRenderer.transform
 			.transformCoords( [ mol_center ])[0];
-
-	// TTD get rid of these magic numbers
-	e.clientX = center.x + 25;
-	e.clientY = center.y + 125;
+	// var offset =
+	// this.editorObject.getOffsetCoords(this.editorObject.originalElement, 0,
+	// 0)
+	// this.logger.info(offset.toString());
+	//
+	e.clientX = undefined;
 
 	this.drag(e, molecule);
 };
@@ -103,12 +106,23 @@ kemia.controller.plugins.MoleculeEdit.prototype.handleMouseDown = function(e) {
 kemia.controller.plugins.MoleculeEdit.prototype.drag = function(e, molecule) {
 
 	var d = new goog.fx.Dragger(this.editorObject.getOriginalElement());
-	d._start = new goog.math.Coordinate(e.clientX, e.clientY);
-	d._prev = d._start;
+	d._center = this.editorObject.getGraphicsCoords(molecule.getCenter());
+	d._initDeltaX = null;
+	d._initDeltaY = null;
+	d._prevDeltaX = 0;
+	d._prevDeltaY = 0;
+	this.logger.info("d._center: " + d._center.toString());
+	this.logger.info("d.startX, d.startY: " + d.startX + ", " + d.startY);
+	// if (e.clientX) {
+	// d._start = kemia.controller.ReactionEditor.getMouseCoords(e);
+	// d._prev = d._start;
+	// }
+	// this.logger.info(d._start.toString());
 	d.molecule = molecule;
 	d.editor = this.editorObject;
 	d
-			.addEventListener(goog.fx.Dragger.EventType.DRAG,
+			.addEventListener(
+					goog.fx.Dragger.EventType.DRAG,
 					function(e) {
 						if (d._highlightGroups) {
 							goog.array.forEach(d._highlightGroups, function(g) {
@@ -116,43 +130,49 @@ kemia.controller.plugins.MoleculeEdit.prototype.drag = function(e, molecule) {
 							})
 						}
 						d._highlightGroups = [];
-						var mouse_coord = new goog.math.Coordinate(e.clientX,
-								e.clientY);
-
-						var diff = goog.math.Coordinate.difference(mouse_coord,
-								d._start);
+						d._initDeltaX = d._initDeltaX || d.deltaX;
+						d._initDeltaY = d._initDeltaY || d.deltaY;
+						var deltaX = d.deltaX - d._initDeltaX;
+						var deltaY = d.deltaY - d._initDeltaY;
+						var deltaDeltaX = deltaX - d._prevDeltaX;
+						var deltaDeltaY = deltaY - d._prevDeltaY;
 
 						// move graphic
-					d.molecule.group.setTransformation(diff.x, diff.y, 0, 0, 0);
+						d.molecule.group.setTransformation(deltaX, deltaY, 0,
+								0, 0);
 
-					// move molecule
-					var mol_coords = d.editor.reactionRenderer.transform
-							.createInverse().transformCoords(
-									[ mouse_coord, d._prev ]);
+						// move molecule
+						var diff = new goog.math.Coordinate(deltaDeltaX
+								/ d.editor.reactionRenderer.transform
+										.getScaleX(), deltaDeltaY
+								/ d.editor.reactionRenderer.transform
+										.getScaleY());
+						d.molecule.reaction.translateMolecule(d.molecule, diff);
 
-					var diff = goog.math.Coordinate.difference(mol_coords[0],
-							mol_coords[1]);
-					d.molecule.reaction.translateMolecule(d.molecule, diff);
-					d._prev = mouse_coord;
+						// d._prev = mouse_coord;
+						d._prevDeltaX = d.deltaX - d._initDeltaX;
+						d._prevDeltaY = d.deltaY - d._initDeltaY
 
-					// highlight merge sites
-					var merge_pairs = this.findAtomMergePairs(molecule);
+						// highlight merge sites
+						var merge_pairs = this.findAtomMergePairs(molecule);
 
-					// only first merge pair for now
-					if (merge_pairs.length > 0) {
-						merge_pairs = [ merge_pairs[0] ];
-					}
-					goog.array
-							.forEach(
-									merge_pairs,
-									function(pair) {
-										d._highlightGroups.push( d.editor.reactionRenderer.moleculeRenderer.atomRenderer
-												.highlightOn(pair[0]));
-										d._highlightGroups.push( d.editor.reactionRenderer.moleculeRenderer.atomRenderer
-												.highlightOn(pair[1]));
-									});
+						// only first merge pair for now
+						if (merge_pairs.length > 0) {
+							merge_pairs = [ merge_pairs[0] ];
+						}
+						goog.array
+								.forEach(
+										merge_pairs,
+										function(pair) {
+											d._highlightGroups
+													.push(d.editor.reactionRenderer.moleculeRenderer.atomRenderer
+															.highlightOn(pair[0]));
+											d._highlightGroups
+													.push(d.editor.reactionRenderer.moleculeRenderer.atomRenderer
+															.highlightOn(pair[1]));
+										});
 
-				}, undefined, this);
+					}, undefined, this);
 	d.addEventListener(goog.fx.Dragger.EventType.END, function(e) {
 		var merge_pairs = this.findAtomMergePairs(d.molecule);
 
@@ -204,13 +224,19 @@ kemia.controller.plugins.MoleculeEdit.prototype.rotate = function(e, molecule) {
 	d._start = kemia.controller.ReactionEditor.getMouseCoords(e);
 	d._start_angle = goog.math.angle(d._center.x, d._center.y, d._start.x,
 			d._start.y);
+	d._initDeltaX = null;
+	d._initDeltaY = null;
 	d.group = molecule.group;
 	d.molecule = molecule;
 	d.editor = this.editorObject;
 
 	d.addEventListener(goog.fx.Dragger.EventType.DRAG, function(e) {
+		d._initDeltaX = d._initDeltaX || d.deltaX;
+		d._initDeltaY = d._initDeltaY || d.deltaY;
+		var deltaX = d.deltaX - d._initDeltaX;
+		var deltaY = d.deltaY - d._initDeltaY;
 		var new_angle = goog.math.angle(d._center.x, d._center.y, d._start.x
-				+ d.deltaX, d._start.y + d.deltaY);
+				+ deltaX, d._start.y + deltaY);
 		var g_trans = d.group.getTransform();
 		var degrees = new_angle - d._start_angle;
 		d.group.setTransformation(0, 0, degrees, d._center.x, d._center.y);
