@@ -35,17 +35,19 @@ function draw(){
     var select1 = new goog.ui.Select();
     select1.addItem(new goog.ui.MenuItem('hexaethylene glycol monophosphate', 'OCCOCCOCCOCCOCCOCCOP(O)(O)=O'));
     select1.addItem(new goog.ui.MenuItem('Glutathione disulfide','N[C@@H](CCC(=O)N[C@@H](CSSC[C@H](NC(=O)CC[C@H](N)C(O)=O)C(=O)NCC(O)=O)C(=O)NCC(O)=O)C(O)=O'));     
-    select1.addItem(new goog.ui.MenuItem('Coenzyme B','C[C@@H](OP(O)(O)=O)[C@H](NC(=O)CCCCCCS)C(O)=O'));
+    select1.addItem(new goog.ui.MenuItem('Coenzyme B','O=C(N[C@@H](C(=O)O)[C@H](OP(=O)(O)O)C)CCCCCCS'));
     select1.addItem(new goog.ui.MenuItem('Hexa-L-lysine monohydrobromide','[H+].[Br-].NCCCC[C@H](N)C(=O)N[C@@H](CCCCN)C(=O)N[C@@H](CCCCN)C(=O)N[C@@H](CCCCN)C(=O)N[C@@H](CCCCN)C(=O)N[C@@H](CCCCN)C(O)=O'));
     select1.addItem(new goog.ui.MenuItem('O-phospho-L-threonine','C[C@@H](OP(O)(O)=O)[C@H](N)C(O)=O'));
     select1.addItem(new goog.ui.MenuItem('Hexacos-2-enoic acid','[H]C(CCCCCCCCCCCCCCCCCCCCCCC)=C([H])C(O)=O'));
     select1.addItem(new goog.ui.MenuItem('Nitroglycerin','O=N(=O)OCC(CON(=O)=O)ON(=O)=O'));
     select1.addItem(new goog.ui.MenuItem('TetraAquaDiCyanoIron','[H][O]([H])[Fe](C#N)(C#N)([O]([H])[H])([O]([H])[H])[O]([H])[H]'));
     select1.addItem(new goog.ui.MenuItem('benzene', 'c1ccccc1'));
-    select1.addItem(new goog.ui.MenuItem('todo.. Cerulenin','[H][C@]1(O[C@]1([H])C(=O)CC\C=C\C\C=C\C)C(N)=O'));
-    select1.addItem(new goog.ui.MenuItem('todo.. Nitrososulfamethoxazole','Cc1cc(NS(=O)(=O)c2ccc(cc2)N=O)no1'));
-	       
-    //select1.addItem(new goog.ui.MenuItem('Sulfur hexafluoride', 'FS(F)(F)(F)(F)F'));
+    select1.addItem(new goog.ui.MenuItem('Cerulenin','[H][C@]1(O[C@]1([H])C(=O)CC\C=C\C\C=C\C)C(N)=O'));
+    select1.addItem(new goog.ui.MenuItem('Nitrososulfamethoxazole','Cc1cc(NS(=O)(=O)c2ccc(cc2)N=O)no1'));
+	select1.addItem(new goog.ui.MenuItem('Chiral test A', 'N[C@](Br)(O)C')); //1D 3U 
+	select1.addItem(new goog.ui.MenuItem('Chiral test B', 'N[C@@](Br)(C)O'));//1U 4D       
+	select1.addItem(new goog.ui.MenuItem('Alpha-pinene','CC1=CC[C@H]2C[C@@H]1C2(C)C'));
+    select1.addItem(new goog.ui.MenuItem('Sulfur hexafluoride', 'FS(F)(F)(F)(F)F'));
 
     select1.setSelectedIndex(0);
     select1.render(goog.dom.getElement('selectMolecule'));

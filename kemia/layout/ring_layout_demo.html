@@ -46,6 +46,7 @@ function draw(){
     });
     try{
     	mol=kemia.layout.CoordinateGenerator.generate(mol);
+        mol.mustRecalcSSSR=true;
     	renderer.setModels([mol]);
     }catch (e) {
     	console.log(e);
@@ -61,6 +62,7 @@ function draw(){
     });
     try{
  	   mol=kemia.layout.CoordinateGenerator.generate(mol);
+       mol.mustRecalcSSSR=true;
  	   renderer.setModels([mol]);
  	} catch (e){
  		console.log(e);
@@ -77,6 +79,7 @@ function draw(){
     });
     try{
     	mol=kemia.layout.CoordinateGenerator.generate(mol);
+        mol.mustRecalcSSSR=true;
     	renderer.setModels([mol]);
  	} catch (e){
  		console.log(e);
@@ -94,6 +97,7 @@ function draw(){
     });
     try{
     	mol=kemia.layout.CoordinateGenerator.generate(mol);
+        mol.mustRecalcSSSR=true;
     	renderer.setModels([mol]);
  	} catch (e){
  		console.log(e);
@@ -110,6 +114,7 @@ function draw(){
     });
     try{
     	mol=kemia.layout.CoordinateGenerator.generate(mol);
+        mol.mustRecalcSSSR=true;
     	renderer.setModels([mol]);
  	} catch (e){
  		console.log(e);

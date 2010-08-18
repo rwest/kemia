@@ -452,6 +452,12 @@ kemia.layout.AtomPlacer.populatePolygonCorners = function(atomsToDraw, rotationC
 	    if (angle >= 2.0 * Math.PI)
 	        angle -= 2.0 * Math.PI;
 
+        //Fix Github issue 17 : Generated bond lengths should better reflect bond and participating element chemistry.
+        connectAtom = atomsToDraw[ad];
+		if (connectAtom.symbol=='H')
+		  radius*=.6;
+        //End fix
+
 	    x = Math.cos(angle) * radius;
 	    y = Math.sin(angle) * radius;
 	    newX = x + rotationCenter.x;
