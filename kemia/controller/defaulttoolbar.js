@@ -47,13 +47,13 @@ kemia.controller.DefaultToolbar.makeDefaultToolbar = function(elem) {
 	buttons.push(kemia.controller.ToolbarFactory.makeButton(
 			kemia.controller.plugins.Zoom.COMMAND.ZOOM_OUT, 'Zoom Out', '',
 			goog.getCssName('tr-icon') + ' ' + goog.getCssName('tr-zoom-out')));
-	var undo = kemia.controller.ToolbarFactory.makeButton(
+	var undo = kemia.controller.DefaultToolbar.undoRedoButtonFactory_(
 			kemia.controller.plugins.UndoRedo.COMMAND.UNDO, 'Undo', '', goog
 					.getCssName('tr-icon')
 					+ ' ' + goog.getCssName('tr-undo'));
 	undo.queryable = true;
 	buttons.push(undo);
-	var redo = kemia.controller.ToolbarFactory.makeButton(
+	var redo = kemia.controller.DefaultToolbar.undoRedoButtonFactory_(
 			kemia.controller.plugins.UndoRedo.COMMAND.REDO, 'Redo', '', goog
 					.getCssName('tr-icon')
 					+ ' ' + goog.getCssName('tr-redo'));

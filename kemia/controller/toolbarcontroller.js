@@ -253,10 +253,13 @@ kemia.controller.ToolbarController.prototype.updateToolbar = function(e) {
  */
 kemia.controller.ToolbarController.prototype.updateToolbarFromState = function(
 		state) {
+	this.logger.info('updateToobarFromState');
+
 	for ( var command in state) {
 		var button = this.toolbar_.getChild(this.getComponentId(command));
 		if (button) {
 			var value = state[command];
+			this.logger.info(command + ": " + value);
 			if (button.updateFromValue) {
 				button.updateFromValue(value);
 			} else {
@@ -283,3 +286,12 @@ kemia.controller.ToolbarController.prototype.handleAction = function(e) {
 	} 
 	this.editor_.execCommand(command, value, checked, e);
 };
+
+/**
+ * The logger for this class.
+ * 
+ * @type {goog.debug.Logger}
+ * @protected
+ */
+kemia.controller.ToolbarController.prototype.logger = goog.debug.Logger
+		.getLogger('kemia.controller.ToolbarController');
