@@ -48,13 +48,14 @@ kemia.controller.plugins.MoleculeEdit.prototype.execCommandInternal = function(
 	this.template = arguments[1];
 	var e = arguments[3];
 	var molecule = kemia.io.json.readMolecule(this.template);
-	// var mol_bbox = molecule.getBoundingBox();
+	// place template as new molecule at 0,0 of graphics canvas
 	var origin = this.editorObject.getAtomicCoords(new goog.math.Coordinate(0,
 			0));
-
-	// var mol_offset = new goog.math.Coordinate(mol_bbox.right - mol_bbox.left,
-	// mol_bbox.top - mol_bbox.bottom);
-	var diff = goog.math.Coordinate.difference(origin, molecule.getCenter());
+	var mol_bbox = molecule.getBoundingBox();
+	var mol_offset = new goog.math.Coordinate(mol_bbox.right, mol_bbox.top);
+	this.logger.info("mol_offset: " + mol_offset.toString());
+	this.logger.info("molecule.getCenter(): " + molecule.getCenter().toString());
+	var diff = goog.math.Coordinate.difference(origin, mol_offset);
 	// diff = goog.math.Coordinate.difference(diff, mol_offset);
 	if (this.editorObject.getModels().length > 0) {
 		var reaction = this.editorObject.getModels()[0];
@@ -65,16 +66,90 @@ kemia.controller.plugins.MoleculeEdit.prototype.execCommandInternal = function(
 	reaction.translateMolecule(molecule, diff);
 	this.editorObject.setModels( [ reaction ]);
 	var mol_center = molecule.getCenter();
-	var center = this.editorObject.reactionRenderer.transform
-			.transformCoords( [ mol_center ])[0];
-	// var offset =
-	// this.editorObject.getOffsetCoords(this.editorObject.originalElement, 0,
-	// 0)
-	// this.logger.info(offset.toString());
-	//
-	e.clientX = undefined;
 
-	this.drag(e, molecule);
+	var center = this.editorObject.getGraphicsCoords(mol_center);
+	var origin = kemia.controller.ReactionEditor.getOffsetCoords(
+			this.editorObject.originalElement, document.body.scrollLeft
+			+ document.documentElement.scrollLeft, document.body.scrollTop
+			+ document.documentElement.scrollTop);
+
+	e.clientX = center.x - origin.x;
+	e.clientY = center.y - origin.y;
+
+	this.dragTemplate(e, molecule);
+};
+
+kemia.controller.plugins.MoleculeEdit.prototype.dragTemplate = function(e,
+		molecule) {
+
+	var d = new goog.fx.Dragger(this.editorObject.getOriginalElement());
+	d._start = new goog.math.Coordinate(e.clientX, e.clientY);
+	d._prev = d._start;
+	d.molecule = molecule;
+	d.editor = this.editorObject;
+	d
+			.addEventListener(goog.fx.Dragger.EventType.DRAG,
+					function(e) {
+						if (d._highlightGroups) {
+							goog.array.forEach(d._highlightGroups, function(g) {
+								g.clear();
+							})
+						}
+						d._highlightGroups = [];
+						var mouse_coord = new goog.math.Coordinate(e.clientX,
+								e.clientY);
+
+						var diff = goog.math.Coordinate.difference(mouse_coord,
+								d._start);
+
+						// move graphic
+					d.molecule.group.setTransformation(diff.x, diff.y, 0, 0, 0);
+
+					// move molecule
+					var mol_coords = d.editor.reactionRenderer.transform
+							.createInverse().transformCoords(
+									[ mouse_coord, d._prev ]);
+
+					var diff = goog.math.Coordinate.difference(mol_coords[0],
+							mol_coords[1]);
+					d.molecule.reaction.translateMolecule(d.molecule, diff);
+					d._prev = mouse_coord;
+
+					// highlight merge sites
+					var merge_pairs = this.findAtomMergePairs(molecule);
+
+					// only first merge pair for now
+					if (merge_pairs.length > 0) {
+						merge_pairs = [ merge_pairs[0] ];
+					}
+					goog.array
+							.forEach(
+									merge_pairs,
+									function(pair) {
+										d._highlightGroups
+												.push(d.editor.reactionRenderer.moleculeRenderer.atomRenderer
+														.highlightOn(pair[0]));
+										d._highlightGroups
+												.push(d.editor.reactionRenderer.moleculeRenderer.atomRenderer
+														.highlightOn(pair[1]));
+									});
+
+				}, undefined, this);
+	d.addEventListener(goog.fx.Dragger.EventType.END, function(e) {
+		var merge_pairs = this.findAtomMergePairs(d.molecule);
+
+		// only first merge pair for now
+			if (merge_pairs.length > 0) {
+				merge_pairs = [ merge_pairs[0] ];
+			}
+			goog.array.forEach(merge_pairs, function(pair) {
+				kemia.controller.plugins.AtomEdit.mergeMolecules(pair[0],
+						pair[1]);
+			}, this);
+			d.editor.setModels(d.editor.getModels());
+			d.dispose();
+		}, undefined, this);
+	d.startDrag(e);
 };
 
 /**
@@ -111,13 +186,6 @@ kemia.controller.plugins.MoleculeEdit.prototype.drag = function(e, molecule) {
 	d._initDeltaY = null;
 	d._prevDeltaX = 0;
 	d._prevDeltaY = 0;
-	this.logger.info("d._center: " + d._center.toString());
-	this.logger.info("d.startX, d.startY: " + d.startX + ", " + d.startY);
-	// if (e.clientX) {
-	// d._start = kemia.controller.ReactionEditor.getMouseCoords(e);
-	// d._prev = d._start;
-	// }
-	// this.logger.info(d._start.toString());
 	d.molecule = molecule;
 	d.editor = this.editorObject;
 	d
@@ -187,6 +255,7 @@ kemia.controller.plugins.MoleculeEdit.prototype.drag = function(e, molecule) {
 			d.editor.setModels(d.editor.getModels());
 			d.dispose();
 		}, undefined, this);
+
 	d.startDrag(e);
 };
 
