@@ -91,17 +91,16 @@ goog.inherits(kemia.controller.ToolbarController, goog.events.EventTarget);
  *         if any.
  * @protected
  */
-kemia.controller.ToolbarController.prototype.getComponentId = function(
-		command) {
+kemia.controller.ToolbarController.prototype.getComponentId = function(command) {
 	// The default implementation assumes that the component ID is the same as
 	// the command constant.
 	return command;
 };
 
 /**
- * Returns the {@link kemia.controller.Command} constant that corresponds to
- * the given Closure component ID. Subclasses may override this method if they
- * want to use a custom mapping scheme from controls to commands.
+ * Returns the {@link kemia.controller.Command} constant that corresponds to the
+ * given Closure component ID. Subclasses may override this method if they want
+ * to use a custom mapping scheme from controls to commands.
  * 
  * @param {string}
  *            id Closure component ID of a toolbar control.
@@ -130,8 +129,7 @@ kemia.controller.ToolbarController.prototype.getHandler = function() {
  * Returns the editor instance managed by the toolbar. Useful for classes that
  * extend {@code kemia.controller.ToolbarController}.
  * 
- * @return {!kemia.controller.ReactionEditor} The editor managed by the
- *         toolbar.
+ * @return {!kemia.controller.ReactionEditor} The editor managed by the toolbar.
  * @protected
  */
 kemia.controller.ToolbarController.prototype.getEditor = function() {
@@ -195,8 +193,7 @@ kemia.controller.ToolbarController.prototype.blur = function() {
 
 /** @inheritDoc */
 kemia.controller.ToolbarController.prototype.disposeInternal = function() {
-	kemia.controller.ToolbarController.superClass_.disposeInternal
-			.call(this);
+	kemia.controller.ToolbarController.superClass_.disposeInternal.call(this);
 	if (this.handler_) {
 		this.handler_.dispose();
 		delete this.handler_;
@@ -283,7 +280,18 @@ kemia.controller.ToolbarController.prototype.handleAction = function(e) {
 	var checked;
 	if (e.target.isChecked) {
 		checked = e.target.isChecked();
-	} 
+	}
+
+	// uncheck all other 'checkable' buttons
+	this.toolbar_.forEachChild(function(c) {
+		if (c.setChecked && c != e.target) {
+			checked = c.setChecked(false);
+			if (c.setValue) {
+				c.setValue(null);
+			}
+		}
+	});
+	this.logger.info("handleAction " + command + " " + checked);
 	this.editor_.execCommand(command, value, checked, e);
 };
 
