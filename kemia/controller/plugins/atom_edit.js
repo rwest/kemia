@@ -49,6 +49,13 @@ kemia.controller.plugins.AtomEdit.prototype.getKeyboardShortcuts = function() {
 }
 
 /**
+ * reset to default state called when another plugin is made active
+ */
+kemia.controller.plugins.AtomEdit.prototype.resetState = function() {
+	this.symbol = undefined;
+}
+
+/**
  * sets atom symbol.
  * 
  * @param {string}
@@ -86,17 +93,19 @@ kemia.controller.plugins.AtomEdit.prototype.handleMouseDown = function(e) {
 	var target = this.editorObject.findTarget(e);
 	if (target instanceof kemia.model.Atom) {
 		var atom = target;
-		this.editorObject.dispatchBeforeChange();
 		if (this.symbol && (this.symbol != atom.symbol)) {
+			this.editorObject.dispatchBeforeChange();
 			this.setAtomSymbol(e, atom);
+			this.editorObject.setModels(this.editorObject.getModels());
+			this.editorObject.dispatchChange();
+			return true;
 		} else {
+			this.editorObject.dispatchBeforeChange();
 			this.drag(e, atom);
+			this.editorObject.dispatchChange();
 		}
-
-		this.editorObject.setModels(this.editorObject.getModels());
-		this.editorObject.dispatchChange();
-		return true;
 	}
+
 };
 
 kemia.controller.plugins.AtomEdit.prototype.handleMouseUp = function(e) {
@@ -221,4 +230,12 @@ kemia.controller.plugins.AtomEdit.prototype.drag = function(e, atom) {
 		d.dispose();
 	});
 	d.startDrag(e);
+};
+
+/** @inheritDoc */
+kemia.controller.plugins.AtomEdit.prototype.queryCommandValue = function(
+		command) {
+	if (command == kemia.controller.plugins.AtomEdit.COMMAND) {
+		return this.symbol;
+	}
 };

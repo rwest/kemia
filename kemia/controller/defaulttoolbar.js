@@ -36,10 +36,11 @@ goog.require('kemia.controller.TemplateMenuButtonRenderer');
 kemia.controller.DefaultToolbar.makeDefaultToolbar = function(elem) {
 
 	var buttons = [];
-	buttons.push(kemia.controller.ToolbarFactory.makeButton(
+	var clear = kemia.controller.ToolbarFactory.makeButton(
 			kemia.controller.plugins.ClearEditor.COMMAND, 'Erase All', '', goog
 					.getCssName('tr-icon')
-					+ ' ' + goog.getCssName('tr-clear')));
+					+ ' ' + goog.getCssName('tr-clear'));
+	buttons.push(clear);
 	buttons.push(kemia.controller.ToolbarFactory.makeButton(
 			kemia.controller.plugins.Zoom.COMMAND.ZOOM_IN, 'Zoom In', '', goog
 					.getCssName('tr-icon')
@@ -59,14 +60,26 @@ kemia.controller.DefaultToolbar.makeDefaultToolbar = function(elem) {
 					+ ' ' + goog.getCssName('tr-redo'));
 	redo.queryable = true;
 	buttons.push(redo);
-	buttons.push(kemia.controller.ToolbarFactory.makeToggleButton(
+	var erase = kemia.controller.ToolbarFactory.makeToggleButton(
 			kemia.controller.plugins.Erase.COMMAND, 'Erase', '', goog
 					.getCssName('tr-icon')
-					+ ' ' + goog.getCssName('tr-erase')));
+					+ ' ' + goog.getCssName('tr-erase'));
+	erase.queryable = true;
+	buttons.push(erase);
 
 	var atom_select = kemia.controller.ToolbarFactory.makeSelectButton(
 			kemia.controller.plugins.AtomEdit.COMMAND, 'Atomic Symbol', '',
 			goog.getCssName('tr-icon') + ' ' + goog.getCssName('tr-symbol'));
+	atom_select.queryable = true;
+	// How to update this button.
+	atom_select.updateFromValue = function(value) {
+		// Normalize value to null or a nonempty string (sometimes we get
+		// the empty string, sometimes we get false...)
+		value = value && value.length > 0 ? value : null;
+		if (value != atom_select.getValue()) {
+			atom_select.setValue(value);
+		}
+	}
 	var atom_menu = new goog.ui.Menu();
 	atom_menu.addItem(new goog.ui.Option(goog.dom.createDom(
 			goog.dom.TagName.DIV, {
@@ -109,6 +122,13 @@ kemia.controller.DefaultToolbar.makeDefaultToolbar = function(elem) {
 			kemia.controller.plugins.BondEdit.COMMAND, 'Bond Type', '', goog
 					.getCssName('tr-icon')
 					+ ' ' + goog.getCssName('tr-bond'));
+	bond_select.queryable = true;
+	// How to update this button.
+	bond_select.updateFromValue = function(value) {
+		if (value != bond_select.getValue()) {
+			bond_select.setValue(value);
+		}
+	}
 	var bond_menu = new goog.ui.Menu();
 	goog.array.forEach(kemia.controller.plugins.BondEdit.BOND_TYPES, function(
 			entry) {
@@ -124,6 +144,13 @@ kemia.controller.DefaultToolbar.makeDefaultToolbar = function(elem) {
 					.getCssName('tr-icon')
 					+ ' ' + goog.getCssName('tr-template'), renderer);
 
+	template_select.queryable = true;
+	// How to update this button.
+	template_select.updateFromValue = function(value) {
+		if (value != template_select.getValue()) {
+			template_select.setValue(value);
+		}
+	}
 	var template_menu = new goog.ui.Menu();
 	goog.array.forEach(kemia.controller.plugins.MoleculeEdit.TEMPLATES,
 			function(template) {
@@ -133,14 +160,17 @@ kemia.controller.DefaultToolbar.makeDefaultToolbar = function(elem) {
 	template_select.setMenu(template_menu);
 	buttons.push(template_select);
 
-	buttons.push(kemia.controller.ToolbarFactory.makeToggleButton(
+	var plus_button = kemia.controller.ToolbarFactory.makeToggleButton(
 			kemia.controller.plugins.ArrowPlusEdit.COMMAND.EDIT_PLUS, 'Plus',
-			'', goog.getCssName('tr-icon') + ' ' + goog.getCssName('tr-plus')));
-	buttons
-			.push(kemia.controller.ToolbarFactory.makeToggleButton(
-					kemia.controller.plugins.ArrowPlusEdit.COMMAND.EDIT_ARROW,
-					'Arrow', '', goog.getCssName('tr-icon') + ' '
-							+ goog.getCssName('tr-arrow')));
+			'', goog.getCssName('tr-icon') + ' ' + goog.getCssName('tr-plus'));
+	plus_button.queryable = true;
+
+	buttons.push(plus_button);
+	var arrow_button = kemia.controller.ToolbarFactory.makeToggleButton(
+			kemia.controller.plugins.ArrowPlusEdit.COMMAND.EDIT_ARROW, 'Arrow',
+			'', goog.getCssName('tr-icon') + ' ' + goog.getCssName('tr-arrow'));
+	arrow_button.queryable = true;
+	buttons.push(arrow_button);
 	buttons.push(kemia.controller.ToolbarFactory.makeButton(
 			kemia.controller.plugins.Cleanup.COMMAND, 'Cleanup', '', goog
 					.getCssName('tr-icon')

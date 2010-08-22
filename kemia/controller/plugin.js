@@ -250,6 +250,7 @@ kemia.controller.Plugin.prototype.execCommand = function(command, var_args) {
 	}
 
 	try {
+		this.editorObject.resetQueryablePlugins();
 		var result = this.execCommandInternal.apply(this, arguments);
 	} finally {
 

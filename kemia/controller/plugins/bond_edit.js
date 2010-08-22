@@ -149,6 +149,7 @@ kemia.controller.plugins.BondEdit.prototype.handleMouseDown = function(e) {
 				}
 			}
 			target._last_click = goog.now();
+			this.drag(e, target);
 		}
 	}
 	if (target == undefined && this.bond_type) {
@@ -304,4 +305,20 @@ kemia.controller.plugins.BondEdit.prototype.drag = function(e, bond) {
 		d.dispose();
 	});
 	d.startDrag(e);
+};
+
+/**
+ * reset to default state
+ * called when another plugin is made active
+ */
+kemia.controller.plugins.BondEdit.prototype.resetState = function(){
+	this.bond_type  = undefined;
+}
+
+
+/** @inheritDoc */
+kemia.controller.plugins.BondEdit.prototype.queryCommandValue = function(command) {
+	if (command == kemia.controller.plugins.BondEdit.COMMAND) {
+		return this.bond_type;
+	}
 };

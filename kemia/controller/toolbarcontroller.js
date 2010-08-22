@@ -282,16 +282,17 @@ kemia.controller.ToolbarController.prototype.handleAction = function(e) {
 		checked = e.target.isChecked();
 	}
 
+
 	// uncheck all other 'checkable' buttons
-	this.toolbar_.forEachChild(function(c) {
-		if (c.setChecked && c != e.target) {
-			checked = c.setChecked(false);
-			if (c.setValue) {
-				c.setValue(null);
-			}
-		}
-	});
-	this.logger.info("handleAction " + command + " " + checked);
+//	this.toolbar_.forEachChild(function(c) {
+//		if (c.setChecked && c != e.target) {
+//			if (c.setValue) {
+//				c.setValue(null);
+//			}
+//			c.setChecked(false);
+//		}
+//	});
+//	this.logger.info("handleAction " + command + " " + checked);
 	this.editor_.execCommand(command, value, checked, e);
 };
 

@@ -135,3 +135,22 @@ kemia.controller.plugins.ArrowPlusEdit.prototype.dragArrow = function(e) {
 		});
 	d.startDrag(e);
 };
+
+
+/**
+ * reset to default state
+ * called when another plugin is made active
+ */
+kemia.controller.plugins.ArrowPlusEdit.prototype.resetState = function(){
+	this.activeCommand[kemia.controller.plugins.ArrowPlusEdit.COMMAND.EDIT_ARROW] = false;
+	this.activeCommand[kemia.controller.plugins.ArrowPlusEdit.COMMAND.EDIT_PLUS] = false;
+}
+
+/** @inheritDoc */
+kemia.controller.plugins.ArrowPlusEdit.prototype.queryCommandValue = function(command) {
+	var state = null;
+	if (this.isSupportedCommand(command)) {
+		state = this.activeCommand[command];
+	} 
+	return state;
+};

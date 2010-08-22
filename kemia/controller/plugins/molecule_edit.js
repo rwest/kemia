@@ -323,6 +323,22 @@ kemia.controller.plugins.MoleculeEdit.prototype.rotate = function(e, molecule) {
 };
 
 /**
+ * reset to default state
+ * called when another plugin is made active
+ */
+kemia.controller.plugins.MoleculeEdit.prototype.resetState = function(){
+	this.template  = undefined;
+}
+
+
+/** @inheritDoc */
+kemia.controller.plugins.MoleculeEdit.prototype.queryCommandValue = function(command) {
+	if (command == kemia.controller.plugins.MoleculeEdit.COMMAND) {
+		return this.template;
+	}
+};
+
+/**
  * @enum {Object}
  */
 kemia.controller.plugins.MoleculeEdit.TEMPLATES = [ {

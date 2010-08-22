@@ -421,6 +421,19 @@ kemia.controller.ReactionEditor.prototype.queryCommandValueInternal_ = function(
 };
 
 /**
+ * resets state of queryable plugins
+ * used to make plugins exclusive
+ */
+kemia.controller.ReactionEditor.prototype.resetQueryablePlugins = function(){
+	var plugins = this.indexedPlugins_[kemia.controller.Plugin.Op.QUERY_COMMAND];
+	goog.array.forEach(plugins, function(p){
+		if(p.resetState){
+			p.resetState();
+		}
+	});
+}
+
+/**
  * Gets the value of command(s).
  * 
  * @param {string|Array.

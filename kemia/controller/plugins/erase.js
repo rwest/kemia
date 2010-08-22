@@ -113,3 +113,20 @@ kemia.controller.plugins.Erase.prototype.eraseArrowOrPlus = function(coord) {
 	reaction.removeArrowOrPlus(coord);
 	this.editorObject.setModels(this.editorObject.getModels());
 };
+
+/**
+ * reset to default state
+ * called when another plugin is made active
+ */
+kemia.controller.plugins.Erase.prototype.resetState = function(){
+	this.isActive = false;
+}
+
+/** @inheritDoc */
+kemia.controller.plugins.Erase.prototype.queryCommandValue = function(command) {
+	var state = null;
+	if (command == kemia.controller.plugins.Erase.COMMAND) {
+		state = this.isActive;
+	} 
+	return state;
+};
