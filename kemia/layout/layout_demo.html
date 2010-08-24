@@ -48,9 +48,14 @@ function draw(){
 	select1.addItem(new goog.ui.MenuItem('Chiral test B', 'N[C@@](Br)(C)O'));//1U 4D       
 	select1.addItem(new goog.ui.MenuItem('Alpha-pinene','CC1=CC[C@H]2C[C@@H]1C2(C)C'));
     select1.addItem(new goog.ui.MenuItem('Sulfur hexafluoride', 'FS(F)(F)(F)(F)F'));
-	select1.addItem(new goog.ui.MenuItem('Demo 1','O5CCN(CC=3C=1C=CC=CC=1C(=C2C=CC=CC2=3)CN4CCOCC4)CC5'));
-	select1.addItem(new goog.ui.MenuItem('ergosteryl 3-β-D-glucoside','[H][C@@]1(CC[C@@]2([H])C3=CC=C4C[C@H](CC[C@]4(C)[C@@]3([H])CC[C@]12C)O[C@@H]1O[C@H](CO)[C@@H](O)[C@H](O)[C@H]1O)[C@H](C)\C=C\[C@H](C)C(C)C'));
-
+	select1.addItem(new goog.ui.MenuItem('Ergosteryl 3-β-D-glucoside','[H][C@@]1(CC[C@@]2([H])C3=CC=C4C[C@H](CC[C@]4(C)[C@@]3([H])CC[C@]12C)O[C@@H]1O[C@H](CO)[C@@H](O)[C@H](O)[C@H]1O)[C@H](C)\C=C\[C@H](C)C(C)C'));
+    select1.addItem(new goog.ui.MenuItem('Rubicene','c1ccc2c(c1)c1cccc3c4c5ccccc5c5cccc(c2c13)c45'));
+    select1.addItem(new goog.ui.MenuItem('Spirolucidine','[H][C@@]12C[C@@H](C)C[C@@H]3N(C)C[C@@H](C[C@]13[H])[C@]1(C2)N[C@H](CCC1=O)C[C@@]1([H])C[C@H](C)C[C@]2([H])N(CCC[C@]12[H])C(C)=O'));
+    select1.addItem(new goog.ui.MenuItem('EGCG','Oc1cc(O)c2C[C@@H](OC(=O)c3cc(O)c(O)c(O)c3)[C@H](Oc2c1)c1cc(O)c(O)c(O)c1'));
+    select1.addItem(new goog.ui.MenuItem('7,10-bis(4-bromophenyl)-8,9-bis(4-octylphenyl)fluoranthene','CCCCCCCCc1ccc(cc1)-c1c(-c2ccc(CCCCCCCC)cc2)c(-c2ccc(Br)cc2)c2-c3cccc4cccc(-c2c1-c1ccc(Br)cc1)c34'));
+    select1.addItem(new goog.ui.MenuItem('Agathisflavone','Oc1ccc(cc1)-c1cc(=O)c2c(O)c(c(O)cc2o1)-c1c(O)cc(O)c2c1oc(cc2=O)-c1ccc(O)cc1'));
+    select1.addItem(new goog.ui.MenuItem('Thalicarpine','[H][C@@]1(Cc2cc(OC)c(OC)cc2Oc2cc3C[C@]4([H])N(C)CCc5cc(OC)c(OC)c(-c3cc2OC)c45)N(C)CCc2cc(OC)c(OC)cc12'));
+    select1.addItem(new goog.ui.MenuItem('Other','O5CCN(CC=3C=1C=CC=CC=1C(=C2C=CC=CC2=3)CN4CCOCC4)CC5'));
     select1.setSelectedIndex(0);
     select1.render(goog.dom.getElement('selectMolecule'));
 
