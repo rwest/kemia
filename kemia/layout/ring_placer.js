@@ -27,21 +27,17 @@ goog.require("kemia.graphics.AffineTransform");
  *            bondLength
  * @return {kemia.layout.Vector2D}
  */
-kemia.layout.RingPlacer.getRingCenterOfFirstRing = function(ring, bondVector,
-		bondLength) {
-	var size = ring.atoms.length;
-	var radius = bondLength / (2 * Math.sin((Math.PI) / size));
-	var newRingPerpendicular = Math.sqrt(Math.pow(radius, 2)
-			- Math.pow(bondLength / 2, 2));
-	// get the angle from the origin to the bondVector
-	var rotangle = Math.atan2(bondVector.y, bondVector.x);
-	/*
-	 * Add 90 Degrees to this angle, this is supposed to be the new ringcenter
-	 * vector
-	 */
-	rotangle += Math.PI / 2;
-	return new kemia.layout.Vector2D(Math.cos(rotangle) * newRingPerpendicular,
-			Math.sin(rotangle) * newRingPerpendicular);
+kemia.layout.RingPlacer.getRingCenterOfFirstRing = function(ring, bondVector,bondLength) {
+        
+        var size = ring.atoms.length;
+        var radius = bondLength / (2 * Math.sin((Math.PI) / size));
+        var newRingPerpendicular = Math.sqrt(Math.pow(radius, 2) - Math.pow(bondLength/2, 2));       
+        /* get the angle between the x axis and the bond vector */
+        var rotangle = kemia.layout.AtomPlacer.getAngle(bondVector.x, bondVector.y);
+        rotangle += Math.PI / 2;
+        return new kemia.layout.Vector2D(Math.cos(rotangle) * newRingPerpendicular, Math.sin(rotangle) * newRingPerpendicular);
+
+
 }
 
 /**
@@ -62,6 +58,7 @@ kemia.layout.RingPlacer.getRingCenterOfFirstRing = function(ring, bondVector,
  */
 kemia.layout.RingPlacer.placeRing = function(ring, shared_fragment,
 		shared_fragment_center, ringCenterVector, bondLength) {
+
 	var sharedAtomCount = shared_fragment.atoms.length;
 
 	if (sharedAtomCount > 2) {
@@ -124,11 +121,14 @@ kemia.layout.RingPlacer.placeRingSubstituents = function(ringset, bondLength) {
  */
 kemia.layout.RingPlacer.placeBridgedRing = function(ring, shared_fragment,
 		shared_fragment_center, ringCenterVector, bondLength) {
+
+
 	var radius = kemia.layout.RingPlacer.getNativeRingRadius(ring.atoms.length,
 			bondLength);
 	ringCenterVector.normalize();
 	ringCenterVector.scale(radius);
-	var ringCenter = shared_fragment_center.add(ringCenterVector);
+    var ringCenter = new goog.math.Coordinate(sharedAtomsCenter.x+ringCenterVector.x, sharedAtomsCenter.y+ringCenterVector.y);
+
 
 	var bridgeAtoms = kemia.layout.RingPlacer.getBridgeAtoms(shared_fragment);
 
@@ -268,9 +268,9 @@ kemia.layout.RingPlacer.getBridgeAtoms = function(shared_fragment) {
  * @param bondLength
  *            The standard bondlength
  */
-kemia.layout.RingPlacer.placeFusedRing = function(ring, shared_fragment,
+kemia.layout.RingPlacer.placeFusedRing = function(ring, sharedAtoms,
 		sharedAtomsCenter, ringCenterVector, bondLength) {
-
+/*
 	var radius = kemia.layout.RingPlacer.getNativeRingRadius(ring.atoms.length,
 			bondLength);
 	var newRingPerpendicular = Math.sqrt(Math.pow(radius, 2)
@@ -278,7 +278,8 @@ kemia.layout.RingPlacer.placeFusedRing = function(ring, shared_fragment,
 	ringCenterVector.normalize();
 	ringCenterVector.scale(newRingPerpendicular);
 
-	var ringCenter = sharedAtomsCenter.add(ringCenterVector);
+    var ringCenter = new goog.math.Coordinate(sharedAtomsCenter.x+ringCenterVector.x, sharedAtomsCenter.y+ringCenterVector.y);
+	//var ringCenter = sharedAtomsCenter.add(ringCenterVector);
 
 	var bondAtom1 = shared_fragment.atoms[0];
 	var bondAtom2 = shared_fragment.atoms[1];
@@ -304,10 +305,102 @@ kemia.layout.RingPlacer.placeFusedRing = function(ring, shared_fragment,
 			startAtom, shared_fragment.bonds[0], ring.bonds);
 	var direction = kemia.layout.RingPlacer.findDirection(ringCenterVector,
 			bondAtom1, bondAtom2);
-	var addAngle = addAngle * direction; 
+	var addAngle = addAngle * direction;
+
 	kemia.layout.AtomPlacer.populatePolygonCorners(atoms_to_place, ringCenter,
 			startAngle, addAngle, radius);
+*/
+
+//  public  void placeFusedRing(IRing ring, IAtomContainer sharedAtoms, Point2d sharedAtomsCenter, Vector2d ringCenterVector, double bondLength )
+
+
+    var radius = kemia.layout.RingPlacer.getNativeRingRadius(ring.atoms.length,
+            bondLength);
+    var newRingPerpendicular = Math.sqrt(Math.pow(radius, 2)
+            - Math.pow(bondLength / 2, 2));
+
+    ringCenterVector.normalize();
+    ringCenterVector.scale(newRingPerpendicular);
+    var ringCenter = new goog.math.Coordinate(sharedAtomsCenter.x+ringCenterVector.x, sharedAtomsCenter.y+ringCenterVector.y);
+
+    var bondAtom1 = sharedAtoms.atoms[0];
+    var bondAtom2 = sharedAtoms.atoms[1];
+
+    var bondAtom1Vector = new kemia.layout.Vector2D(bondAtom1.coord.x, bondAtom1.coord.y);
+    var bondAtom2Vector = new kemia.layout.Vector2D(bondAtom2.coord.x, bondAtom2.coord.y);
+
+    var originRingCenterVector = new kemia.layout.Vector2D(ringCenter.x, ringCenter.y);     
+
+    bondAtom1Vector.sub(originRingCenterVector);
+    bondAtom2Vector.sub(originRingCenterVector);        
+    
+    var occupiedAngle = bondAtom1Vector.angle(bondAtom2Vector);
+
+    var remainingAngle = (2 * Math.PI) - occupiedAngle;
+    var addAngle = remainingAngle / (ring.atoms.length -  1);
+
+    centerX = ringCenter.x;
+    centerY = ringCenter.y;
+    
+    xDiff = bondAtom1.coord.x - bondAtom2.coord.x;
+    yDiff = bondAtom1.coord.y - bondAtom2.coord.y;
+    
+    direction = 1;
+    // if bond is vertical
+    if (xDiff == 0)
+    {
+        if (bondAtom1.coord.y > bondAtom2.coord.y)
+            startAtom = bondAtom1;
+        else
+            startAtom = bondAtom2;
+        
+        //changes the drawing direction
+        if (centerX < bondAtom1.coord.x)
+            direction = 1;
+        else
+            direction = -1;
+    }
+    // if bond is not vertical
+    else
+    {
+        //starts with the left Atom
+        if (bondAtom1.coord.x > bondAtom2.coord.x)
+            startAtom = bondAtom1;
+        else
+            startAtom = bondAtom2;
+        
+        //changes the drawing direction
+        if (centerY - bondAtom1.coord.y > (centerX - bondAtom1.coord.x) * yDiff / xDiff)
+            direction = 1;
+        else
+            direction = -1;
+    }
+    startAngle = kemia.layout.AtomPlacer.getAngle(startAtom.coord.x - ringCenter.x, startAtom.coord.y - ringCenter.y);
+
+    currentAtom = startAtom;
+    currentBond = sharedAtoms.bonds[0];
+
+    atomsToDraw = new Array();
+    for (x1=0,x2=ring.bonds.length-2;x1<x2; x1++)
+    {
+        currentBond = this.getNextBond(ring, currentBond, currentAtom);
+        currentAtom = currentBond.otherAtom(currentAtom);
+        atomsToDraw.push(currentAtom);
+    }
+    addAngle = addAngle * direction;
+    kemia.layout.AtomPlacer.populatePolygonCorners(atomsToDraw, ringCenter, startAngle, addAngle, radius);
 }
+
+
+kemia.layout.RingPlacer.getNextBond = function(ring, bond,atom) {
+    for (f = 0; f < ring.bonds.length; f++) {
+		if (ring.bonds[f] != bond && (ring.bonds[f].source == atom || ring.bonds[f].target == atom)) {
+            return ring.bonds[f];
+		}
+    }
+    return null;
+}
+
 
 /**
  * Generated coordinates for a spiro ring.
@@ -330,7 +423,7 @@ kemia.layout.RingPlacer.placeSpiroRing = function(ring, shared_fragment,
 			bondLength);
 	ringCenterVector.normalize();
 	ringCenterVector.scale(radius);
-	var ringCenter = sharedAtomsCenter.add(ringCenterVector);
+    var ringCenter = new goog.math.Coordinate(sharedAtomsCenter.x+ringCenterVector.x, sharedAtomsCenter.y+ringCenterVector.y);
 
 	var addAngle = 2 * Math.PI / ring.atoms.length;
 
@@ -396,36 +489,45 @@ kemia.layout.RingPlacer.center = function(atoms) {
 			/ atoms.length);
 };
 
-kemia.layout.RingPlacer.placeConnectedRings = function(ringset, ring,
-		bondLength) {
-	var connectedRings = kemia.ring.RingPartitioner.directConnectedRings(ring,
-			ringset);
-	goog.array.forEach(connectedRings, function(connected_ring) {
-		var shared_fragment = {
-				atoms : kemia.layout.RingPlacer.getIntersectingAtoms(ring,
-						connected_ring),
-						bonds : kemia.layout.RingPlacer.getIntersectingBonds(ring,
-								connected_ring)
-		}
 
-		var shared_fragment_center = kemia.layout.RingPlacer
-		.center(shared_fragment.atoms);
-		var old_ring_center = kemia.layout.RingPlacer.center(ring.atoms);
-		var new_ring_center = goog.math.Coordinate.difference(
-				shared_fragment_center, old_ring_center);
-		var new_ring_center_vector = new kemia.layout.Vector2D(new_ring_center.x, new_ring_center.y);
-		var shared_fragment_center_vector = new kemia.layout.Vector2D(shared_fragment_center.x, shared_fragment_center.y);
-		kemia.layout.RingPlacer.placeRing(connected_ring, shared_fragment,
-				shared_fragment_center_vector, new_ring_center_vector, bondLength);
-	});
-	var remaining = goog.array.filter(ringset, function(r) {
-		return !r === ring;
-	});
-	if (remaining.length > 0) {
-		kemia.layout.RingPlacer.placeConnectedRings(remaining, remaining[0],
-				bondLength);
-	}
-};
+kemia.layout.RingPlacer.placeConnectedRings = function(ringset, ring, handleType, bondLength) {
+    var connectedRings = kemia.ring.RingPartitioner.directConnectedRings(ring,ringset);
+    for (r=0,r1=connectedRings.length; r<r1; r++) {
+		var connectedRing = connectedRings[r];
+        if (!connectedRing.flags[kemia.model.Flags.ISPLACED]) {
+	        var shared_fragment = {
+	                atoms : kemia.layout.RingPlacer.getIntersectingAtoms(ring,connectedRing),
+	                bonds : kemia.layout.RingPlacer.getIntersectingBonds(ring,connectedRing)
+	        }
+			sac = shared_fragment.atoms.length;
+            if ((sac == 2 && handleType == 'FUSED') ||(sac == 1 && handleType == 'SPIRO')||(sac > 2 && handleType == 'BRIDGED'))
+            {
+				debug="";
+                for(qw=0;qw<shared_fragment.atoms.length;qw++)
+                    debug+=("\n         "+shared_fragment.atoms[qw].coord+" "+shared_fragment.atoms[qw].flags[kemia.model.Flags.ISPLACED]);
+				//alert(debug)
+
+                sharedAtomsCenter = kemia.layout.AtomPlacer.getAtoms2DCenter(shared_fragment.atoms);
+                //alert("shar center.. "+sharedAtomsCenter);
+
+                oldRingCenter = kemia.layout.AtomPlacer.getAtoms2DCenter(ring.atoms);
+				//alert("oldRingCenter "+oldRingCenter)
+                var tempVector = new kemia.layout.Vector2D(sharedAtomsCenter.x,sharedAtomsCenter.y);
+				//alert("tempVextor "+tempVector)
+                newRingCenterVector = new kemia.layout.Vector2D(tempVector.x,tempVector.y);
+				//alert("newRingCenterVector a "+newRingCenterVector)
+                newRingCenterVector.sub(new kemia.layout.Vector2D(oldRingCenter.x,oldRingCenter.y));
+                //alert("newRingCenterVector b "+newRingCenterVector)
+
+                oldRingCenterVector = new kemia.layout.Vector2D(newRingCenterVector.x,newRingCenterVector.y);
+                tempPoint = new goog.math.Coordinate(sharedAtomsCenter.x+newRingCenterVector.x, sharedAtomsCenter.y+newRingCenterVector.y);
+                kemia.layout.RingPlacer.placeRing(connectedRing, shared_fragment, sharedAtomsCenter, newRingCenterVector, bondLength);
+                connectedRing.setFlag(kemia.model.Flags.ISPLACED, true);
+                kemia.layout.RingPlacer.placeConnectedRings(ringset, connectedRing, handleType, bondLength);
+            }
+		}
+    }	
+}
 
 /**
  * flag all atoms in rings as unplaced atoms

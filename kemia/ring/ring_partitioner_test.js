@@ -6,15 +6,15 @@ function testDirectlyConnectedRings() {
 	var a1 = new kemia.model.Atom("C");
 	var a2 = new kemia.model.Atom("N");
 	var a3 = new kemia.model.Atom("O");
+    var a4 = new kemia.model.Atom("P");
+
 	var ring1 = new kemia.ring.Ring( [ a1, a2 ]);
 	var ring2 = new kemia.ring.Ring( [ a2, a3 ]);
 	var ring3 = new kemia.ring.Ring( [ a3 ]);
-	var direct_connect = kemia.ring.RingPartitioner.directConnectedRings(ring1,
-			[ ring1, ring2, ring3 ]);
-	assertEquals('should be two rings', 2, direct_connect.length);
-	assertTrue(goog.array.contains(direct_connect, ring1));
-	assertTrue(goog.array.contains(direct_connect, ring2));
-	assertFalse(goog.array.contains(direct_connect, ring3));
+    var ring4 = new kemia.ring.Ring( [ a4 ]);
+
+    var direct_connect = kemia.ring.RingPartitioner.getPartitionedRings([ ring1, ring2, ring3, ring4 ]);
+	assertEquals('should be one ring', 2, direct_connect.length);
 }
 
 function testAlphaPinene() {

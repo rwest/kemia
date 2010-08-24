@@ -23,7 +23,7 @@ goog.require('kemia.layout.RingPlacer');
  * 
  * @author: markr@ebi.ac.uk
  */
-kemia.layout.CoordinateGenerator.BOND_LENGTH = 1.25;
+kemia.layout.CoordinateGenerator.BOND_LENGTH = 1.5;
 
 
 kemia.layout.CoordinateGenerator.generate = function(molecule){
@@ -61,6 +61,18 @@ kemia.layout.CoordinateGenerator.generate = function(molecule){
    var angle; // double
    var expectedRingCount = nrOfEdges - molecule.countAtoms() + 1;
    var sssr = molecule.getRings();
+   
+   //DEBUG
+   /*for(d=0; d<sssr.length; d++) {
+       dblcnt=0;
+	   for (d1=0; d1 < sssr[d].bonds.length; d1++) {
+	   	if (sssr[d].bonds[d1].order == kemia.model.Bond.ORDER.DOUBLE) 
+	   		dblcnt++;
+	   }
+	   alert("double count "+dblcnt)	
+   }
+   */
+   
    // partition sssr into connected sets of rings
    var ringsets = new kemia.ring.RingPartitioner.getPartitionedRings(sssr);
    
@@ -68,6 +80,7 @@ kemia.layout.CoordinateGenerator.generate = function(molecule){
     	
     	// flag all atoms in sssr as ISINRING
     	goog.array.forEach(sssr, function(ring){
+			//alert(ring.atoms.length);
     		goog.array.forEach(ring.atoms, function(atom){
     			atom.setFlag(kemia.model.Flags.ISINRING, true);
     				});
@@ -77,6 +90,7 @@ kemia.layout.CoordinateGenerator.generate = function(molecule){
     		return goog.array.defaultCompare(a.length, b.length);
     	});
     	var largest_ringset = goog.array.peek(ringsets);
+		//alert("ringsets length"+ ringsets.length+" largest_ringset is "+ largest_ringset.length)
     	// place largest ringset
     	this.layoutRingSet(firstBondVector, largest_ringset);
 
@@ -145,7 +159,8 @@ kemia.layout.CoordinateGenerator.generate = function(molecule){
 kemia.layout.CoordinateGenerator.layoutRingSet=function(bondVector, ringset){
 	
 	// TODO apply templates to layout pre-fab rings
-	
+
+    var bl=kemia.layout.CoordinateGenerator.BOND_LENGTH;	
 	var complexity = function(ring){
 		var others = goog.array.filter(ringset, function(r){
 			return goog.array.contains(ringset, r);
@@ -164,16 +179,33 @@ kemia.layout.CoordinateGenerator.layoutRingSet=function(bondVector, ringset){
 	
 	var most_complex_ring = goog.array.peek(ringset);
 
-	var shared_fragment = {atoms:this.placeFirstBond( most_complex_ring.bonds[0], bondVector),
-			bonds: [most_complex_ring.bonds[0]]};
-	var shared_fragment_sum = goog.array.reduce(shared_fragment.atoms, function(r,atom){
-		return goog.math.Coordinate.sum(r,atom.coord);}, 
-		new goog.math.Coordinate(0,0));
-	var shared_fragment_center = new kemia.layout.Vector2D(shared_fragment_sum.x/shared_fragment.atoms.length, shared_fragment_sum.y/shared_fragment.atoms.length);
-	var ringCenterVector = kemia.layout.RingPlacer.getRingCenterOfFirstRing(most_complex_ring, bondVector, kemia.layout.CoordinateGenerator.BOND_LENGTH);
-	kemia.layout.RingPlacer.placeRing(most_complex_ring, shared_fragment, shared_fragment_center, ringCenterVector, kemia.layout.CoordinateGenerator.BOND_LENGTH);
+    if (!most_complex_ring.flags[kemia.model.Flags.ISPLACED]) {
+		var shared_fragment = {atoms:this.placeFirstBond( most_complex_ring.bonds[0], bondVector),
+				bonds: [most_complex_ring.bonds[0]]};
+		var shared_fragment_sum = goog.array.reduce(shared_fragment.atoms, function(r,atom){
+			return goog.math.Coordinate.sum(r,atom.coord);}, 
+			new goog.math.Coordinate(0,0));
+		var shared_fragment_center = new kemia.layout.Vector2D(shared_fragment_sum.x/shared_fragment.atoms.length, shared_fragment_sum.y/shared_fragment.atoms.length);
 
-	kemia.layout.RingPlacer.placeConnectedRings(ringset, most_complex_ring, kemia.layout.CoordinateGenerator.BOND_LENGTH);
+		var ringCenterVector = kemia.layout.RingPlacer.getRingCenterOfFirstRing(most_complex_ring, bondVector, bl);
+
+		kemia.layout.RingPlacer.placeRing(most_complex_ring, shared_fragment, shared_fragment_center, ringCenterVector, bl);
+
+	    most_complex_ring.setFlag(kemia.model.Flags.ISPLACED, true);
+
+	}	
+    var thisRing = 0;
+    do {
+        if (most_complex_ring.flags[kemia.model.Flags.ISPLACED]) {
+            kemia.layout.RingPlacer.placeConnectedRings(ringset, most_complex_ring, 'FUSED',bl);
+            kemia.layout.RingPlacer.placeConnectedRings(ringset, most_complex_ring, 'BRIDGED', bl);
+            kemia.layout.RingPlacer.placeConnectedRings(ringset, most_complex_ring, 'SPIRO',bl);
+        }
+        thisRing++;
+        if (thisRing == ringset.length)
+            thisRing = 0;
+        most_complex_ring = ringset[thisRing];
+    } while (!this.allPlaced(ringset));
 }
 
 
@@ -197,6 +229,14 @@ kemia.layout.CoordinateGenerator.placeFirstBond=function(bond, vector){
 	return [bond.source, bond.target];
 }
 
+kemia.layout.CoordinateGenerator.allPlaced=function(rings){
+    for (f1=0; f1<rings.length; f1++) {
+        if (! rings[f1].flags[kemia.model.Flags.ISPLACED]) {
+            return false;
+        }
+    }
+    return true;
+}
 
 /**
  * Returns the next atom with unplaced aliphatic neighbors

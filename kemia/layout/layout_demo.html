@@ -5,7 +5,7 @@
 <title>kemia.view.MoleculeRenderer</title>
 <script src="../../third-party/closure/closure/goog/base.js"></script>
 <script src="../deps.js"></script>
-<script src="smiles.js"></script>
+<script src="../io/smiles/smiles_parser.js"></script>
 
 <link rel="stylesheet"
     href="../../third-party/closure/closure/goog/demos/css/demo.css">
@@ -48,6 +48,8 @@ function draw(){
 	select1.addItem(new goog.ui.MenuItem('Chiral test B', 'N[C@@](Br)(C)O'));//1U 4D       
 	select1.addItem(new goog.ui.MenuItem('Alpha-pinene','CC1=CC[C@H]2C[C@@H]1C2(C)C'));
     select1.addItem(new goog.ui.MenuItem('Sulfur hexafluoride', 'FS(F)(F)(F)(F)F'));
+	select1.addItem(new goog.ui.MenuItem('Demo 1','O5CCN(CC=3C=1C=CC=CC=1C(=C2C=CC=CC2=3)CN4CCOCC4)CC5'));
+	select1.addItem(new goog.ui.MenuItem('ergosteryl 3-β-D-glucoside','[H][C@@]1(CC[C@@]2([H])C3=CC=C4C[C@H](CC[C@]4(C)[C@@]3([H])CC[C@]12C)O[C@@H]1O[C@H](CO)[C@@H](O)[C@H](O)[C@H]1O)[C@H](C)\C=C\[C@H](C)C(C)C'));
 
     select1.setSelectedIndex(0);
     select1.render(goog.dom.getElement('selectMolecule'));

@@ -251,6 +251,21 @@ kemia.layout.AtomPlacer.get2DCenter = function(molecule){
     return center
 }
 
+kemia.layout.AtomPlacer.getAtoms2DCenter = function(atoms){
+	var centerX = 0;
+	var centerY = 0;
+	var counter = 0;
+	for (atIdx = 0, atCount = atoms.length; atIdx < atCount; atIdx++) {
+		atom = atoms[atIdx];
+		if (atom.flags[kemia.model.Flags.ISPLACED] == true) {
+			centerX += atom.coord.x;
+			centerY += atom.coord.y;
+			counter++;
+		}
+	}
+	center = new goog.math.Coordinate(centerX / (counter), centerY / (counter))
+	return center;
+}
 
 kemia.layout.AtomPlacer.getAngle = function(xDiff, yDiff){
 
@@ -348,7 +363,7 @@ kemia.layout.AtomPlacer.distributePartners = function(atom, placedNeighbours, sh
         }
 		addAngle = Math.PI * 2.0 / unPlacedNeighboursCountAtoms;
 		startAngle = 0.0;
-		populatePolygonCorners(atomsToDraw, new goog.math.Coordinate(atom.coord.x, atom.coord.y), startAngle, addAngle, bondLength);
+		this.populatePolygonCorners(atomsToDraw, new goog.math.Coordinate(atom.coord.x, atom.coord.y), startAngle, addAngle, bondLength);
 		return;
 	}
     var sortedAtoms = new Array();
@@ -448,12 +463,16 @@ kemia.layout.AtomPlacer.populatePolygonCorners = function(atomsToDraw, rotationC
 	points = new Array();
     angle = startAngle;
 	for (ad=0,ads=atomsToDraw.length; ad < ads; ad++) {
+		
 	    angle = angle + addAngle;
 	    if (angle >= 2.0 * Math.PI)
 	        angle -= 2.0 * Math.PI;
 
         //Fix Github issue 17 : Generated bond lengths should better reflect bond and participating element chemistry.
         connectAtom = atomsToDraw[ad];
+		
+		//alert(connectAtom.flags[kemia.model.Flags.VISITED]);
+		
 		if (connectAtom.symbol=='H')
 		  radius*=.6;
         //End fix

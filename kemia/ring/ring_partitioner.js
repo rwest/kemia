@@ -12,6 +12,10 @@
 goog.provide('kemia.ring.RingPartitioner');
 goog.require('goog.array');
 
+
+
+
+
 /**
  * partitions array of rings into connected lists
  * 
@@ -20,6 +24,81 @@ goog.require('goog.array');
  *            arrays
  * @return {Array.<Array.<kemia.ring.Ring>>} array of arrays of Rings
  */
+kemia.ring.RingPartitioner.getPartitionedRings = function(rings){
+    var partitions = [];
+    done= new Array(rings.length);
+    for(x=0, x2=rings.length; x<x2; x++) {
+        done[x]=false;
+    }
+    for (i=0, j=rings.length; i < j; i++) {
+        if (!done[i]) {
+          partition = new Array();
+          partition.push(rings[i]);
+          done[i]=true;
+          atomCount=rings[i].atoms.length;
+          for (k=i+1;k<rings.length;k++){
+            if (!done[k]) {
+				atomCount2 = rings[k].atoms.length;
+				connected: for (p = 0; p < partition.length; p++) {
+					atomCount = partition[p].atoms.length;
+					for (a = 0; a < atomCount; a++) {
+						for (a2 = 0; a2 < atomCount2; a2++) {
+							if (partition[p].atoms[a] == rings[k].atoms[a2]) {
+								partition.push(rings[k]);
+								done[k] = true;
+								k=i;
+								break connected;
+							}
+						}
+					}
+				}
+			}
+          }
+          partitions.push(partition);  
+        }
+    }
+    return partitions;
+}
+
+/**
+ * finds rings directly connected to the subject ring
+ * 
+ * @param{kemia.ring.Ring} ring, the ring which we want to find direct
+ *                         connections to
+ * @param{Array.<kemia.ring.Ring>} rings, the rings we want to search for
+ *               connections
+ * @return{Array.<kemia.ring.Ring>} array of directly connected rings, which
+ *                does *not* include the subject ring
+ */
+kemia.ring.RingPartitioner.directConnectedRings = function(ring, rings){
+	result = [];
+	atomCount=ring.atoms.length;
+	for (k=0,k1=rings.length;k<k1;k++){
+		if (ring != rings[k]) {
+			atomCount2 = rings[k].atoms.length;
+			connected: for (a = 0; a < atomCount; a++) {
+				for (a2 = 0; a2 < atomCount2; a2++) {
+					if (ring.atoms[a] == rings[k].atoms[a2]) {
+						result.push(rings[k]);
+						break connected;
+					}
+				}
+			}
+		}
+	}
+	return result;
+}
+
+
+
+/**
+ * partitions array of rings into connected lists
+ * 
+ * @param {Array.
+ *            <kemia.ring.Ring>} rings list of rings to group into connected
+ *            arrays
+ * @return {Array.<Array.<kemia.ring.Ring>>} array of arrays of Rings
+ 
 kemia.ring.RingPartitioner.getPartitionedRings = function(rings) {
 	var partitions = [];
 	var search = rings;
@@ -47,6 +126,7 @@ kemia.ring.RingPartitioner.getPartitionedRings = function(rings) {
 	return partitions;
 };
 
+
 /**
  * finds rings directly connected to the subject ring
  * 
@@ -56,7 +136,7 @@ kemia.ring.RingPartitioner.getPartitionedRings = function(rings) {
  *               connections
  * @return{Array.<kemia.ring.Ring>} array of directly connected rings, which
  *                does *not* include the subject ring
- */
+ *
 kemia.ring.RingPartitioner.directConnectedRings = function(ring, rings) {
 	result = [];
 	goog.array.forEach(rings, function(r) {
@@ -73,3 +153,5 @@ kemia.ring.RingPartitioner.directConnectedRings = function(ring, rings) {
 	});
 	return result;
 }
+*/
+

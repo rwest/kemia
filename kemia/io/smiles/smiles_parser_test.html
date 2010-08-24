@@ -1,57 +1,77 @@
-<!--
- * Copyright [2010] [Mark Rijnbeek] 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software distributed under the License 
- * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and limitations under the License.
--->
-
 <!DOCTYPE html>
+<!--TODO: License and copyright-->
 <html>
-    <head>
-        <title>Jchemhub Unit test smilesParser.js</title>
-        <script src="../../../third-party/closure/closure/goog/base.js"></script>
-        <script src="../../deps.js"></script>
+<head>
+<title>kemia unit test-smiles.js</title>
+<script src="../../../third-party/closure/closure/goog/base.js"></script>
+<script src="../../deps.js"></script>
+<script>
+	goog.require('goog.testing.jsunit');
+	goog.require('kemia.io.mdl');
+</script>
+<script src="smiles_parser.js"></script>
+<script src="smiles_test_mols.js"></script>
 
-        <script>
-            goog.require('goog.testing.jsunit');
-            goog.require('kemia.io.smiles.SmilesParser');
-            goog.require('kemia.ring.RingFinder');
-        </script>
+<script><!--
+ 	var rxn;
+ 	var mol;
+  	function setUp() {
+  	}
 
-        <script>            
-            function test01(){
-                var mol=kemia.io.smiles.SmilesParser.parse("CBrClON");
-            }
+  	function testAtomCount() {
+		var mol = kemia.io.smiles.parse('CCC');
+		assertEquals(mol.countAtoms(), 3);
+		mol = kemia.io.smiles.parse('C(=O)(c1c([NH2+])cccc1)c1c(C)cccc1');
+		assertEquals(mol.countAtoms(), 16);
+		var a = mol.getAtom(4);
+		assertEquals(a.symbol, 'N');
+		assertEquals(a.charge, 1);
+		assertEquals(a.hydrogenCount(), 3);
+	}
 
-            function test02(){
-                var mol=kemia.io.smiles.SmilesParser.parse("CCCC(C(=O)O)CCC");
-            }
-            function test03(){
-                var mol=kemia.io.smiles.SmilesParser.parse("C1CCNC1");
-                var rings = kemia.ring.RingFinder.findRings(mol);
-                assertEquals(1, rings.length);
+  	function testTimeParse() {
+		for (var i in smiles) {
+			kemia.io.smiles.parse(smiles[i]);
+		}
 
-            }
-            function test04(){
-                var mol=kemia.io.smiles.SmilesParser.parse("F[Au](F)F");
-				gold = mol.getAtom(1);
-                assertEquals(mol.countBonds(),3);
-                assertEquals(gold.symbol,"Au");
-            }
+	}
 
-            function test05(){
-                var mol=kemia.io.smiles.SmilesParser.parse("[H][C@@]1(CC[C@@]2([H])C3=CC=C4C[C@H](CC[C@]4(C)[C@@]3([H])CC[C@]12C)O[C@@H]1O[C@H](CO)[C@@H](O)[C@H](O)[C@H]1O)[C@H](C)\C=C\[C@H](C)C(C)C");
-                var rings = kemia.ring.RingFinder.findRings(mol);
-                assertEquals(11, rings.length);
-            }
+    function test01(){
+        var mol=kemia.io.smiles.parse('CBrClON');
+    }
 
-            
-        </script>
-    </head>
-    <body>
-    </body>
+    function test02(){
+        var mol=kemia.io.smiles.parse("CCCC(C(=O)O)CCC");
+    }
+    function test03(){
+        var mol=kemia.io.smiles.parse("C1CCNC1");
+        var rings = kemia.ring.RingFinder.findRings(mol);
+        assertEquals(1, rings.length);
+
+    }
+    function test04(){
+        var mol=kemia.io.smiles.parse("F[Au](F)F");
+        gold = mol.getAtom(1);
+        assertEquals(mol.countBonds(),3);
+        assertEquals(gold.symbol,"Au");
+    }
+
+    function test05(){
+        var mol=kemia.io.smiles.parse("[H][C@@]1(CC[C@@]2([H])C3=CC=C4C[C@H](CC[C@]4(C)[C@@]3([H])CC[C@]12C)O[C@@H]1O[C@H](CO)[C@@H](O)[C@H](O)[C@H]1O)[C@H](C)\C=C\[C@H](C)C(C)C");
+        var rings = kemia.ring.RingFinder.findRings(mol);
+        assertEquals(5, rings.length);
+    }
+	
+    function test06(){
+        var mol=kemia.io.smiles.parse("O5CCN(CC=3C=1C=CC=CC=1C(=C2C=CC=CC2=3)CN4CCOCC4)CC5");
+        var rings = kemia.ring.RingFinder.findRings(mol);
+        assertEquals(5, rings.length);
+
+    }
+	
+
+--></script>
+</head>
+<body>
+</body>
 </html>
