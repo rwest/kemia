@@ -4,3 +4,4 @@ docs/*.html
 docs/*.css
 docs/symbols
 .project
+*~
