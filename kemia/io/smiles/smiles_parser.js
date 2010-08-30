@@ -1,4 +1,4 @@
-goog.provide("kemia.io.smiles");
+goog.provide("kemia.io.smiles_parse");
 goog.require('kemia.model.Molecule');
 goog.require('kemia.model.Atom');
 goog.require('kemia.model.Bond');
