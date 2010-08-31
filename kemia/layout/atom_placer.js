@@ -227,12 +227,35 @@ kemia.layout.AtomPlacer.placeLinearChain = function(chain, initialBondVector, bo
         bondVector.scale(bondLength);
 		atomPoint.x += bondVector.x;
         atomPoint.y += bondVector.y;
-
-		nextAtom.coord.x=atomPoint.x; 
-        nextAtom.coord.y=atomPoint.y; 
+		nextAtom.coord =atomPoint;
 		nextAtom.setFlag(kemia.model.Flags.ISPLACED,true);
-		bondVector = this.getNextBondVector(nextAtom, atom, this.get2DCenter(chain));
+		var trans=true;
+        if (this.has2DCoordinatesNew(chain) == 2)
+	   	   trans=false;
+		bondVector = this.getNextBondVector(nextAtom, atom, this.get2DCenter(chain),trans);
 	}
+}
+
+kemia.layout.AtomPlacer.has2DCoordinatesNew = function(chain){
+    if (chain == null) return 0;
+    
+    var no2d=false;
+    var with2d=false;
+    goog.array.forEach(chain.atoms, function(atom){
+        if (atom.coord == null || (atom.coord.x==0 && atom.coord.y==0)) {
+            no2d=true;
+        } else {
+            with2d=true;
+        }
+    }); 
+
+    if(!no2d && with2d){
+        return 2;
+    } else if(no2d && with2d){
+        return 1;
+    } else{
+        return 0;
+    }
 }
 
 kemia.layout.AtomPlacer.get2DCenter = function(molecule){
@@ -283,24 +306,20 @@ kemia.layout.AtomPlacer.getAngle = function(xDiff, yDiff){
 }
 
 
-kemia.layout.AtomPlacer.getNextBondVector = function(atom, previousAtom, distanceMeasure){
+kemia.layout.AtomPlacer.getNextBondVector = function(atom, previousAtom, distanceMeasure,trans){
 
-	angle = this.getAngle(previousAtom.coord.x - atom.coord.x, previousAtom.coord.y - atom.coord.y);
-    addAngle = Math.PI *(120/180)
-
-    // Omitted from CDK port:
-    // if(!trans)
-    // addAngle=Math.toRadians(60);
-
-    // TODO if (shouldBeLinear(atom, molecule)) addAngle = Math.toRadians(180);
+	var angle = this.getAngle(previousAtom.coord.x - atom.coord.x, previousAtom.coord.y - atom.coord.y);
+    var addAngle = Math.PI *(120/180)
+    if(!trans)
+        addAngle=Math.PI *(60/180);
 
 	angle += addAngle;
-	vec1 =  new kemia.layout.Vector2D(Math.cos(angle), Math.sin(angle));
+	var vec1 =  new kemia.layout.Vector2D(Math.cos(angle), Math.sin(angle));
 	point1 = new goog.math.Coordinate(atom.coord.x+vec1.x, atom.coord.y+vec1.y);
 	distance1 = goog.math.Coordinate.distance(point1,distanceMeasure)
 	angle += addAngle;
 
-	vec2 = new kemia.layout.Vector2D(Math.cos(angle), Math.sin(angle));
+	var vec2 = new kemia.layout.Vector2D(Math.cos(angle), Math.sin(angle));
 	point2 = new goog.math.Coordinate(atom.coord.x+vec2.x, atom.coord.y+vec2.y);
     distance2 = goog.math.Coordinate.distance(point2,distanceMeasure)
 
@@ -471,8 +490,6 @@ kemia.layout.AtomPlacer.populatePolygonCorners = function(atomsToDraw, rotationC
         //Fix Github issue 17 : Generated bond lengths should better reflect bond and participating element chemistry.
         connectAtom = atomsToDraw[ad];
 		
-		//alert(connectAtom.flags[kemia.model.Flags.VISITED]);
-		
 		if (connectAtom.symbol=='H')
 		  radius*=.6;
         //End fix
@@ -492,7 +509,8 @@ kemia.layout.AtomPlacer.populatePolygonCorners = function(atomsToDraw, rotationC
 
 /**
  * Partition the bonding partners of a given atom into placed and not placed.
- * 
+ * @param molecule 
+ *            {kemia.model.Molecule} The molecule getting laid
  * @param atom
  *            {kemia.model.Atom} The atom whose bonding partners are to be
  *            partitioned
@@ -501,15 +519,18 @@ kemia.layout.AtomPlacer.populatePolygonCorners = function(atomsToDraw, rotationC
  * @param placedPartners
  *            An array vector for the placed bonding partners to go in
  */
-kemia.layout.AtomPlacer.partitionPartners=function(atom, unplacedPartners, placedPartners){
+kemia.layout.AtomPlacer.partitionPartners=function(molec, atom, unplacedPartners, placedPartners){
+    cntLoop=0;
 	goog.array.forEach(atom.bonds.getValues(), function(bond){
+		cntLoop++;
 		var other_atom = bond.otherAtom(atom);
-		if (other_atom.flags[kemia.model.Flags.ISPLACED]){
-			placedPartners.addAtom(other_atom);
+		if (!other_atom.flags[kemia.model.Flags.ISPLACED]){
+            unplacedPartners.addAtom(other_atom);
 		}else{
-			unplacedPartners.addAtom(other_atom);
+            placedPartners.addAtom(other_atom);
 		}
 	});
+	return cntLoop;
 };
 	
 kemia.layout.AtomPlacer.markNotPlaced = function(atoms){

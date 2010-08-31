@@ -1,6 +1,6 @@
 goog.require('goog.testing.jsunit');
 goog.require('kemia.layout.RingPlacer');
-goog.require('kemia.io.smiles');
+goog.require('kemia.io.smiles.SmilesParser');
 goog.require('kemia.io.mdl');
 goog.require('kemia.layout.CoordinateGenerator');
 goog.require('goog.debug.Console');
@@ -13,7 +13,7 @@ function setUp(){
 }
 
 function testGetRingCenterOfFirstRing() {
-	var mol = kemia.io.smiles.parse('c1ccccc1');
+	var mol = kemia.io.smiles.SmilesParser.parse('c1ccccc1');
 	var center = kemia.layout.RingPlacer.getRingCenterOfFirstRing(mol
 			.getRings()[0], new kemia.layout.Vector2D(1, 1), 1.25)
 	assertEquals(-0.7654655446197434, center.x);
@@ -79,7 +79,7 @@ function testAzulene() {
 }
 
 function testBenzene(){
-	var mol = kemia.io.smiles.parse('c1ccccc1');
+	var mol = kemia.io.smiles.SmilesParser.parse('c1ccccc1');
 	goog.array.forEach(mol.atoms, function(atom) {
 		atom.coord.x = 0.0;
 		atom.coord.y = 0.0;

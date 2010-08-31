@@ -36,8 +36,6 @@ kemia.layout.RingPlacer.getRingCenterOfFirstRing = function(ring, bondVector,bon
         var rotangle = kemia.layout.AtomPlacer.getAngle(bondVector.x, bondVector.y);
         rotangle += Math.PI / 2;
         return new kemia.layout.Vector2D(Math.cos(rotangle) * newRingPerpendicular, Math.sin(rotangle) * newRingPerpendicular);
-
-
 }
 
 /**
@@ -58,9 +56,7 @@ kemia.layout.RingPlacer.getRingCenterOfFirstRing = function(ring, bondVector,bon
  */
 kemia.layout.RingPlacer.placeRing = function(ring, shared_fragment,
 		shared_fragment_center, ringCenterVector, bondLength) {
-
 	var sharedAtomCount = shared_fragment.atoms.length;
-
 	if (sharedAtomCount > 2) {
 		kemia.layout.RingPlacer.placeBridgedRing(ring, shared_fragment,
 				shared_fragment_center, ringCenterVector, bondLength);
@@ -73,8 +69,9 @@ kemia.layout.RingPlacer.placeRing = function(ring, shared_fragment,
 	}
 }
 
-kemia.layout.RingPlacer.placeRingSubstituents = function(ringset, bondLength) {
+kemia.layout.RingPlacer.placeRingSubstituents = function(molec, ringset, bondLength) {
 	var treated_atoms = new kemia.model.Molecule();
+	var cntDbg=0;
 	goog.array.forEach(ringset, function(ring) {
 		goog.array.forEach(ring.atoms, function(atom) {
 			var unplaced_partners = new kemia.model.Molecule();
@@ -88,13 +85,13 @@ kemia.layout.RingPlacer.placeRingSubstituents = function(ringset, bondLength) {
 			}));
 			var center_of_ring_gravity = kemia.layout.RingPlacer
 			.center(rings_atoms);
-			kemia.layout.AtomPlacer.partitionPartners(atom, unplaced_partners,
+			cntDbg+=kemia.layout.AtomPlacer.partitionPartners(molec, atom, unplaced_partners,
 					shared_atoms);
+
 			kemia.layout.AtomPlacer.markNotPlaced(unplaced_partners.atoms);
 			goog.array.forEach(unplaced_partners.atoms, function(atom){
 				treated_atoms.addAtom(atom);
 			});
-
 			if (unplaced_partners.atoms.length > 0) {
 				kemia.layout.AtomPlacer.distributePartners(atom, shared_atoms,
 						center_of_ring_gravity, unplaced_partners, bondLength);
@@ -103,6 +100,8 @@ kemia.layout.RingPlacer.placeRingSubstituents = function(ringset, bondLength) {
 	});
 	return treated_atoms;
 }
+
+
 
 /**
  * Generated coordinates for a bridged ring.
@@ -122,9 +121,7 @@ kemia.layout.RingPlacer.placeRingSubstituents = function(ringset, bondLength) {
 kemia.layout.RingPlacer.placeBridgedRing = function(ring, shared_fragment,
 		shared_fragment_center, ringCenterVector, bondLength) {
 
-
-	var radius = kemia.layout.RingPlacer.getNativeRingRadius(ring.atoms.length,
-			bondLength);
+	var radius = kemia.layout.RingPlacer.getNativeRingRadius(ring.atoms.length,bondLength);
 	ringCenterVector.normalize();
 	ringCenterVector.scale(radius);
     var ringCenter = new goog.math.Coordinate(sharedAtomsCenter.x+ringCenterVector.x, sharedAtomsCenter.y+ringCenterVector.y);
@@ -175,7 +172,7 @@ kemia.layout.RingPlacer.atomsInPlacementOrder = function(atom, bond, bonds) {
 		return b!==next_bond;
 	});
 
-	if (remaining_bonds.length > 0) {
+	if (remaining_bonds.length > 0 ) {
 		var next_atom = next_bond.otherAtom(atom);
 		return goog.array.concat(next_atom, kemia.layout.RingPlacer
 				.atomsInPlacementOrder(next_atom, next_bond, remaining_bonds));
@@ -270,50 +267,6 @@ kemia.layout.RingPlacer.getBridgeAtoms = function(shared_fragment) {
  */
 kemia.layout.RingPlacer.placeFusedRing = function(ring, sharedAtoms,
 		sharedAtomsCenter, ringCenterVector, bondLength) {
-/*
-	var radius = kemia.layout.RingPlacer.getNativeRingRadius(ring.atoms.length,
-			bondLength);
-	var newRingPerpendicular = Math.sqrt(Math.pow(radius, 2)
-			- Math.pow(bondLength / 2, 2));
-	ringCenterVector.normalize();
-	ringCenterVector.scale(newRingPerpendicular);
-
-    var ringCenter = new goog.math.Coordinate(sharedAtomsCenter.x+ringCenterVector.x, sharedAtomsCenter.y+ringCenterVector.y);
-	//var ringCenter = sharedAtomsCenter.add(ringCenterVector);
-
-	var bondAtom1 = shared_fragment.atoms[0];
-	var bondAtom2 = shared_fragment.atoms[1];
-
-	var bondAtom1Vector = new kemia.layout.Vector2D(
-			bondAtom1.coord.x, bondAtom1.coord.y);
-	var bondAtom2Vector = new kemia.layout.Vector2D(
-			bondAtom2.coord.x, bondAtom2.coord.y);
-
-	bondAtom1Vector.sub(ringCenter);
-	bondAtom2Vector.sub(ringCenter);
-
-	var occupiedAngle = bondAtom1Vector.angle(bondAtom2Vector);
-
-	var remainingAngle = (2 * Math.PI) - occupiedAngle;
-	var addAngle = remainingAngle / (ring.atoms.length -  1);
-
-	var startAtom = kemia.layout.RingPlacer.findStartAtom(ringCenterVector,
-			bondAtom1, bondAtom2);
-	var startAngle = Math.atan2(startAtom.coord.y - ringCenter.y, startAtom.coord.x - ringCenter.x);
-
-	var atoms_to_place = kemia.layout.RingPlacer.atomsInPlacementOrder(
-			startAtom, shared_fragment.bonds[0], ring.bonds);
-	var direction = kemia.layout.RingPlacer.findDirection(ringCenterVector,
-			bondAtom1, bondAtom2);
-	var addAngle = addAngle * direction;
-
-	kemia.layout.AtomPlacer.populatePolygonCorners(atoms_to_place, ringCenter,
-			startAngle, addAngle, radius);
-*/
-
-//  public  void placeFusedRing(IRing ring, IAtomContainer sharedAtoms, Point2d sharedAtomsCenter, Vector2d ringCenterVector, double bondLength )
-
-
     var radius = kemia.layout.RingPlacer.getNativeRingRadius(ring.atoms.length,
             bondLength);
     var newRingPerpendicular = Math.sqrt(Math.pow(radius, 2)
@@ -505,20 +458,11 @@ kemia.layout.RingPlacer.placeConnectedRings = function(ringset, ring, handleType
 				debug="";
                 for(qw=0;qw<shared_fragment.atoms.length;qw++)
                     debug+=("\n         "+shared_fragment.atoms[qw].coord+" "+shared_fragment.atoms[qw].flags[kemia.model.Flags.ISPLACED]);
-				//alert(debug)
-
                 sharedAtomsCenter = kemia.layout.AtomPlacer.getAtoms2DCenter(shared_fragment.atoms);
-                //alert("shar center.. "+sharedAtomsCenter);
-
                 oldRingCenter = kemia.layout.AtomPlacer.getAtoms2DCenter(ring.atoms);
-				//alert("oldRingCenter "+oldRingCenter)
                 var tempVector = new kemia.layout.Vector2D(sharedAtomsCenter.x,sharedAtomsCenter.y);
-				//alert("tempVextor "+tempVector)
                 newRingCenterVector = new kemia.layout.Vector2D(tempVector.x,tempVector.y);
-				//alert("newRingCenterVector a "+newRingCenterVector)
                 newRingCenterVector.sub(new kemia.layout.Vector2D(oldRingCenter.x,oldRingCenter.y));
-                //alert("newRingCenterVector b "+newRingCenterVector)
-
                 oldRingCenterVector = new kemia.layout.Vector2D(newRingCenterVector.x,newRingCenterVector.y);
                 tempPoint = new goog.math.Coordinate(sharedAtomsCenter.x+newRingCenterVector.x, sharedAtomsCenter.y+newRingCenterVector.y);
                 kemia.layout.RingPlacer.placeRing(connectedRing, shared_fragment, sharedAtomsCenter, newRingCenterVector, bondLength);
@@ -583,38 +527,45 @@ kemia.layout.RingPlacer.layoutNextRingSystem=function(firstBondVector, molecule,
 
 		// Place all the substituents of next ring system
 		kemia.layout.AtomPlacer.markNotPlaced(placed_atoms);
-		var substituents = kemia.layout.RingPlacer.placeRingSubstituents(next_ring_set, kemia.layout.CoordinateGenerator.BOND_LENGTH);
+		var substituents = kemia.layout.RingPlacer.placeRingSubstituents(molecule,next_ring_set, kemia.layout.CoordinateGenerator.BOND_LENGTH);
 		kemia.layout.AtomPlacer.markPlaced(placed_atoms);
 
-		// Translate and rotate the laid out ring system to match the
-		// geometry of the
-		// attachment bond
-		var trans_diff = goog.math.Coordinate.difference( old_chain_atom_coord,  chain_atom.coord);
-		var old_angle = goog.math.angle(0, old_chain_atom_coord.x - old_ring_atom_coord.x, 0, old_chain_atom_coord.y - old_ring_atom_coord.y);
-		var new_angle = goog.math.angle(0, chain_atom.coord.x - ring_atom.coord.x, 0, chain_atom.coord.y - ring_atom.coord.y);
-		var angle_diff = goog.math.angleDifference( new_angle, old_angle);
+        var placed_atoms = goog.array.concat(substituents.atoms, 
+                goog.array.flatten(goog.array.map(next_ring_set, function(ring){
+                    return ring.atoms;
+                }))
+                );
+        goog.array.removeDuplicates(placed_atoms)
+		
+        oldPoint2 = old_ring_atom_coord;
+        oldPoint1 = old_chain_atom_coord;
+        newPoint2 = ring_atom.coord;
+        newPoint1 = chain_atom.coord;
+        oldAngle =kemia.layout.AtomPlacer.getAngle(oldPoint2.x - oldPoint1.x,oldPoint2.y - oldPoint1.y);
+        newAngle =kemia.layout.AtomPlacer.getAngle(newPoint2.x - newPoint1.x,newPoint2.y - newPoint1.y);
+        angleDiff = oldAngle - newAngle;
 
+        translationVector = new kemia.layout.Vector2D(oldPoint1.x, oldPoint1.y);
+        translationVector.sub(new kemia.layout.Vector2D(newPoint1.x,newPoint1.y));
 
-		var placed_atoms = goog.array.concat(substituents.atoms, 
-				goog.array.flatten(goog.array.map(next_ring_set, function(ring){
-					return ring.atoms;
-				}))
-				);
+        goog.array.forEach(placed_atoms, function(atom) {
+            atom.coord.x+=translationVector.x;
+            atom.coord.y+=translationVector.y;
+        });
 
-		var trans = kemia.graphics.AffineTransform.getRotateInstance(goog.math.toRadians(angle_diff), old_chain_atom_coord.x, old_chain_atom_coord.y);
-		trans.translate(trans_diff.x, trans_diff.y);
-
-		var new_coords = trans.transformCoords(
-				goog.array.map(placed_atoms, function(atom){
-					return atom.coord;
-				})
-				);
-		goog.array.forEach(placed_atoms, function(atom, idx){
-			atom.coord = new_coords[idx];
-		});
-	    goog.array.forEach(next_ring_set, function(ring){
-	    	ring.isPlaced = true;
-	    });
+        costheta = Math.cos(angleDiff);
+        sintheta = Math.sin(angleDiff);
+        goog.array.forEach(placed_atoms, function(atom) {
+			point = atom.coord;
+            relativex = point.x - oldPoint1.x;
+            relativey = point.y - oldPoint1.y;
+            point.x = relativex * costheta - relativey * sintheta + oldPoint1.x;
+            point.y = relativex * sintheta + relativey * costheta + oldPoint1.y;
+        });
+		
+        goog.array.forEach(next_ring_set, function(ring){
+            ring.isPlaced = true;
+        });
 	}
 }
 

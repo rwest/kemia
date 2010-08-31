@@ -1,4 +1,4 @@
-goog.provide("kemia.io.smiles_parse");
+goog.provide("kemia.io.smiles.SmilesParser");
 goog.require('kemia.model.Molecule');
 goog.require('kemia.model.Atom');
 goog.require('kemia.model.Bond');
@@ -9,7 +9,7 @@ goog.require('kemia.model.Reaction');
  *
  * @enum {string}
  */
-kemia.io.smiles.BondType = {
+kemia.io.smiles.SmilesParser.BondType = {
                 NONE:"NONE",
                 SINGLE_BOND:"-",
                 DOUBLE_BOND:"=",
@@ -24,38 +24,38 @@ kemia.io.smiles.BondType = {
  *
  * @enum {string}
  */
-kemia.io.smiles.BondStereo = {
+kemia.io.smiles.SmilesParser.BondStereo = {
                 NONE:"NONE",
                 CLOCKWISE:"@",
                 COUNTER_CLOCKWISE:"@@"
 };
 
 
-kemia.io.smiles.punctuation = {
+kemia.io.smiles.SmilesParser.punctuation = {
  nobond:      '.',
  openbranch:  '(',
  closebranch: ')',
- singlebond:  kemia.io.smiles.BondType.SINGLE_BOND,
- doublebond:  kemia.io.smiles.BondType.DOUBLE_BOND,
- triplebond:  kemia.io.smiles.BondType.TRIPLE_BOND,
- quadbond:    kemia.io.smiles.BondType.QUAD_BOND,
- aromaticbond:kemia.io.smiles.BondType.AROMATIC_BOND,
+ singlebond:  kemia.io.smiles.SmilesParser.BondType.SINGLE_BOND,
+ doublebond:  kemia.io.smiles.SmilesParser.BondType.DOUBLE_BOND,
+ triplebond:  kemia.io.smiles.SmilesParser.BondType.TRIPLE_BOND,
+ quadbond:    kemia.io.smiles.SmilesParser.BondType.QUAD_BOND,
+ aromaticbond:kemia.io.smiles.SmilesParser.BondType.AROMATIC_BOND,
  ringclosure: '%',
  cis:         '/',
  trans:       '\\'
 };
 
-kemia.io.smiles.smiPattern =  new RegExp(/\[[^[]+\]|Br|B|Cl|C|N|F|O|P]|S|c|n|o|s|-|=|#|%[0-9][0-9]|[0-9]|\(|\)|./g);
-kemia.io.smiles.atomPattern = new RegExp(/^\[([0-9]*)([A-Z][a-z]?|c|n|o|se|s|as)(@|@@)?(H)?([0-9])?([+-][\d]?)?\]$/);
-kemia.io.smiles.specialAtoms = { C:1, c:1, N:1, n:1, O:1, o:1, S:1, s:1, P:1, F:1, Br:1, Cl:1, I:1, B:1 };
-kemia.io.smiles.aromaticAtoms = { c:1, n:1, o:1, s:1, as:1, se:1 };
+kemia.io.smiles.SmilesParser.smiPattern =  new RegExp(/\[[^[]+\]|Br|B|Cl|C|N|F|O|P]|S|c|n|o|s|-|=|#|%[0-9][0-9]|[0-9]|\(|\)|./g);
+kemia.io.smiles.SmilesParser.atomPattern = new RegExp(/^\[([0-9]*)([A-Z][a-z]?|c|n|o|se|s|as)(@|@@)?(H)?([0-9])?([+-][\d]?)?\]$/);
+kemia.io.smiles.SmilesParser.specialAtoms = { C:1, c:1, N:1, n:1, O:1, o:1, S:1, s:1, P:1, F:1, Br:1, Cl:1, I:1, B:1 };
+kemia.io.smiles.SmilesParser.aromaticAtoms = { c:1, n:1, o:1, s:1, as:1, se:1 };
 
-kemia.io.smiles.parse = function (smi) {
+kemia.io.smiles.SmilesParser.parse = function (smi) {
 	items = smi.match(this.smiPattern);
 	var mol = new kemia.model.Molecule(smi);
 	var natoms = 0;
 	var previous_atom;
-	var bond_type = kemia.io.smiles.BondType.NONE;
+	var bond_type = kemia.io.smiles.SmilesParser.BondType.NONE;
 	var branch = new Array();
 	var ring   = new Array();
 	var errstr = "";
@@ -72,21 +72,21 @@ kemia.io.smiles.parse = function (smi) {
 				errstr = " unbalanced parens";
 			}
 		} else if (item == this.punctuation.singlebond) {
-			bond_type = kemia.io.smiles.BondType.SINGLE_BOND;
+			bond_type = kemia.io.smiles.SmilesParser.BondType.SINGLE_BOND;
 		} else if (item == this.punctuation.doublebond) {
-			bond_type = kemia.io.smiles.BondType.DOUBLE_BOND;
+			bond_type = kemia.io.smiles.SmilesParser.BondType.DOUBLE_BOND;
 		} else if (item == this.punctuation.triplebond) {
-			bond_type = kemia.io.smiles.BondType.TRIPLE_BOND;
+			bond_type = kemia.io.smiles.SmilesParser.BondType.TRIPLE_BOND;
 		} else if (item == this.punctuation.quadbond) {
-			bond_type = kemia.io.smiles.BondType.QUAD_BOND;
+			bond_type = kemia.io.smiles.SmilesParser.BondType.QUAD_BOND;
 		} else if (item == this.punctuation.aromaticbond) {
-			bond_type = kemia.io.smiles.BondType.AROMATIC_BOND
+			bond_type = kemia.io.smiles.SmilesParser.BondType.AROMATIC_BOND
 		} else if (item[0] == this.punctuation.ringclosure) {
 			ringid = parseInt(item[1]+item[2]);
 			ring_atom = ring[ringid];
 			if (ring_atom) {
 				mol.addBond(this.createBond(bond_type, previous_atom, ring_atom));
-				bond_type = kemia.io.smiles.BondType.NONE;
+				bond_type = kemia.io.smiles.SmilesParser.BondType.NONE;
 				ring[ringid] = null;
 			} else {
 				ring[ringid] = previous_atom;
@@ -97,7 +97,7 @@ kemia.io.smiles.parse = function (smi) {
 			ring_atom = ring[ringid];
 			if (ring_atom) {
                 mol.addBond(this.createBond(bond_type, previous_atom, ring_atom));
-				bond_type = kemia.io.smiles.BondType.NONE;
+				bond_type = kemia.io.smiles.SmilesParser.BondType.NONE;
 				ring[ringid] = null;
 			} else {
 				ring[ringid] = previous_atom;
@@ -109,7 +109,7 @@ kemia.io.smiles.parse = function (smi) {
 				var atom = new kemia.model.Atom(smi_atom.symbol,0,0,smi_atom.charge,smi_atom.aromatic,smi_atom.isotope);
 				if (previous_atom) {
 					mol.addBond(this.createBond(bond_type, previous_atom, atom));
-					bond_type = kemia.io.smiles.BondType.NONE;
+					bond_type = kemia.io.smiles.SmilesParser.BondType.NONE;
 				}
 				mol.addAtom(atom);
 				if (smi_atom.stereo != "NONE") {
@@ -137,7 +137,7 @@ kemia.io.smiles.parse = function (smi) {
 	}
 };
 
-kemia.io.smiles.sanityCheck = function (branch, ring, bond_type) {
+kemia.io.smiles.SmilesParser.sanityCheck = function (branch, ring, bond_type) {
 	if (branch.length) {
 		throw new Error(smi + " unbalanced parens");
 		return false;
@@ -155,8 +155,8 @@ kemia.io.smiles.sanityCheck = function (branch, ring, bond_type) {
 	return true;
 };
 
-kemia.io.smiles.parseAtom = function (item) {
-  var atom = {isotope:null, symbol:null, stereo:kemia.io.smiles.BondStereo.NONE, hcount:null, charge:null, aromatic:false, chiralHydrogenNeighbour:false};
+kemia.io.smiles.SmilesParser.parseAtom = function (item) {
+  var atom = {isotope:null, symbol:null, stereo:kemia.io.smiles.SmilesParser.BondStereo.NONE, hcount:null, charge:null, aromatic:false, chiralHydrogenNeighbour:false};
   var atomProp = this.atomPattern.exec(item);
   if (atomProp) {
     atom.isotope = atomProp[1];
@@ -164,13 +164,13 @@ kemia.io.smiles.parseAtom = function (item) {
     // periodicTable has entries for c,n,o,s,as,se
     if (this.periodicTable[atomProp[2]]) atom.symbol = atomProp[2];
     
-    if (atomProp[3] == kemia.io.smiles.BondStereo.CLOCKWISE || atomProp[3] == kemia.io.smiles.BondStereo.COUNTER_CLOCKWISE) {
+    if (atomProp[3] == kemia.io.smiles.SmilesParser.BondStereo.CLOCKWISE || atomProp[3] == kemia.io.smiles.SmilesParser.BondStereo.COUNTER_CLOCKWISE) {
 	    atom.stereo = atomProp[3];  
         if (atomProp[4] == 'H') 
 		  atom.chiralHydrogenNeighbour=true;
 	} 
 	else {
-		atom.stereo = kemia.io.smiles.BondStereo.NONE;
+		atom.stereo = kemia.io.smiles.SmilesParser.BondStereo.NONE;
 	}
     
     if (atomProp[4] == 'H') {
@@ -208,73 +208,102 @@ kemia.io.smiles.parseAtom = function (item) {
 /**
  * factory method for bonds
  *
- * @param{kemia.io.smiles.BondType}type bond-type code
+ * @param{kemia.io.smiles.SmilesParser.BondType}type bond-type code
  * @param{kemia.model.Atom} source atom at source end of bond
  * @param{kemia.model.Atom} target atom at target end of bond
  *
  * @return{kemia.model.Bond}
  */
-kemia.io.smiles.createBond = function(type, source, target) {
+kemia.io.smiles.SmilesParser.createBond = function(type, source, target) {
 		var atype = type;
-		if (type == kemia.io.smiles.BondType.NONE) {
+		if (type == kemia.io.smiles.SmilesParser.BondType.NONE) {
 			if (source.aromatic && target.aromatic) {
-				atype = kemia.io.smiles.BondType.AROMATIC_BOND;
+				atype = kemia.io.smiles.SmilesParser.BondType.AROMATIC_BOND;
 			} else {
-				atype = kemia.io.smiles.BondType.SINGLE_BOND;
+				atype = kemia.io.smiles.SmilesParser.BondType.SINGLE_BOND;
 			}
 		}
         switch (atype) {
         
-        case kemia.io.smiles.BondType.SINGLE_BOND:
+        case kemia.io.smiles.SmilesParser.BondType.SINGLE_BOND:
                     return new kemia.model.Bond(source, target, kemia.model.Bond.ORDER.SINGLE);
-        case kemia.io.smiles.BondType.DOUBLE_BOND:
+        case kemia.io.smiles.SmilesParser.BondType.DOUBLE_BOND:
                 return new kemia.model.Bond(source, target, kemia.model.Bond.ORDER.DOUBLE);
-        case kemia.io.smiles.BondType.TRIPLE_BOND:
+        case kemia.io.smiles.SmilesParser.BondType.TRIPLE_BOND:
                 return new kemia.model.Bond(source, target, kemia.model.Bond.ORDER.TRIPLE);
-        case kemia.io.smiles.BondType.AROMATIC_BOND:
+        case kemia.io.smiles.SmilesParser.BondType.AROMATIC_BOND:
                 var bond = new kemia.model.Bond(source, target);
                 bond.aromatic = true;
                 return bond;
-        case kemia.io.smiles.BondType.ANY:
+        case kemia.io.smiles.SmilesParser.BondType.ANY:
         default:
                 throw new Error("invalid bond type/stereo [" + type + "]/[" + stereo
                                 + "]");
         };
 };
 
-//TODO - probably up for some refinements
-kemia.io.smiles.setChiralCenters = function(molecule,chiralCenters){
-    for (c=0,centers=chiralCenters.length; c<centers; c++) {
-		atIndex=chiralCenters[c];
-		chiralAtom=molecule.getAtom(atIndex);
-		direction=chiralCenters[++c]
-		chiralHydrogenNeighbour=chiralCenters[++c];
-		cnt=0;
-        goog.array.forEach(molecule.atoms, function(atom){
-			bond =molecule.findBond(chiralAtom,atom);
-			if(bond!=null) {
-                if (bond.source!=chiralAtom) {
-					bond.source=chiralAtom;
-					bond.target=atom;
+/**
+ * Sets UP and DOWN bonds based on chiral center information
+ * 
+ * @param{kemia.model.molecule} current molecule being constructed by Smiles parser
+ * @param{Array} array of atoms flagged as chiral center in Smiles (plus extra overhead data)
+ */
+kemia.io.smiles.SmilesParser.setChiralCenters = function(molecule, chiralCenters){
+    for (c = 0, centers = chiralCenters.length; c < centers; c++) {
+		atIndex = chiralCenters[c];
+		chiralAtom = molecule.getAtom(atIndex);
+        if (chiralAtom!=undefined ) {
+			
+			var direction = chiralCenters[++c]
+			var chiralHydrogenNeighbour = chiralCenters[++c];
+			var cnt = 0;
+			var availableBonds=new Array();
+			var cntNeighb = 0;
+			var bond=null;
+			goog.array.forEach(molecule.atoms, function(atom){
+				bond_ = molecule.findBond(chiralAtom, atom);
+				if (bond_ != null && bond_!=undefined) {
+					if (bond_.source != chiralAtom) {
+						bond_.source = chiralAtom;
+						bond_.target = atom;
+					}
+					cntNeighb++;
+					if (!molecule.isBondInRing(bond_)) 
+						availableBonds.push(bond_)
 				}
-				cnt++;
-				if (cnt == 2)
-				    if(direction == kemia.io.smiles.BondStereo.CLOCKWISE) 
-					   bond.stereo = kemia.model.Bond.STEREO.UP;
-					else 
-					   bond.stereo = kemia.model.Bond.STEREO.DOWN;
-				else if (cnt == 4) 
-                    if(direction == kemia.io.smiles.BondStereo.CLOCKWISE) 
-                       bond.stereo = kemia.model.Bond.STEREO.DOWN;
-                    else 
-                       bond.stereo = kemia.model.Bond.STEREO.UP;
+			});
+			var numOfAvBonds = availableBonds.length;
+			if ((cntNeighb == 3 || cntNeighb == 4) && numOfAvBonds > 0) {
+				bondidx = 0;
+				if ((cntNeighb == 3 && numOfAvBonds > 1) || (cntNeighb == 4 && numOfAvBonds > 2)) {
+					bondidx = 1;
+				}
+				bond = availableBonds[bondidx]
+				if (direction == kemia.io.smiles.SmilesParser.BondStereo.CLOCKWISE) {
+					bond.stereo = kemia.model.Bond.STEREO.UP;
+				}
+				else 
+					bond.stereo = kemia.model.Bond.STEREO.DOWN;
 			}
-        });
-	}
+			if (cntNeighb == 4 && numOfAvBonds > 1) {
+				bondidx = 1;
+				if (numOfAvBonds == 4) 
+					bondidx = 3;
+				else 
+					if (numOfAvBonds == 4) 
+						bondidx = 2;
+				bond = availableBonds[bondidx]
+				if (direction == kemia.io.smiles.SmilesParser.BondStereo.CLOCKWISE) 
+					bond.stereo = kemia.model.Bond.STEREO.DOWN;
+				else 
+					bond.stereo = kemia.model.Bond.STEREO.UP;
+			}
+	   }
+    }
 }
 
 
-kemia.io.smiles.periodicTable = {
+kemia.io.smiles.SmilesParser.periodicTable = {
 H:{"number":1, "name":"Hydrogen"},
 He:{"number":2, "name":"Helium"},
 Li:{"number":3, "name":"Lithium"},

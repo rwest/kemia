@@ -12,7 +12,7 @@ Copyright (c) 2010 Mark Rijnbeek (markr@ebi.ac.uk)
             goog.require('goog.testing.jsunit');
             goog.require('goog.array');
             goog.require('kemia.io.mdl');
-            goog.require('kemia.io.smiles');
+            goog.require('kemia.io.smiles.SmilesParser');
             goog.require('kemia.model.Atom');
             goog.require('kemia.query.Query');
             goog.require('kemia.query.DFSMapper');
@@ -86,7 +86,7 @@ function debug(text, noNewLine) {
             }
 
             function genericSmilesMatchTest(smiles) {
-                var queried = kemia.io.smiles.parse(smiles);
+                var queried = kemia.io.smiles.SmilesParser.parse(smiles);
                 var query = kemia.query.SmilesCompiler.compile(smiles);
                 var mapper = new kemia.query.DFSMapper(query);
                 var maps = mapper.mapUnique(queried);

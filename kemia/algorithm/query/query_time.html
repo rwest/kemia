@@ -7,7 +7,7 @@
 <script src="../../deps.js"></script>
 <script>
         goog.require('goog.testing.jsunit');
-        goog.require('kemia.io.smiles');
+        goog.require('kemia.io.smiles.SmilesParser');
         goog.require('kemia.query.DFSMapper');
         goog.require('kemia.query.SmilesCompiler');
 </script>
@@ -36,7 +36,7 @@ function debug(text, noNewLine) {
         function doNext() {
             var query = kemia.query.SmilesCompiler.compile('c1ccccc1');
             var mapper = new kemia.query.DFSMapper(query);
-            var molecule = kemia.io.smiles.parse(smiles[i]);
+            var molecule = kemia.io.smiles.SmilesParser.parse(smiles[i]);
             var maps = mapper.mapAll(molecule);
             debug("match " + (i+1) + ": " + maps.length);
             i++;

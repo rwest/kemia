@@ -252,6 +252,41 @@ kemia.model.Molecule.prototype.getRings = function() {
 };
 
 /**
+ * Checks if atom is in a ring
+ * 
+ * @return{boolean
+ */
+kemia.model.Molecule.prototype.isAtomInRing = function(atom_) {
+    rings = this.getRings();
+	for(r=0,ringCount=rings.length; r<ringCount; r++) { 
+        for (a = 0, atomCount = rings[r].atoms.length; a < atomCount; a++) {
+			if (atom_ == rings[r].atoms[a]) {
+				return true;
+			}
+		}
+	}
+    return false;
+};
+
+/**
+ * Checks if bond is in a ring
+ * 
+ * @return{boolean
+ */
+kemia.model.Molecule.prototype.isBondInRing = function(bond_) {
+    rings = this.getRings();
+    for(r=0,ringCount=rings.length; r<ringCount; r++) { 
+        for (b = 0, bondCount = rings[r].bonds.length; b < bondCount; b++) {
+            if (bond_ == rings[r].bonds[b]) {
+                return true;
+            }
+        }
+    }
+    return false;
+};
+
+
+/**
  * clone (shallow) this molecule
  * 
  * @return{kemia.model.Molecule}

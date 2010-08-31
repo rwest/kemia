@@ -1,10 +1,10 @@
-goog.provide("kemia.io.smiles");
+goog.provide("kemia.io.smiles.SmilesGenerator");
 goog.require('kemia.model.Molecule');
 goog.require('kemia.model.Atom');
 goog.require('kemia.model.Bond');
 goog.require('kemia.model.Reaction');
 
-kemia.io.smiles.generate = function (molecule,chiral) {
+kemia.io.smiles.SmilesGenerator.generate = function (molecule,chiral) {
 
     if (molecule.countAtoms()== 0)
         return "shit "+molecule.countAtoms();

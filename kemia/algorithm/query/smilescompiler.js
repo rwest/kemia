@@ -14,7 +14,7 @@
 
 goog.provide('kemia.query.SmilesCompiler');
 
-goog.require('kemia.io.smiles');
+goog.require('kemia.io.smiles.SmilesParser');
 goog.require('kemia.query.MoleculeCompiler');
 
 (function() {
@@ -36,7 +36,7 @@ goog.require('kemia.query.MoleculeCompiler');
      * @return {kemia.query.IQuery}
      */
     kemia.query.SmilesCompiler.compile = function(/**string*/smiles) {
-        var molecule = kemia.io.smiles.parse(smiles);
+        var molecule = kemia.io.smiles.SmilesParser.parse(smiles);
         var query = kemia.query.MoleculeCompiler.compile(molecule);
         return query;
     };
